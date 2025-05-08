@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
+import { Link } from "react-router-dom"
 
 import { cn } from "@/lib/utils"
 
@@ -37,15 +38,46 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
+  href?: string
+  to?: string
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, href, to, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
+    
+    // If to prop is provided, render a Link from react-router-dom
+    if (to) {
+      return (
+        <Link 
+          to={to} 
+          className={cn(buttonVariants({ variant, size, className }))}
+        >
+          {props.children}
+        </Link>
+      )
+    }
+    
+    // If href is provided, render a regular anchor tag
+    if (href) {
+      return (
+        <a
+          href={href}
+          className={cn(buttonVariants({ variant, size, className }))}
+          target={href.startsWith("http") ? "_blank" : undefined}
+          rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+        >
+          {props.children}
+        </a>
+      )
+    }
+    
+    // Otherwise render a regular button
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
+        type={props.type || "button"}
         {...props}
       />
     )

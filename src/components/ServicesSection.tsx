@@ -8,20 +8,28 @@ const services = [
     title: "Plastic Cap Manufacturing",
     description: "Custom injection molded caps for various industrial applications. We produce caps with precise dimensions and high-quality finish.",
     icon: Factory,
+    path: "/services/caps",
   },
   {
     title: "Custom Die Making",
     description: "High-precision plastic mold dies designed and manufactured to your exact specifications with exceptional durability.",
     icon: Settings,
+    path: "/services/dies",
   },
   {
     title: "Machine Maintenance",
     description: "Professional on-site repair and maintenance services for industrial machinery to minimize downtime and optimize performance.",
     icon: Wrench,
+    path: "/services/maintenance",
   }
 ];
 
 const ServicesSection = () => {
+  const handleLearnMore = (path: string) => {
+    console.log("Navigating to:", path);
+    // In a real application, this would navigate to the specific service page
+  };
+
   return (
     <section className="py-20 bg-navneet-light">
       <div className="container mx-auto px-4">
@@ -47,7 +55,10 @@ const ServicesSection = () => {
               <p className="mb-6 text-navneet-gray">
                 {service.description}
               </p>
-              <Button className="bg-transparent hover:bg-navneet-orange text-navneet-dark hover:text-white border border-navneet-dark hover:border-transparent">
+              <Button 
+                className="bg-transparent hover:bg-navneet-orange text-navneet-dark hover:text-white border border-navneet-dark hover:border-transparent"
+                onClick={() => handleLearnMore(service.path)}
+              >
                 Learn More
               </Button>
             </div>
@@ -63,7 +74,10 @@ const ServicesSection = () => {
                 Our workshop is equipped with high-precision lathe, milling, and drilling machines 
                 operated by skilled technicians to deliver precise parts for various industrial applications.
               </p>
-              <Button className="bg-navneet-orange hover:bg-navneet-orange/90 text-white">
+              <Button 
+                className="bg-navneet-orange hover:bg-navneet-orange/90 text-white"
+                to="/contact"
+              >
                 Request Quote
               </Button>
             </div>

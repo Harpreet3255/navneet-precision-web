@@ -60,10 +60,17 @@ const Hero = () => {
               for India's leading industrial partners.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Button className="bg-navneet-orange hover:bg-navneet-orange/90 text-white">
+              <Button 
+                className="bg-navneet-orange hover:bg-navneet-orange/90 text-white"
+                to="/services"
+              >
                 Our Services <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-              <Button variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-navneet-dark">
+              <Button 
+                variant="outline"
+                className="bg-transparent border-white text-white hover:bg-white hover:text-navneet-dark"
+                to="/contact"
+              >
                 Contact Us
               </Button>
             </div>
