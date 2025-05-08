@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -63,12 +62,14 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Custom colors for Navneet Industries
+				// Custom colors for Navneet Industries - updated to more subtle tones
 				navneet: {
-					dark: '#1A2E4C', // Dark blue
-					gray: '#3A4750', // Machine gray
-					orange: '#FF6B35', // Safety orange
-					light: '#F3F4F6', // Light gray
+					dark: '#2C3E50', // Muted dark blue
+					gray: '#5D6D7E', // Softer gray
+					orange: '#D35400', // Muted orange
+					light: '#F5F7FA', // Very light gray/off-white
+					accent: '#3498DB', // Subtle blue accent
+					muted: '#ECF0F1', // Extremely light gray for backgrounds
 				},
 			},
 			borderRadius: {
