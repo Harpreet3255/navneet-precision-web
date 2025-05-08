@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Truck, Package, Machine, Factory } from 'lucide-react';
+import { Truck, Package, Factory, Cog } from 'lucide-react';
 
 const industries = [
   {
@@ -18,7 +18,7 @@ const industries = [
   {
     title: "Heavy Machinery",
     description: "Durable parts and maintenance services for heavy industrial equipment and machinery.",
-    icon: Machine,
+    icon: Cog,
     image: "/placeholder.svg"
   },
   {
