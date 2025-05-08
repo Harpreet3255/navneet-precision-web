@@ -31,12 +31,19 @@ const industries = [
 
 const IndustriesSection = () => {
   return (
-    <section className="py-20 bg-navneet-light">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-700">Industries We Serve</h2>
-          <div className="w-20 h-1 bg-gray-400 mx-auto mb-6"></div>
-          <p className="max-w-2xl mx-auto text-lg text-gray-600">
+    <section className="py-20 bg-navneet-light relative overflow-hidden">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 opacity-5 pointer-events-none">
+        <div className="absolute top-0 left-0 w-64 h-64 border border-gray-400 rounded-full"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 border border-gray-400 rounded-full"></div>
+        <div className="absolute top-1/2 left-1/4 w-32 h-32 border border-gray-400 rounded-full"></div>
+      </div>
+      
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="text-center mb-16 animate-fade-in">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-navneet-dark uppercase tracking-wide">Industries We Serve</h2>
+          <div className="w-20 h-1 bg-navneet-orange mx-auto mb-6"></div>
+          <p className="max-w-2xl mx-auto text-lg text-navneet-gray">
             Our expertise spans across multiple industries, delivering specialized solutions 
             tailored to each sector's unique requirements.
           </p>
@@ -44,18 +51,21 @@ const IndustriesSection = () => {
         
         <div className="grid md:grid-cols-2 gap-12">
           {industries.map((industry, index) => (
-            <div key={index} className="flex flex-col md:flex-row gap-6 items-start">
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <industry.icon className="h-12 w-12 text-blue-400" />
+            <div 
+              key={index} 
+              className="flex flex-col md:flex-row gap-6 items-start transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+            >
+              <div className="bg-white p-6 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md">
+                <industry.icon className="h-12 w-12 text-navneet-orange transition-colors duration-300" />
               </div>
               <div>
-                <h3 className="text-xl font-bold mb-3 text-gray-700">{industry.title}</h3>
-                <p className="mb-4 text-gray-600">{industry.description}</p>
-                <div className="rounded-lg overflow-hidden shadow-sm">
+                <h3 className="text-xl font-bold mb-3 text-navneet-dark">{industry.title}</h3>
+                <p className="mb-4 text-navneet-gray">{industry.description}</p>
+                <div className="rounded-lg overflow-hidden shadow-sm group">
                   <img 
                     src={industry.image} 
                     alt={industry.title} 
-                    className="w-full h-48 object-cover transition-transform duration-500 hover:scale-105"
+                    className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
               </div>
