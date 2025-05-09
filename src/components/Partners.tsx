@@ -1,13 +1,13 @@
 
 import React from 'react';
 
-// Placeholder for partner logos
+// Updated partners with actual brand logos
 const partners = [
-  { name: 'Tata', logo: '/placeholder.svg' },
-  { name: 'RSB', logo: '/placeholder.svg' },
-  { name: 'RKFL', logo: '/placeholder.svg' },
-  { name: 'Cummins', logo: '/placeholder.svg' },
-  { name: 'Silicon', logo: '/placeholder.svg' },
+  { name: 'Tata', logo: 'https://www.logotaglines.com/wp-content/uploads/2022/12/Tata-Logo-Tagline-Slogan-Owner-480x480.jpg' },
+  { name: 'RSB', logo: 'https://www.rsbglobal.com/images/footer-logo.png' },
+  { name: 'RKFL', logo: 'https://yt3.googleusercontent.com/ytc/APkrFKZh3LVoMPBFx2ikWCS7_UvMtdSqF0qq_WKVJb4j=s900-c-k-c0x00ffffff-no-rj' },
+  { name: 'Cummins', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Cummins_logo.svg/2560px-Cummins_logo.svg.png' },
+  { name: 'Silicon', logo: 'https://siliconlogyindia.com/images/logo.png' },
 ];
 
 const Partners = () => {

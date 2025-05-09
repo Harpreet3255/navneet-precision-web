@@ -65,7 +65,7 @@ const ServicesSection = () => {
           ))}
         </div>
         
-        {/* Additional Service */}
+        {/* Additional Service with updated machine image */}
         <div className="mt-16 bg-navneet-dark rounded-lg shadow-xl p-8 text-white">
           <div className="grid md:grid-cols-5 gap-8 items-center">
             <div className="md:col-span-3">
@@ -83,7 +83,7 @@ const ServicesSection = () => {
             </div>
             <div className="md:col-span-2">
               <img 
-                src="/placeholder.svg" 
+                src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=1740&auto=format&fit=crop" 
                 alt="Machining Operations" 
                 className="rounded-lg object-cover w-full h-64"
               />

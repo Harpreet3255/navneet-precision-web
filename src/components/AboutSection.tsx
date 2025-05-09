@@ -8,10 +8,10 @@ const AboutSection = () => {
     <section className="py-20 bg-white">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-10 items-center">
-          {/* Left column with image */}
+          {/* Left column with updated workshop image */}
           <div className="rounded-lg overflow-hidden shadow-xl">
             <img 
-              src="/placeholder.svg" 
+              src="https://images.unsplash.com/photo-1587293852726-70cdb56c2866?q=80&w=1772&auto=format&fit=crop" 
               alt="Navneet Industries Workshop" 
               className="w-full h-auto object-cover"
             />

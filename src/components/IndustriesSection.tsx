@@ -7,25 +7,25 @@ const industries = [
     title: "Automotive",
     description: "Custom plastic components and caps for the automotive industry, meeting strict quality standards.",
     icon: Truck,
-    image: "/placeholder.svg"
+    image: "https://images.unsplash.com/photo-1565043666747-69f6646db940?q=80&w=1588&auto=format&fit=crop"
   },
   {
     title: "Packaging",
     description: "Injection molded caps for various packaging applications across industries.",
     icon: Package,
-    image: "/placeholder.svg"
+    image: "https://images.unsplash.com/photo-1597401581070-3dec04841300?q=80&w=1655&auto=format&fit=crop"
   },
   {
     title: "Heavy Machinery",
     description: "Durable parts and maintenance services for heavy industrial equipment and machinery.",
     icon: Cog,
-    image: "/placeholder.svg"
+    image: "https://images.unsplash.com/photo-1581093458791-9a246dc5cf1b?q=80&w=1740&auto=format&fit=crop"
   },
   {
     title: "Industrial Components",
     description: "Precision-engineered components for industrial applications and assemblies.",
     icon: Factory,
-    image: "/placeholder.svg"
+    image: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?q=80&w=1740&auto=format&fit=crop"
   }
 ];
 
