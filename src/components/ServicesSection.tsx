@@ -31,7 +31,7 @@ const ServicesSection = () => {
   };
 
   return (
-    <section className="py-20 bg-navneet-light">
+    <section id="services" className="py-20 bg-navneet-light">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-navneet-dark">Our Services</h2>
@@ -76,7 +76,7 @@ const ServicesSection = () => {
               </p>
               <Button 
                 className="bg-navneet-orange hover:bg-navneet-orange/90 text-white"
-                to="/contact"
+                scrollTo="contact"
               >
                 Request Quote
               </Button>

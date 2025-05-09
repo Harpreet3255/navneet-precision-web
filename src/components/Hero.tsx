@@ -26,7 +26,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative h-screen overflow-hidden">
+    <section id="hero" className="relative h-screen overflow-hidden">
       {/* Slider Images */}
       {sliderImages.map((image, index) => (
         <div
@@ -62,14 +62,14 @@ const Hero = () => {
             <div className="flex flex-wrap gap-4">
               <Button 
                 className="bg-navneet-orange hover:bg-navneet-orange/90 text-white"
-                to="/services"
+                scrollTo="services"
               >
                 Our Services <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
               <Button 
                 variant="outline"
                 className="bg-transparent border-white text-white hover:bg-white hover:text-navneet-dark"
-                to="/contact"
+                scrollTo="contact"
               >
                 Contact Us
               </Button>

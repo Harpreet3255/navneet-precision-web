@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Mail, Phone } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { scrollToSection } from '@/lib/scrollUtils';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -22,6 +23,13 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleNavClick = (sectionId: string) => {
+    scrollToSection(sectionId);
+    if (isMenuOpen) {
+      setIsMenuOpen(false);
+    }
+  };
+
   return (
     <header 
       className={`fixed w-full z-50 transition-all duration-300 ${
@@ -37,13 +45,12 @@ const Header = () => {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center space-x-8">
-          <Link to="/" className="text-navneet-dark hover:text-navneet-orange font-medium transition-colors">Home</Link>
-          <Link to="/about" className="text-navneet-dark hover:text-navneet-orange font-medium transition-colors">About Us</Link>
-          <Link to="/services" className="text-navneet-dark hover:text-navneet-orange font-medium transition-colors">Services</Link>
-          <Link to="/industries" className="text-navneet-dark hover:text-navneet-orange font-medium transition-colors">Industries</Link>
-          <Link to="/machines" className="text-navneet-dark hover:text-navneet-orange font-medium transition-colors">Machines</Link>
-          <Link to="/gallery" className="text-navneet-dark hover:text-navneet-orange font-medium transition-colors">Gallery</Link>
-          <Link to="/contact" className="text-navneet-dark hover:text-navneet-orange font-medium transition-colors">Contact</Link>
+          <button onClick={() => handleNavClick('hero')} className="text-navneet-dark hover:text-navneet-orange font-medium transition-colors">Home</button>
+          <button onClick={() => handleNavClick('about')} className="text-navneet-dark hover:text-navneet-orange font-medium transition-colors">About Us</button>
+          <button onClick={() => handleNavClick('services')} className="text-navneet-dark hover:text-navneet-orange font-medium transition-colors">Services</button>
+          <button onClick={() => handleNavClick('industries')} className="text-navneet-dark hover:text-navneet-orange font-medium transition-colors">Industries</button>
+          <button onClick={() => handleNavClick('machines')} className="text-navneet-dark hover:text-navneet-orange font-medium transition-colors">Machines</button>
+          <button onClick={() => handleNavClick('contact')} className="text-navneet-dark hover:text-navneet-orange font-medium transition-colors">Contact</button>
         </nav>
 
         {/* Contact Info for Desktop */}
@@ -69,13 +76,12 @@ const Header = () => {
         <div className="md:hidden bg-white shadow-lg">
           <div className="container mx-auto px-4 py-4">
             <nav className="flex flex-col space-y-4">
-              <Link to="/" className="text-navneet-dark hover:text-navneet-orange font-medium py-2" onClick={toggleMenu}>Home</Link>
-              <Link to="/about" className="text-navneet-dark hover:text-navneet-orange font-medium py-2" onClick={toggleMenu}>About Us</Link>
-              <Link to="/services" className="text-navneet-dark hover:text-navneet-orange font-medium py-2" onClick={toggleMenu}>Services</Link>
-              <Link to="/industries" className="text-navneet-dark hover:text-navneet-orange font-medium py-2" onClick={toggleMenu}>Industries</Link>
-              <Link to="/machines" className="text-navneet-dark hover:text-navneet-orange font-medium py-2" onClick={toggleMenu}>Machines</Link>
-              <Link to="/gallery" className="text-navneet-dark hover:text-navneet-orange font-medium py-2" onClick={toggleMenu}>Gallery</Link>
-              <Link to="/contact" className="text-navneet-dark hover:text-navneet-orange font-medium py-2" onClick={toggleMenu}>Contact</Link>
+              <button onClick={() => handleNavClick('hero')} className="text-navneet-dark hover:text-navneet-orange font-medium py-2 text-left">Home</button>
+              <button onClick={() => handleNavClick('about')} className="text-navneet-dark hover:text-navneet-orange font-medium py-2 text-left">About Us</button>
+              <button onClick={() => handleNavClick('services')} className="text-navneet-dark hover:text-navneet-orange font-medium py-2 text-left">Services</button>
+              <button onClick={() => handleNavClick('industries')} className="text-navneet-dark hover:text-navneet-orange font-medium py-2 text-left">Industries</button>
+              <button onClick={() => handleNavClick('machines')} className="text-navneet-dark hover:text-navneet-orange font-medium py-2 text-left">Machines</button>
+              <button onClick={() => handleNavClick('contact')} className="text-navneet-dark hover:text-navneet-orange font-medium py-2 text-left">Contact</button>
               
               <div className="pt-4 border-t border-gray-200">
                 <a href="tel:+911234567890" className="flex items-center text-navneet-dark hover:text-navneet-orange py-2">

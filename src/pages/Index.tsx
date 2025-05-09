@@ -1,6 +1,7 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
+import { useLocation } from 'react-router-dom';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import Partners from '@/components/Partners';
@@ -11,8 +12,21 @@ import MachinesSection from '@/components/MachinesSection';
 import WhyChooseUsSection from '@/components/WhyChooseUsSection';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
+import { scrollToSection } from '@/lib/scrollUtils';
 
 const Index = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    // Check if there's a hash in the URL and scroll to that section
+    if (location.hash) {
+      const sectionId = location.hash.substring(1); // Remove the # character
+      setTimeout(() => {
+        scrollToSection(sectionId);
+      }, 100);
+    }
+  }, [location]);
+
   return (
     <>
       <Helmet>
@@ -33,14 +47,23 @@ const Index = () => {
       <div className="flex flex-col min-h-screen">
         <Header />
         <main className="flex-grow">
-          <Hero />
+          <Hero /> {/* Already has id="hero" */}
           <Partners />
-          <AboutSection />
+          <div id="about">
+            <AboutSection />
+          </div>
+          {/* Services section already has id="services" */}
           <ServicesSection />
+          {/* Industries section already has id="industries" */}
           <IndustriesSection />
+          {/* Machines section already has id="machines" */}
           <MachinesSection />
-          <WhyChooseUsSection />
-          <ContactSection />
+          <div id="why-choose-us">
+            <WhyChooseUsSection />
+          </div>
+          <div id="contact">
+            <ContactSection />
+          </div>
         </main>
         <Footer />
       </div>

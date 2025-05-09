@@ -1,7 +1,9 @@
+
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Link } from "react-router-dom"
+import { scrollToSection } from "@/lib/scrollUtils"
 
 import { cn } from "@/lib/utils"
 
@@ -40,11 +42,33 @@ export interface ButtonProps
   asChild?: boolean
   href?: string
   to?: string
+  scrollTo?: string
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, href, to, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, href, to, scrollTo, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
+    
+    // If scrollTo prop is provided, create a button that scrolls to the section
+    if (scrollTo) {
+      const handleClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        scrollToSection(scrollTo);
+        if (props.onClick) {
+          props.onClick(e);
+        }
+      };
+      
+      return (
+        <Comp
+          className={cn(buttonVariants({ variant, size, className }))}
+          ref={ref}
+          type="button"
+          onClick={handleClick}
+          {...props}
+        />
+      );
+    }
     
     // If to prop is provided, render a Link from react-router-dom
     if (to) {
