@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 
-// Updated slider images with industrial machinery images
+// Updated slider images with industrial machinery and plastic cap image
 const sliderImages = [
-  'https://images.unsplash.com/photo-1581093458791-9a246dc5cf1b?q=80&w=1740&auto=format&fit=crop',
+  'public/lovable-uploads/c0cd5f04-6f5a-4596-9930-a834cc66d247.png', // Plastic cap image
   'https://images.unsplash.com/photo-1582415892521-eee0c3115e7c?q=80&w=1662&auto=format&fit=crop',
   'https://images.unsplash.com/photo-1507646227500-4d389b0012be?q=80&w=1470&auto=format&fit=crop',
 ];
@@ -41,7 +41,7 @@ const Hero = () => {
           ></div>
           <img
             src={image}
-            alt={`Navneet Industries - Slide ${index + 1}`}
+            alt={`${index === 0 ? 'Navneet Industries - Plastic Caps' : `Navneet Industries - Slide ${index + 1}`}`}
             className="w-full h-full object-cover"
           />
         </div>
