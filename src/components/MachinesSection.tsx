@@ -7,7 +7,7 @@ const machines = [
     category: "lathe",
     title: "Lathe Machines",
     description: "Our precision lathe machines are capable of producing high-quality turned parts with tight tolerances. We specialize in both manual and CNC lathe operations for various materials including metals and plastics.",
-    image: "https://images.unsplash.com/photo-1612026498112-9f67c16e3821?q=80&w=1740&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=1740&auto=format&fit=crop",
     specs: [
       "Max Diameter: 400mm",
       "Max Length: 1000mm",
@@ -18,7 +18,7 @@ const machines = [
     category: "milling",
     title: "Milling Machines",
     description: "Our milling machines enable precise cutting and shaping of solid materials. These versatile machines allow us to create complex shapes and features on parts for various industrial applications.",
-    image: "https://images.unsplash.com/photo-1627745193246-1fa1c9404b21?q=80&w=1740&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1626208465488-56bb695c67ce?q=80&w=1470&auto=format&fit=crop",
     specs: [
       "X-Axis Travel: 600mm",
       "Y-Axis Travel: 400mm",
@@ -29,7 +29,7 @@ const machines = [
     category: "drilling",
     title: "Drilling Machines",
     description: "We utilize advanced drilling equipment for creating precise holes in various materials. Our drilling capabilities ensure accurate hole placement and sizing for critical components.",
-    image: "https://images.unsplash.com/photo-1664481333731-fcca9a57377b?q=80&w=1740&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1621913360966-dff01e2de71c?q=80&w=1740&auto=format&fit=crop",
     specs: [
       "Max Drilling Capacity: 50mm",
       "Table Size: 500x500mm",
@@ -40,7 +40,7 @@ const machines = [
     category: "injection",
     title: "Injection Molding Machines",
     description: "Our injection molding systems produce high-quality plastic caps and components with consistent precision. These machines form the core of our plastic manufacturing capabilities.",
-    image: "https://images.unsplash.com/photo-1598170845058-96a743c10281?q=80&w=1740&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1574170609519-d1d8d4b71f60?q=80&w=1470&auto=format&fit=crop",
     specs: [
       "Clamping Force: 150 tons",
       "Shot Weight: 100-450g",

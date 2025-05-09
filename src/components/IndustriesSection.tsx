@@ -13,19 +13,19 @@ const industries = [
     title: "Packaging",
     description: "Injection molded caps for various packaging applications across industries.",
     icon: Package,
-    image: "https://images.unsplash.com/photo-1597401581070-3dec04841300?q=80&w=1655&auto=format&fit=crop"
+    image: "https://images.unsplash.com/photo-1530587191325-3db32d826c18?q=80&w=1470&auto=format&fit=crop"
   },
   {
     title: "Heavy Machinery",
     description: "Durable parts and maintenance services for heavy industrial equipment and machinery.",
     icon: Cog,
-    image: "https://images.unsplash.com/photo-1581093458791-9a246dc5cf1b?q=80&w=1740&auto=format&fit=crop"
+    image: "https://images.unsplash.com/photo-1473621038790-b778b4750efe?q=80&w=1572&auto=format&fit=crop"
   },
   {
     title: "Industrial Components",
     description: "Precision-engineered components for industrial applications and assemblies.",
     icon: Factory,
-    image: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?q=80&w=1740&auto=format&fit=crop"
+    image: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=1740&auto=format&fit=crop"
   }
 ];
 

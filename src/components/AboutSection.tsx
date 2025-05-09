@@ -11,7 +11,7 @@ const AboutSection = () => {
           {/* Left column with updated workshop image */}
           <div className="rounded-lg overflow-hidden shadow-xl">
             <img 
-              src="https://images.unsplash.com/photo-1587293852726-70cdb56c2866?q=80&w=1772&auto=format&fit=crop" 
+              src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=1740&auto=format&fit=crop" 
               alt="Navneet Industries Workshop" 
               className="w-full h-auto object-cover"
             />

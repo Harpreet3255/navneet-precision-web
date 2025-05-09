@@ -83,7 +83,7 @@ const ServicesSection = () => {
             </div>
             <div className="md:col-span-2">
               <img 
-                src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=1740&auto=format&fit=crop" 
+                src="https://images.unsplash.com/photo-1535813547-99c456a41d4a?q=80&w=1470&auto=format&fit=crop" 
                 alt="Machining Operations" 
                 className="rounded-lg object-cover w-full h-64"
               />

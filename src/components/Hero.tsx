@@ -3,11 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 
-// Mock data for hero slider images
+// Updated slider images with industrial machinery images
 const sliderImages = [
-  '/placeholder.svg',
-  '/placeholder.svg',
-  '/placeholder.svg',
+  'https://images.unsplash.com/photo-1581093458791-9a246dc5cf1b?q=80&w=1740&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1582415892521-eee0c3115e7c?q=80&w=1662&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1507646227500-4d389b0012be?q=80&w=1470&auto=format&fit=crop',
 ];
 
 const Hero = () => {
