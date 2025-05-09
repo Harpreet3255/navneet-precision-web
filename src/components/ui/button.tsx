@@ -51,11 +51,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     
     // If scrollTo prop is provided, create a button that scrolls to the section
     if (scrollTo) {
-      const handleClick = (e: React.MouseEvent) => {
+      const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         scrollToSection(scrollTo);
         if (props.onClick) {
-          props.onClick(e);
+          props.onClick(e as React.MouseEvent<HTMLButtonElement>);
         }
       };
       
