@@ -39,12 +39,13 @@ const machines = [
   {
     category: "injection",
     title: "Injection Molding Machines",
-    description: "Our injection molding systems produce high-quality plastic caps and components with consistent precision. These machines form the core of our plastic manufacturing capabilities.",
+    description: "Our advanced injection molding systems produce high-quality, eco-friendly plastic protective caps and components with consistent precision. These energy-efficient machines form the core of our sustainable plastic manufacturing capabilities.",
     image: "https://images.unsplash.com/photo-1574170609519-d1d8d4b71f60?q=80&w=1470&auto=format&fit=crop",
     specs: [
       "Clamping Force: 150 tons",
       "Shot Weight: 100-450g",
-      "Cycle Time: 15-40 sec"
+      "Cycle Time: 15-40 sec",
+      "Material: Eco-friendly polymers"
     ]
   }
 ];
@@ -57,11 +58,11 @@ const MachinesSection = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-navneet-dark">Machines & Workshop</h2>
           <div className="w-20 h-1 bg-navneet-orange mx-auto mb-6"></div>
           <p className="max-w-2xl mx-auto text-lg text-navneet-gray">
-            Our workshop is equipped with state-of-the-art machinery operated by skilled technicians 
+            Our workshop is equipped with state-of-the-art machinery operated by skilled technicians
             to deliver precision manufacturing and maintenance services.
           </p>
         </div>
-        
+
         <Tabs defaultValue="lathe" className="w-full">
           <TabsList className="grid grid-cols-2 md:grid-cols-4 mb-8">
             <TabsTrigger value="lathe" className="text-lg">Lathe Machines</TabsTrigger>
@@ -69,22 +70,22 @@ const MachinesSection = () => {
             <TabsTrigger value="drilling" className="text-lg">Drilling Machines</TabsTrigger>
             <TabsTrigger value="injection" className="text-lg">Injection Molding</TabsTrigger>
           </TabsList>
-          
+
           {machines.map((machine) => (
             <TabsContent key={machine.category} value={machine.category} className="animate-fade-in">
               <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                 <div className="grid md:grid-cols-2">
                   <div className="h-full">
-                    <img 
-                      src={machine.image} 
-                      alt={machine.title} 
+                    <img
+                      src={machine.image}
+                      alt={machine.title}
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="p-8">
                     <h3 className="text-2xl font-bold mb-4 text-navneet-dark">{machine.title}</h3>
                     <p className="mb-6 text-navneet-gray">{machine.description}</p>
-                    
+
                     <div className="bg-navneet-light p-4 rounded-lg">
                       <h4 className="font-semibold mb-2">Technical Specifications:</h4>
                       <ul className="list-disc list-inside space-y-1">

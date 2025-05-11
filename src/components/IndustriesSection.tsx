@@ -11,7 +11,7 @@ const industries = [
   },
   {
     title: "Packaging",
-    description: "Injection molded caps for various packaging applications across industries.",
+    description: "Eco-friendly injection molded protective caps for various packaging applications. Our sustainable solutions help reduce plastic waste while maintaining product integrity.",
     icon: Package,
     image: "https://images.unsplash.com/photo-1530587191325-3db32d826c18?q=80&w=1470&auto=format&fit=crop"
   },
@@ -38,21 +38,21 @@ const IndustriesSection = () => {
         <div className="absolute bottom-0 right-0 w-96 h-96 border border-gray-400 rounded-full"></div>
         <div className="absolute top-1/2 left-1/4 w-32 h-32 border border-gray-400 rounded-full"></div>
       </div>
-      
+
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-navneet-dark uppercase tracking-wide">Industries We Serve</h2>
           <div className="w-20 h-1 bg-navneet-orange mx-auto mb-6"></div>
           <p className="max-w-2xl mx-auto text-lg text-navneet-gray">
-            Our expertise spans across multiple industries, delivering specialized solutions 
+            Our expertise spans across multiple industries, delivering specialized solutions
             tailored to each sector's unique requirements.
           </p>
         </div>
-        
+
         <div className="grid md:grid-cols-2 gap-12">
           {industries.map((industry, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className="flex flex-col md:flex-row gap-6 items-start transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
             >
               <div className="bg-white p-6 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md">
@@ -62,9 +62,9 @@ const IndustriesSection = () => {
                 <h3 className="text-xl font-bold mb-3 text-navneet-dark">{industry.title}</h3>
                 <p className="mb-4 text-navneet-gray">{industry.description}</p>
                 <div className="rounded-lg overflow-hidden shadow-sm group">
-                  <img 
-                    src={industry.image} 
-                    alt={industry.title} 
+                  <img
+                    src={industry.image}
+                    alt={industry.title}
                     className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>

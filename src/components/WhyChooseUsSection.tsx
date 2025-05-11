@@ -33,7 +33,7 @@ const WhyChooseUsSection = () => {
           <div>
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-navneet-dark">Why Choose Us?</h2>
             <div className="w-20 h-1 bg-navneet-orange mb-6"></div>
-            
+
             <div className="space-y-6">
               {reasons.map((reason, index) => (
                 <div key={index} className="flex gap-4">
@@ -50,10 +50,10 @@ const WhyChooseUsSection = () => {
               ))}
             </div>
           </div>
-          
+
           <div className="bg-navneet-light rounded-lg p-8">
             <h3 className="text-2xl font-bold mb-6 text-navneet-dark">Compliance & Quality</h3>
-            
+
             <div className="mb-6">
               <h4 className="text-lg font-semibold mb-3">Raw Materials</h4>
               <div className="grid grid-cols-2 gap-4">
@@ -75,8 +75,8 @@ const WhyChooseUsSection = () => {
                 </div>
               </div>
             </div>
-            
-            <div>
+
+            <div className="mb-6">
               <h4 className="text-lg font-semibold mb-3">Quality Standards</h4>
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
@@ -94,6 +94,28 @@ const WhyChooseUsSection = () => {
                 <div className="flex items-start gap-3">
                   <CheckCheck className="h-5 w-5 text-navneet-orange flex-shrink-0 mt-0.5" />
                   <p className="text-navneet-gray">RoHS and REACH compliant materials when required</p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-lg font-semibold mb-3">Environmental Commitment</h4>
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <CheckCheck className="h-5 w-5 text-navneet-orange flex-shrink-0 mt-0.5" />
+                  <p className="text-navneet-gray">Eco-friendly plastic protective caps for packaging</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCheck className="h-5 w-5 text-navneet-orange flex-shrink-0 mt-0.5" />
+                  <p className="text-navneet-gray">Reduced material usage through optimized design</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCheck className="h-5 w-5 text-navneet-orange flex-shrink-0 mt-0.5" />
+                  <p className="text-navneet-gray">Recyclable and biodegradable material options</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCheck className="h-5 w-5 text-navneet-orange flex-shrink-0 mt-0.5" />
+                  <p className="text-navneet-gray">Waste reduction initiatives in manufacturing process</p>
                 </div>
               </div>
             </div>
