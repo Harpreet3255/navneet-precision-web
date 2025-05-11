@@ -2,6 +2,7 @@
 import React from 'react';
 import { Settings, Wrench, Factory } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 
 const services = [
   {
@@ -44,25 +45,31 @@ const ServicesSection = () => {
 
         <div className="grid md:grid-cols-3 gap-8">
           {services.map((service, index) => (
-            <div
+            <Card
               key={index}
               id={service.title.toLowerCase().replace(/\s+/g, '-')}
-              className="bg-white rounded-lg shadow-lg p-8 transform transition duration-300 hover:-translate-y-2"
+              className="bg-white border-none shadow-lg rounded-lg overflow-hidden h-full flex flex-col transform transition duration-300 hover:-translate-y-2"
             >
-              <div className="p-4 bg-navneet-orange/10 inline-block rounded-full mb-6">
-                <service.icon className="h-8 w-8 text-navneet-orange" />
-              </div>
-              <h3 className="text-xl font-bold mb-4 text-navneet-dark">{service.title}</h3>
-              <p className="mb-6 text-navneet-gray">
-                {service.description}
-              </p>
-              <Button
-                className="bg-transparent hover:bg-navneet-orange text-navneet-dark hover:text-white border border-navneet-dark hover:border-transparent"
-                onClick={() => handleLearnMore(service.path)}
-              >
-                Learn More
-              </Button>
-            </div>
+              <CardHeader className="pb-0">
+                <div className="p-4 bg-navneet-orange/10 inline-flex rounded-full mb-4 items-center justify-center">
+                  <service.icon className="h-6 w-6 text-navneet-orange" />
+                </div>
+                <h3 className="text-xl font-bold mb-2 text-navneet-dark">{service.title}</h3>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                <p className="text-navneet-gray">
+                  {service.description}
+                </p>
+              </CardContent>
+              <CardFooter className="pt-0">
+                <Button
+                  className="bg-transparent hover:bg-navneet-orange text-navneet-dark hover:text-white border border-navneet-dark hover:border-transparent"
+                  onClick={() => handleLearnMore(service.path)}
+                >
+                  Learn More
+                </Button>
+              </CardFooter>
+            </Card>
           ))}
         </div>
 
