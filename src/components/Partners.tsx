@@ -61,21 +61,38 @@ interface PartnerLogoProps {
     name: string;
     logo: string;
     fallbackLogo?: string;
+    localLogo?: string;
   };
 }
 
 const PartnerLogo: React.FC<PartnerLogoProps> = ({ partner }) => {
   const [useMainLogo, setUseMainLogo] = useState(true);
   const [useFallbackLogo, setUseFallbackLogo] = useState(false);
+  const [useLocalLogo, setUseLocalLogo] = useState(false);
   const [useSvgFallback, setUseSvgFallback] = useState(false);
 
   const handleMainImageError = () => {
     setUseMainLogo(false);
-    setUseFallbackLogo(true);
+    if (partner.localLogo) {
+      setUseLocalLogo(true);
+    } else if (partner.fallbackLogo) {
+      setUseFallbackLogo(true);
+    } else {
+      setUseSvgFallback(true);
+    }
   };
 
   const handleFallbackImageError = () => {
     setUseFallbackLogo(false);
+    if (partner.localLogo) {
+      setUseLocalLogo(true);
+    } else {
+      setUseSvgFallback(true);
+    }
+  };
+  
+  const handleLocalImageError = () => {
+    setUseLocalLogo(false);
     setUseSvgFallback(true);
   };
 
@@ -103,10 +120,6 @@ const PartnerLogo: React.FC<PartnerLogoProps> = ({ partner }) => {
           alt={`${partner.name} Logo`}
           onError={handleMainImageError}
           className="max-h-20 max-w-[180px] object-contain transition-all duration-300"
-          style={{
-            objectFit: 'contain',
-            objectPosition: 'center'
-          }}
         />
       )}
 
@@ -116,10 +129,15 @@ const PartnerLogo: React.FC<PartnerLogoProps> = ({ partner }) => {
           alt={`${partner.name} Logo (Fallback)`}
           onError={handleFallbackImageError}
           className="max-h-20 max-w-[180px] object-contain transition-all duration-300"
-          style={{
-            objectFit: 'contain',
-            objectPosition: 'center'
-          }}
+        />
+      )}
+      
+      {useLocalLogo && partner.localLogo && (
+        <img
+          src={partner.localLogo}
+          alt={`${partner.name} Logo (Local)`}
+          onError={handleLocalImageError}
+          className="max-h-20 max-w-[180px] object-contain transition-all duration-300"
         />
       )}
 
@@ -128,27 +146,31 @@ const PartnerLogo: React.FC<PartnerLogoProps> = ({ partner }) => {
   );
 };
 
-// Client logos using reliable direct URLs from multiple sources
+// Updated clients with local image fallback options
 const partners = [
   {
     name: 'Tata',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/8/8e/Tata_logo.svg',
-    fallbackLogo: 'https://www.tata.com/content/dam/tata/images/home-page/desktop/logo_desktop_tata-logo.svg'
+    fallbackLogo: 'https://www.tata.com/content/dam/tata/images/home-page/desktop/logo_desktop_tata-logo.svg',
+    localLogo: '/images/tata-logo.jpg'
   },
   {
     name: 'RSB',
     logo: 'https://www.rsbglobal.co.in/images/logo.png',
-    fallbackLogo: 'https://static.wixstatic.com/media/c17d42_e1e2c3e1a1c94d2e9b2f5ee0d3ad0b6a~mv2.png'
+    fallbackLogo: 'https://static.wixstatic.com/media/c17d42_e1e2c3e1a1c94d2e9b2f5ee0d3ad0b6a~mv2.png',
+    localLogo: '/images/rsb-logo.jpg'
   },
   {
     name: 'Ramkrishna Forgings',
     logo: 'https://www.ramkrishnaforgings.com/images/logo.png',
-    fallbackLogo: 'https://www.bseindia.com/include/images/Ramkrishna_Forgings_Ltd.png'
+    fallbackLogo: 'https://www.bseindia.com/include/images/Ramkrishna_Forgings_Ltd.png',
+    localLogo: '/images/rkfl-logo.jpg'
   },
   {
     name: 'Cummins',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Cummins_logo.svg/1280px-Cummins_logo.svg.png',
-    fallbackLogo: 'https://www.cummins.com/sites/default/files/styles/logo_image/public/2022-01/Cummins_Logo_Global_2021_Red_RGB.jpg'
+    fallbackLogo: 'https://www.cummins.com/sites/default/files/styles/logo_image/public/2022-01/Cummins_Logo_Global_2021_Red_RGB.jpg',
+    localLogo: '/images/cummins-logo.jpg'
   },
 ];
 
