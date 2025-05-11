@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ChevronRight } from 'lucide-react';
 
 // Updated slider images with industrial machinery and plastic cap image
 const sliderImages = [
@@ -36,7 +36,7 @@ const Hero = () => {
           }`}
         >
           <div 
-            className="absolute inset-0 bg-navneet-dark opacity-60 z-10"
+            className="absolute inset-0 bg-gradient-to-b from-navneet-dark/80 to-navneet-dark/60 z-10"
             aria-hidden="true"
           ></div>
           <img
@@ -51,27 +51,30 @@ const Hero = () => {
       <div className="relative z-20 h-full flex items-center">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl animate-fade-in">
-            <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-4">
+            <div className="inline-block bg-navneet-orange/90 text-white text-sm font-medium py-1 px-3 rounded mb-4">
+              Leading Manufacturer in India
+            </div>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
               Precision in Every Cap. <br />
               <span className="text-navneet-orange">Trust in Every Turn.</span>
             </h1>
-            <p className="text-lg md:text-xl text-white mb-8 max-w-xl">
+            <p className="text-lg md:text-xl text-white/90 mb-8 max-w-xl leading-relaxed">
               Specialized in plastic cap production, custom die making, and machine maintenance services 
               for India's leading industrial partners.
             </p>
             <div className="flex flex-wrap gap-4">
               <Button 
-                className="bg-navneet-orange hover:bg-navneet-orange/90 text-white"
+                className="bg-navneet-orange hover:bg-navneet-orange/90 text-white font-medium px-6 py-2.5 h-auto"
                 scrollTo="services"
               >
                 Our Services <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
               <Button 
                 variant="outline"
-                className="bg-transparent border-white text-white hover:bg-white hover:text-navneet-dark"
+                className="bg-transparent border-white text-white hover:bg-white hover:text-navneet-dark font-medium px-6 py-2.5 h-auto"
                 scrollTo="contact"
               >
-                Contact Us
+                Contact Us <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -80,13 +83,15 @@ const Hero = () => {
 
       {/* Slider indicators */}
       <div className="absolute bottom-8 left-0 right-0 flex justify-center z-20">
-        <div className="flex space-x-2">
+        <div className="flex space-x-3">
           {sliderImages.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full ${
-                index === currentSlide ? 'bg-navneet-orange' : 'bg-white/50'
+              className={`w-3 h-3 rounded-full transition-all ${
+                index === currentSlide 
+                  ? 'bg-navneet-orange w-8' 
+                  : 'bg-white/50 hover:bg-white/70'
               }`}
               aria-label={`Go to slide ${index + 1}`}
             ></button>

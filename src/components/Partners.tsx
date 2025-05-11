@@ -12,16 +12,20 @@ const partners = [
 
 const Partners = () => {
   return (
-    <section className="py-12 bg-navneet-light">
+    <section className="py-16 bg-white border-b border-gray-100">
       <div className="container mx-auto px-4">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-6">
-          Trusted by Industry Leaders
-        </h2>
-        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
+        <div className="text-center mb-10">
+          <h2 className="text-2xl md:text-3xl font-bold text-navneet-dark mb-2">
+            Trusted by Industry Leaders
+          </h2>
+          <div className="w-20 h-1 bg-navneet-orange mx-auto"></div>
+        </div>
+        
+        <div className="flex flex-wrap justify-center items-center gap-12 md:gap-16">
           {partners.map((partner) => (
             <div 
               key={partner.name} 
-              className="grayscale hover:grayscale-0 transition-all duration-300"
+              className="grayscale hover:grayscale-0 transition-all duration-300 transform hover:scale-105"
             >
               <img 
                 src={partner.logo} 
@@ -30,6 +34,12 @@ const Partners = () => {
               />
             </div>
           ))}
+        </div>
+        
+        <div className="mt-12 text-center">
+          <p className="text-navneet-gray text-sm">
+            Providing precision manufacturing solutions to India's most trusted companies since 2005
+          </p>
         </div>
       </div>
     </section>

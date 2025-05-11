@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -14,10 +15,17 @@ export default {
 			center: true,
 			padding: '2rem',
 			screens: {
+				'sm': '640px',
+				'md': '768px',
+				'lg': '1024px',
+				'xl': '1280px',
 				'2xl': '1400px'
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ['Inter', 'system-ui', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -62,20 +70,24 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Custom colors for Navneet Industries - updated to more subtle tones
+				// Updated enterprise-level color palette for Navneet Industries
 				navneet: {
-					dark: '#2C3E50', // Muted dark blue
-					gray: '#5D6D7E', // Softer gray
-					orange: '#D35400', // Muted orange
-					light: '#F5F7FA', // Very light gray/off-white
-					accent: '#3498DB', // Subtle blue accent
-					muted: '#ECF0F1', // Extremely light gray for backgrounds
+					dark: '#1E293B', // More professional dark blue
+					gray: '#64748B', // Refined slate gray
+					orange: '#E25822', // More vibrant and professional orange
+					light: '#F8FAFC', // Cleaner light background
+					accent: '#0EA5E9', // Professional blue accent
+					muted: '#F1F5F9', // Light gray for backgrounds
 				},
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
+			},
+			boxShadow: {
+				'enterprise': '0 4px 20px -2px rgba(0, 0, 0, 0.08)',
+				'enterprise-lg': '0 10px 30px -3px rgba(0, 0, 0, 0.1)',
 			},
 			keyframes: {
 				'accordion-down': {
@@ -97,9 +109,11 @@ export default {
 				'fade-in': {
 					'0%': { 
 						opacity: '0',
+						transform: 'translateY(10px)',
 					},
 					'100%': { 
 						opacity: '1',
+						transform: 'translateY(0)',
 					},
 				},
 				'slide-in': {
@@ -112,12 +126,23 @@ export default {
 						opacity: '1', 
 					},
 				},
+				'slide-in-right': {
+					'0%': { 
+						transform: 'translateX(20px)',
+						opacity: '0',
+					},
+					'100%': { 
+						transform: 'translateX(0)',
+						opacity: '1', 
+					},
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'fade-in': 'fade-in 0.5s ease-out',
-				'slide-in': 'slide-in 0.6s ease-out',
+				'fade-in': 'fade-in 0.6s ease-out',
+				'slide-in': 'slide-in 0.7s ease-out',
+				'slide-in-right': 'slide-in-right 0.5s ease-out',
 			}
 		}
 	},
