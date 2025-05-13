@@ -34,7 +34,7 @@ const CustomDieMaking = () => {
           <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
             <div>
               <img 
-                src="https://images.unsplash.com/photo-1626208465488-56bb695c67ce?ixlib=rb-4.0.3&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1470" 
+                src="/public/machinery-image.jpg" 
                 alt="Custom die manufacturing machinery"
                 className="rounded-lg shadow-lg w-full"
               />

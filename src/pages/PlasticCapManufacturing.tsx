@@ -46,7 +46,7 @@ const PlasticCapManufacturing = () => {
             </div>
             <div>
               <img 
-                src="https://images.unsplash.com/photo-1574170609519-d1d8d4b71f60?ixlib=rb-4.0.3&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1470" 
+                src="/public/machinery-background.jpg" 
                 alt="Plastic injection molding machine"
                 className="rounded-lg shadow-lg w-full"
               />
