@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { ArrowLeft } from 'lucide-react';
@@ -47,7 +46,7 @@ const MachineMaintenance = () => {
             </div>
             <div>
               <img 
-                src="https://images.unsplash.com/photo-1581092921461-eab10380358b?q=80&w=1470&auto=format&fit=crop" 
+                src="https://images.unsplash.com/photo-1581092921461-eab10380358b?ixlib=rb-4.0.3&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1470" 
                 alt="Machine maintenance technician"
                 className="rounded-lg shadow-lg w-full"
               />
