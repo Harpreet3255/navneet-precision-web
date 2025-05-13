@@ -3,6 +3,7 @@ import React from 'react';
 import { Settings, Wrench, Factory } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { useNavigate } from 'react-router-dom';
 
 const services = [
   {
@@ -26,9 +27,10 @@ const services = [
 ];
 
 const ServicesSection = () => {
+  const navigate = useNavigate();
+
   const handleLearnMore = (path: string) => {
-    console.log("Navigating to:", path);
-    // In a real application, this would navigate to the specific service page
+    navigate(path);
   };
 
   return (
