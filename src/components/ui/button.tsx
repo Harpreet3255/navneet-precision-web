@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -60,10 +61,14 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           }
         };
 
-        const button = ref?.current;
-        if (button) {
-          button.addEventListener('click', handleClick);
-          return () => button.removeEventListener('click', handleClick);
+        // Fix: Check if ref is an object with current property
+        if (ref && 'current' in ref && ref.current) {
+          ref.current.addEventListener('click', handleClick);
+          return () => {
+            if (ref && 'current' in ref && ref.current) {
+              ref.current.removeEventListener('click', handleClick);
+            }
+          };
         }
       }
     }, [scrollTo, ref]);
