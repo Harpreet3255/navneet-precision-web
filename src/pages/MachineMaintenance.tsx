@@ -5,19 +5,19 @@ import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import Footer from '@/components/Footer';
-import Header from '@/components/Header';
+import ServiceDetailHeader from '@/components/ServiceDetailHeader';
 
 const MachineMaintenance = () => {
   return (
     <>
       <Helmet>
-        <title>Machine Maintenance Services - Navneet Industries</title>
-        <meta name="description" content="Professional on-site repair and maintenance services for industrial machinery to minimize downtime and optimize performance by Navneet Industries." />
+        <title>Machine Maintenance - Navneet Industries</title>
+        <meta name="description" content="Professional on-site repair and maintenance services for industrial machinery by Navneet Industries. Minimize downtime and optimize performance." />
       </Helmet>
 
-      <Header />
+      <ServiceDetailHeader />
       
-      <main className="min-h-screen">
+      <main className="min-h-screen pt-24">
         <div className="bg-navneet-orange/10 py-12">
           <div className="container mx-auto px-4">
             <Link to="/#services" className="inline-flex items-center text-navneet-dark hover:text-navneet-orange mb-6 transition-colors">
@@ -34,137 +34,110 @@ const MachineMaintenance = () => {
         <div className="container mx-auto px-4 py-16">
           <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold mb-6 text-navneet-dark">Comprehensive Maintenance Solutions</h2>
+              <h2 className="text-2xl md:text-3xl font-bold mb-6 text-navneet-dark">Comprehensive Machine Maintenance</h2>
               <p className="mb-4 text-navneet-gray">
-                At Navneet Industries, we understand that equipment downtime can severely impact your production and bottom line. Our skilled technicians provide comprehensive maintenance services designed to keep your machinery running at peak efficiency.
+                At Navneet Industries, our skilled technicians provide expert maintenance and repair services for a wide range of industrial machinery. We understand that downtime costs money, which is why we offer responsive service to get your operations back up and running quickly.
               </p>
               <p className="mb-4 text-navneet-gray">
-                With decades of combined experience, our maintenance team can service a wide range of industrial machinery, from manufacturing equipment to specialized tools and systems.
+                Our preventative maintenance programs help identify potential issues before they become costly problems, extending equipment life and improving operational reliability.
               </p>
               <p className="text-navneet-gray">
-                We pride ourselves on quick response times, thorough diagnostics, and effective solutions that minimize downtime and extend the lifespan of your valuable equipment.
+                Whether you need emergency repairs, scheduled maintenance, or a comprehensive maintenance program, our team has the expertise and tools to keep your machinery operating at peak performance.
               </p>
             </div>
             <div>
               <img 
-                src="https://images.unsplash.com/photo-1581093806997-124204d9fa9d?q=80&w=1470&auto=format&fit=crop" 
-                alt="Industrial machinery maintenance"
+                src="https://images.unsplash.com/photo-1581092921461-eab10380358b?q=80&w=1470&auto=format&fit=crop" 
+                alt="Machine maintenance technician"
                 className="rounded-lg shadow-lg w-full"
               />
             </div>
           </div>
 
           <div className="bg-navneet-light rounded-lg p-8 mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-navneet-dark">Our Maintenance Services</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-navneet-dark">Maintenance Services</h2>
             
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
               <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h3 className="font-bold text-xl mb-3 text-navneet-dark">Preventive Maintenance</h3>
-                <p className="text-navneet-gray mb-4">
-                  Regular scheduled maintenance to prevent unexpected breakdowns and extend equipment life.
-                </p>
-                <ul className="list-disc list-inside space-y-1 text-navneet-gray">
-                  <li>Scheduled inspections and adjustments</li>
-                  <li>Lubrication and fluid checks</li>
-                  <li>Component replacements before failure</li>
-                  <li>Performance testing and calibration</li>
-                </ul>
+                <h3 className="font-bold text-xl mb-3 text-navneet-dark">Preventative Maintenance</h3>
+                <p className="text-navneet-gray">Regular inspection and servicing to prevent unexpected breakdowns and extend equipment life.</p>
               </div>
               <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h3 className="font-bold text-xl mb-3 text-navneet-dark">Corrective Maintenance</h3>
-                <p className="text-navneet-gray mb-4">
-                  Rapid response repairs to address equipment failures and restore operation quickly.
-                </p>
-                <ul className="list-disc list-inside space-y-1 text-navneet-gray">
-                  <li>Emergency repair services</li>
-                  <li>Fault diagnosis and troubleshooting</li>
-                  <li>Component replacement</li>
-                  <li>System restoration and testing</li>
-                </ul>
+                <h3 className="font-bold text-xl mb-3 text-navneet-dark">Repair Services</h3>
+                <p className="text-navneet-gray">Expert troubleshooting and repair of mechanical, electrical, and hydraulic systems.</p>
               </div>
               <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h3 className="font-bold text-xl mb-3 text-navneet-dark">Predictive Maintenance</h3>
-                <p className="text-navneet-gray mb-4">
-                  Advanced monitoring techniques to identify potential issues before they cause failures.
-                </p>
-                <ul className="list-disc list-inside space-y-1 text-navneet-gray">
-                  <li>Vibration analysis</li>
-                  <li>Thermal imaging</li>
-                  <li>Oil analysis</li>
-                  <li>Performance trend monitoring</li>
-                </ul>
+                <h3 className="font-bold text-xl mb-3 text-navneet-dark">Equipment Overhaul</h3>
+                <p className="text-navneet-gray">Complete disassembly, inspection, and rebuilding to restore equipment to like-new condition.</p>
               </div>
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h3 className="font-bold text-xl mb-3 text-navneet-dark">Equipment Upgrades</h3>
-                <p className="text-navneet-gray mb-4">
-                  Modernization and enhancement of existing machinery to improve performance and reliability.
-                </p>
-                <ul className="list-disc list-inside space-y-1 text-navneet-gray">
-                  <li>Control system upgrades</li>
-                  <li>Efficiency improvements</li>
-                  <li>Safety enhancement installations</li>
-                  <li>Component modernization</li>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <h3 className="font-bold text-xl mb-3 text-navneet-dark">Equipment We Service</h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                <ul className="list-disc list-inside space-y-2 text-navneet-gray">
+                  <li>Injection Molding Machines</li>
+                  <li>CNC Machine Tools</li>
+                  <li>Hydraulic Presses</li>
+                  <li>Industrial Pumps and Motors</li>
+                </ul>
+                <ul className="list-disc list-inside space-y-2 text-navneet-gray">
+                  <li>Conveyor Systems</li>
+                  <li>Pneumatic Equipment</li>
+                  <li>Material Handling Equipment</li>
+                  <li>Production Line Machinery</li>
                 </ul>
               </div>
             </div>
           </div>
 
           <div className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-navneet-dark">Industries We Serve</h2>
-            <p className="mb-6 text-navneet-gray">
-              Our maintenance teams have experience across a wide range of industrial sectors:
-            </p>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-navneet-dark">Our Maintenance Process</h2>
             
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-4 gap-6">
               <div className="border border-navneet-orange/20 p-6 rounded-lg">
-                <h3 className="font-bold text-xl mb-3 text-navneet-dark">Manufacturing</h3>
+                <div className="bg-navneet-orange/10 text-navneet-orange text-xl font-bold rounded-full h-12 w-12 flex items-center justify-center mb-4">1</div>
+                <h3 className="font-bold text-xl mb-3 text-navneet-dark">Inspection & Assessment</h3>
                 <p className="text-navneet-gray">
-                  Production lines, assembly equipment, and factory machinery maintenance.
+                  Thorough evaluation of equipment condition and identification of issues.
                 </p>
               </div>
               <div className="border border-navneet-orange/20 p-6 rounded-lg">
-                <h3 className="font-bold text-xl mb-3 text-navneet-dark">Automotive</h3>
+                <div className="bg-navneet-orange/10 text-navneet-orange text-xl font-bold rounded-full h-12 w-12 flex items-center justify-center mb-4">2</div>
+                <h3 className="font-bold text-xl mb-3 text-navneet-dark">Service Recommendation</h3>
                 <p className="text-navneet-gray">
-                  Specialized equipment for automotive component production and assembly.
+                  Detailed report with recommended repairs, maintenance, and cost estimates.
                 </p>
               </div>
               <div className="border border-navneet-orange/20 p-6 rounded-lg">
-                <h3 className="font-bold text-xl mb-3 text-navneet-dark">Metal Fabrication</h3>
+                <div className="bg-navneet-orange/10 text-navneet-orange text-xl font-bold rounded-full h-12 w-12 flex items-center justify-center mb-4">3</div>
+                <h3 className="font-bold text-xl mb-3 text-navneet-dark">Service Execution</h3>
                 <p className="text-navneet-gray">
-                  Presses, shears, bending machines, and welding equipment.
+                  Professional repair and maintenance performed by experienced technicians.
                 </p>
               </div>
               <div className="border border-navneet-orange/20 p-6 rounded-lg">
-                <h3 className="font-bold text-xl mb-3 text-navneet-dark">Plastic Processing</h3>
+                <div className="bg-navneet-orange/10 text-navneet-orange text-xl font-bold rounded-full h-12 w-12 flex items-center justify-center mb-4">4</div>
+                <h3 className="font-bold text-xl mb-3 text-navneet-dark">Testing & Validation</h3>
                 <p className="text-navneet-gray">
-                  Injection molding machines, extruders, and thermoforming equipment.
-                </p>
-              </div>
-              <div className="border border-navneet-orange/20 p-6 rounded-lg">
-                <h3 className="font-bold text-xl mb-3 text-navneet-dark">Food & Beverage</h3>
-                <p className="text-navneet-gray">
-                  Processing equipment, packaging lines, and sanitary machinery.
-                </p>
-              </div>
-              <div className="border border-navneet-orange/20 p-6 rounded-lg">
-                <h3 className="font-bold text-xl mb-3 text-navneet-dark">General Industry</h3>
-                <p className="text-navneet-gray">
-                  General industrial equipment, utilities, and facility machinery.
+                  Comprehensive testing to ensure equipment functions properly after service.
                 </p>
               </div>
             </div>
           </div>
 
           <div className="text-center">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-navneet-dark">Ready to Optimize Your Machinery Performance?</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-navneet-dark">Need Reliable Machine Maintenance?</h2>
             <p className="mb-8 text-navneet-gray max-w-2xl mx-auto">
-              Contact our maintenance team today to schedule a service or discuss a customized maintenance plan for your equipment.
+              Contact our team today to discuss your maintenance requirements and how we can help keep your operations running smoothly.
             </p>
             <Button 
-              scrollTo="contact"
               className="bg-navneet-orange hover:bg-navneet-orange/90 text-white px-8 py-3"
+              onClick={() => {
+                window.location.href = '/#contact';
+              }}
             >
-              Schedule Maintenance Service
+              Schedule a Service Call
             </Button>
           </div>
         </div>

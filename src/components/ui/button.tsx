@@ -1,14 +1,11 @@
-
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-import { Link } from "react-router-dom"
-import { scrollToSection } from "@/lib/scrollUtils"
-
 import { cn } from "@/lib/utils"
+import { Link } from "react-router-dom"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
@@ -40,68 +37,52 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
-  href?: string
-  to?: string
   scrollTo?: string
+  to?: string
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, href, to, scrollTo, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, scrollTo, to, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
-    
-    // If scrollTo prop is provided, create a button that scrolls to the section
-    if (scrollTo) {
-      const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-        scrollToSection(scrollTo);
-        if (props.onClick) {
-          props.onClick(e as React.MouseEvent<HTMLButtonElement>);
+
+    React.useEffect(() => {
+      if (scrollTo) {
+        const handleClick = () => {
+          // Check if we're on the homepage
+          if (window.location.pathname === '/') {
+            const element = document.getElementById(scrollTo);
+            if (element) {
+              element.scrollIntoView({ behavior: 'smooth' });
+            }
+          } else {
+            // If not on homepage, navigate home first then scroll
+            window.location.href = `/#${scrollTo}`;
+          }
+        };
+
+        const button = ref?.current;
+        if (button) {
+          button.addEventListener('click', handleClick);
+          return () => button.removeEventListener('click', handleClick);
         }
-      };
-      
-      return (
-        <Comp
-          className={cn(buttonVariants({ variant, size, className }))}
-          ref={ref}
-          type="button"
-          onClick={handleClick}
-          {...props}
-        />
-      );
-    }
-    
-    // If to prop is provided, render a Link from react-router-dom
+      }
+    }, [scrollTo, ref]);
+
     if (to) {
       return (
-        <Link 
-          to={to} 
+        <Link
+          to={to}
           className={cn(buttonVariants({ variant, size, className }))}
         >
           {props.children}
         </Link>
-      )
+      );
     }
-    
-    // If href is provided, render a regular anchor tag
-    if (href) {
-      return (
-        <a
-          href={href}
-          className={cn(buttonVariants({ variant, size, className }))}
-          target={href.startsWith("http") ? "_blank" : undefined}
-          rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-        >
-          {props.children}
-        </a>
-      )
-    }
-    
-    // Otherwise render a regular button
+
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(buttonVariants({ variant, size }), className)}
         ref={ref}
-        type={props.type || "button"}
         {...props}
       />
     )

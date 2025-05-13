@@ -5,7 +5,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import Footer from '@/components/Footer';
-import Header from '@/components/Header';
+import ServiceDetailHeader from '@/components/ServiceDetailHeader';
 
 const PlasticCapManufacturing = () => {
   return (
@@ -15,9 +15,9 @@ const PlasticCapManufacturing = () => {
         <meta name="description" content="Custom injection molded caps for various industrial applications by Navneet Industries. Eco-friendly protective caps with precise dimensions and high-quality finish." />
       </Helmet>
 
-      <Header />
+      <ServiceDetailHeader />
       
-      <main className="min-h-screen">
+      <main className="min-h-screen pt-24">
         <div className="bg-navneet-orange/10 py-12">
           <div className="container mx-auto px-4">
             <Link to="/#services" className="inline-flex items-center text-navneet-dark hover:text-navneet-orange mb-6 transition-colors">
