@@ -51,9 +51,24 @@ const Header = () => {
 
   return (
     <header
-      className="fixed w-full z-50 transition-all duration-300 bg-white shadow-md py-4"
+      className="fixed w-full z-50 transition-all duration-300 bg-white shadow-md"
     >
-      <div className="container mx-auto px-4 flex justify-between items-center gap-4">
+      {/* Top bar with contact info */}
+      <div className="hidden md:block bg-navneet-dark text-white py-2">
+        <div className="container mx-auto px-4 flex justify-end items-center space-x-6">
+          <a href="tel:+919263391309" className="flex items-center text-white hover:text-navneet-orange transition-colors text-sm">
+            <Phone size={14} className="mr-2" />
+            <span>+91-9263391309</span>
+          </a>
+          <a href="mailto:navneetindustries@gmail.com" className="flex items-center text-white hover:text-navneet-orange transition-colors text-sm">
+            <Mail size={14} className="mr-2" />
+            <span>navneetindustries@gmail.com</span>
+          </a>
+        </div>
+      </div>
+
+      {/* Main navigation */}
+      <div className="container mx-auto px-4 flex justify-between items-center py-4">
         <div className="flex items-center">
           <Link to="/" className="text-2xl font-bold text-navneet-dark">
             NAVNEET <span className="text-navneet-orange">INDUSTRIES</span>
@@ -61,83 +76,97 @@ const Header = () => {
         </div>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center space-x-8">
-          <div className="relative">
-            <button
-              onClick={() => handleNavClick('hero')}
-              className={`font-medium transition-colors ${activeSection === 'hero' ? 'text-navneet-orange' : 'text-navneet-dark hover:text-navneet-orange'}`}
-            >
-              Home
-            </button>
-            {activeSection === 'hero' && <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-navneet-orange"></div>}
-          </div>
-          <div className="relative">
-            <button
-              onClick={() => handleNavClick('about')}
-              className={`font-medium transition-colors ${activeSection === 'about' ? 'text-navneet-orange' : 'text-navneet-dark hover:text-navneet-orange'}`}
-            >
-              About Us
-            </button>
-            {activeSection === 'about' && <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-navneet-orange"></div>}
-          </div>
-          <div className="relative">
-            <button
-              onClick={() => handleNavClick('services')}
-              className={`font-medium transition-colors ${activeSection === 'services' ? 'text-navneet-orange' : 'text-navneet-dark hover:text-navneet-orange'}`}
-            >
-              Services
-            </button>
-            {activeSection === 'services' && <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-navneet-orange"></div>}
-          </div>
-          <div className="relative">
-            <button
-              onClick={() => handleNavClick('industries')}
-              className={`font-medium transition-colors ${activeSection === 'industries' ? 'text-navneet-orange' : 'text-navneet-dark hover:text-navneet-orange'}`}
-            >
-              Industries
-            </button>
-            {activeSection === 'industries' && <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-navneet-orange"></div>}
-          </div>
-          <div className="relative">
-            <button
-              onClick={() => handleNavClick('machines')}
-              className={`font-medium transition-colors ${activeSection === 'machines' ? 'text-navneet-orange' : 'text-navneet-dark hover:text-navneet-orange'}`}
-            >
-              Machines
-            </button>
-            {activeSection === 'machines' && <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-navneet-orange"></div>}
-          </div>
-          <div className="relative">
-            <button
-              onClick={() => handleNavClick('why-choose-us')}
-              className={`font-medium transition-colors ${activeSection === 'why-choose-us' ? 'text-navneet-orange' : 'text-navneet-dark hover:text-navneet-orange'}`}
-            >
-              Why Us
-            </button>
-            {activeSection === 'why-choose-us' && <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-navneet-orange"></div>}
-          </div>
-          <div className="relative">
-            <button
-              onClick={() => handleNavClick('contact')}
-              className={`font-medium transition-colors ${activeSection === 'contact' ? 'text-navneet-orange' : 'text-navneet-dark hover:text-navneet-orange'}`}
-            >
-              Contact
-            </button>
-            {activeSection === 'contact' && <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-navneet-orange"></div>}
+        <nav className="hidden md:flex items-center">
+          <div className="flex space-x-1">
+            <div className="relative px-1">
+              <button
+                onClick={() => handleNavClick('hero')}
+                className={`font-medium transition-colors px-4 py-2 rounded-md ${
+                  activeSection === 'hero'
+                    ? 'text-white bg-navneet-orange'
+                    : 'text-navneet-dark hover:bg-navneet-orange/10'
+                }`}
+              >
+                Home
+              </button>
+            </div>
+            <div className="relative px-1">
+              <button
+                onClick={() => handleNavClick('about')}
+                className={`font-medium transition-colors px-4 py-2 rounded-md ${
+                  activeSection === 'about'
+                    ? 'text-white bg-navneet-orange'
+                    : 'text-navneet-dark hover:bg-navneet-orange/10'
+                }`}
+              >
+                About Us
+              </button>
+            </div>
+            <div className="relative px-1">
+              <button
+                onClick={() => handleNavClick('services')}
+                className={`font-medium transition-colors px-4 py-2 rounded-md ${
+                  activeSection === 'services'
+                    ? 'text-white bg-navneet-orange'
+                    : 'text-navneet-dark hover:bg-navneet-orange/10'
+                }`}
+              >
+                Services
+              </button>
+            </div>
+            <div className="relative px-1">
+              <button
+                onClick={() => handleNavClick('industries')}
+                className={`font-medium transition-colors px-4 py-2 rounded-md ${
+                  activeSection === 'industries'
+                    ? 'text-white bg-navneet-orange'
+                    : 'text-navneet-dark hover:bg-navneet-orange/10'
+                }`}
+              >
+                Industries
+              </button>
+            </div>
+            <div className="relative px-1">
+              <button
+                onClick={() => handleNavClick('machines')}
+                className={`font-medium transition-colors px-4 py-2 rounded-md ${
+                  activeSection === 'machines'
+                    ? 'text-white bg-navneet-orange'
+                    : 'text-navneet-dark hover:bg-navneet-orange/10'
+                }`}
+              >
+                Machines
+              </button>
+            </div>
+            <div className="relative px-1">
+              <button
+                onClick={() => handleNavClick('why-choose-us')}
+                className={`font-medium transition-colors px-4 py-2 rounded-md ${
+                  activeSection === 'why-choose-us'
+                    ? 'text-white bg-navneet-orange'
+                    : 'text-navneet-dark hover:bg-navneet-orange/10'
+                }`}
+              >
+                Why Us
+              </button>
+            </div>
+            <div className="relative px-1">
+              <button
+                onClick={() => handleNavClick('contact')}
+                className={`font-medium transition-colors px-4 py-2 rounded-md ${
+                  activeSection === 'contact'
+                    ? 'text-white bg-navneet-orange'
+                    : 'text-navneet-dark hover:bg-navneet-orange/10'
+                }`}
+              >
+                Contact
+              </button>
+            </div>
           </div>
         </nav>
 
-        {/* Contact Info for Desktop */}
-        <div className="hidden md:flex items-center space-x-6">
-          <a href="tel:+911234567890" className="flex items-center text-navneet-dark hover:text-navneet-orange">
-            <Phone size={16} className="mr-2" />
-            <span>+91 12345 67890</span>
-          </a>
-          <a href="mailto:info@navneetindustries.com" className="flex items-center text-navneet-dark hover:text-navneet-orange">
-            <Mail size={16} className="mr-2" />
-            <span>info@navneetindustries.com</span>
-          </a>
-        </div>
+        {/* Mobile contact info - shown in mobile menu */}
+        <div className="hidden"></div>
 
         {/* Mobile Menu Button */}
         <button className="md:hidden text-navneet-dark" onClick={toggleMenu}>
@@ -149,58 +178,87 @@ const Header = () => {
       {isMenuOpen && (
         <div className="md:hidden bg-white shadow-lg">
           <div className="container mx-auto px-4 py-4">
-            <nav className="flex flex-col space-y-4">
+            <nav className="flex flex-col space-y-2">
               <button
                 onClick={() => handleNavClick('hero')}
-                className={`font-medium py-2 text-left ${activeSection === 'hero' ? 'text-navneet-orange' : 'text-navneet-dark hover:text-navneet-orange'}`}
+                className={`font-medium py-3 px-4 text-left rounded-md ${
+                  activeSection === 'hero'
+                    ? 'bg-navneet-orange text-white'
+                    : 'text-navneet-dark hover:bg-navneet-orange/10'
+                }`}
               >
                 Home
               </button>
               <button
                 onClick={() => handleNavClick('about')}
-                className={`font-medium py-2 text-left ${activeSection === 'about' ? 'text-navneet-orange' : 'text-navneet-dark hover:text-navneet-orange'}`}
+                className={`font-medium py-3 px-4 text-left rounded-md ${
+                  activeSection === 'about'
+                    ? 'bg-navneet-orange text-white'
+                    : 'text-navneet-dark hover:bg-navneet-orange/10'
+                }`}
               >
                 About Us
               </button>
               <button
                 onClick={() => handleNavClick('services')}
-                className={`font-medium py-2 text-left ${activeSection === 'services' ? 'text-navneet-orange' : 'text-navneet-dark hover:text-navneet-orange'}`}
+                className={`font-medium py-3 px-4 text-left rounded-md ${
+                  activeSection === 'services'
+                    ? 'bg-navneet-orange text-white'
+                    : 'text-navneet-dark hover:bg-navneet-orange/10'
+                }`}
               >
                 Services
               </button>
               <button
                 onClick={() => handleNavClick('industries')}
-                className={`font-medium py-2 text-left ${activeSection === 'industries' ? 'text-navneet-orange' : 'text-navneet-dark hover:text-navneet-orange'}`}
+                className={`font-medium py-3 px-4 text-left rounded-md ${
+                  activeSection === 'industries'
+                    ? 'bg-navneet-orange text-white'
+                    : 'text-navneet-dark hover:bg-navneet-orange/10'
+                }`}
               >
                 Industries
               </button>
               <button
                 onClick={() => handleNavClick('machines')}
-                className={`font-medium py-2 text-left ${activeSection === 'machines' ? 'text-navneet-orange' : 'text-navneet-dark hover:text-navneet-orange'}`}
+                className={`font-medium py-3 px-4 text-left rounded-md ${
+                  activeSection === 'machines'
+                    ? 'bg-navneet-orange text-white'
+                    : 'text-navneet-dark hover:bg-navneet-orange/10'
+                }`}
               >
                 Machines
               </button>
               <button
                 onClick={() => handleNavClick('why-choose-us')}
-                className={`font-medium py-2 text-left ${activeSection === 'why-choose-us' ? 'text-navneet-orange' : 'text-navneet-dark hover:text-navneet-orange'}`}
+                className={`font-medium py-3 px-4 text-left rounded-md ${
+                  activeSection === 'why-choose-us'
+                    ? 'bg-navneet-orange text-white'
+                    : 'text-navneet-dark hover:bg-navneet-orange/10'
+                }`}
               >
                 Why Us
               </button>
               <button
                 onClick={() => handleNavClick('contact')}
-                className={`font-medium py-2 text-left ${activeSection === 'contact' ? 'text-navneet-orange' : 'text-navneet-dark hover:text-navneet-orange'}`}
+                className={`font-medium py-3 px-4 text-left rounded-md ${
+                  activeSection === 'contact'
+                    ? 'bg-navneet-orange text-white'
+                    : 'text-navneet-dark hover:bg-navneet-orange/10'
+                }`}
               >
                 Contact
               </button>
 
-              <div className="pt-4 border-t border-gray-200">
-                <a href="tel:+911234567890" className="flex items-center text-navneet-dark hover:text-navneet-orange py-2">
-                  <Phone size={16} className="mr-2" />
-                  <span>+91 12345 67890</span>
+              <div className="mt-4 pt-4 border-t border-gray-200 bg-navneet-dark/5 rounded-lg p-4">
+                <h3 className="font-semibold text-navneet-dark mb-3">Contact Us</h3>
+                <a href="tel:+919263391309" className="flex items-center text-navneet-dark hover:text-navneet-orange py-2">
+                  <Phone size={16} className="mr-2 text-navneet-orange" />
+                  <span>+91-9263391309</span>
                 </a>
-                <a href="mailto:info@navneetindustries.com" className="flex items-center text-navneet-dark hover:text-navneet-orange py-2">
-                  <Mail size={16} className="mr-2" />
-                  <span>info@navneetindustries.com</span>
+                <a href="mailto:navneetindustries@gmail.com" className="flex items-center text-navneet-dark hover:text-navneet-orange py-2">
+                  <Mail size={16} className="mr-2 text-navneet-orange" />
+                  <span>navneetindustries@gmail.com</span>
                 </a>
               </div>
             </nav>

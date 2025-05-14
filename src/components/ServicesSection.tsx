@@ -4,6 +4,8 @@ import { Settings, Wrench, Factory } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
+import { useTransition, TransitionType } from '@/contexts/TransitionContext';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const services = [
   {
@@ -11,26 +13,40 @@ const services = [
     description: "Custom injection molded caps for various industrial applications. We produce eco-friendly protective caps with precise dimensions and high-quality finish, designed to reduce environmental impact.",
     icon: Factory,
     path: "/services/caps",
+    transitionType: "precision-cap" as TransitionType,
+    transitionTooltip: "Precision in Every Cap"
   },
   {
     title: "Custom Die Making",
     description: "High-precision plastic mold dies designed and manufactured to your exact specifications with exceptional durability.",
     icon: Settings,
     path: "/services/dies",
+    transitionType: "die-making" as TransitionType,
+    transitionTooltip: "Die in Making"
   },
   {
     title: "Machine Maintenance",
     description: "Professional on-site repair and maintenance services for industrial machinery to minimize downtime and optimize performance.",
     icon: Wrench,
     path: "/services/maintenance",
+    transitionType: "fix-progress" as TransitionType,
+    transitionTooltip: "Fix in Progress"
   }
 ];
 
 const ServicesSection = () => {
   const navigate = useNavigate();
+  const { setTransition, setIsTransitioning } = useTransition();
 
-  const handleLearnMore = (path: string) => {
-    navigate(path);
+  const handleLearnMore = (path: string, transitionType: TransitionType) => {
+    // Set the transition type and show the transition overlay
+    setTransition(transitionType);
+    setIsTransitioning(true);
+
+    // Navigate after a short delay to allow the animation to play
+    setTimeout(() => {
+      navigate(path);
+    }, 1800); // Match this with the animation duration in TransitionOverlay
   };
 
   return (
@@ -64,12 +80,21 @@ const ServicesSection = () => {
                 </p>
               </CardContent>
               <CardFooter className="pt-0">
-                <Button
-                  className="bg-transparent hover:bg-navneet-orange text-navneet-dark hover:text-white border border-navneet-dark hover:border-transparent"
-                  onClick={() => handleLearnMore(service.path)}
-                >
-                  Learn More
-                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        className="bg-transparent hover:bg-navneet-orange text-navneet-dark hover:text-white border border-navneet-dark hover:border-transparent"
+                        onClick={() => handleLearnMore(service.path, service.transitionType)}
+                      >
+                        Learn More
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{service.transitionTooltip}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </CardFooter>
             </Card>
           ))}

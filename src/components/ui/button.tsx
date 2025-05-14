@@ -46,32 +46,21 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, scrollTo, to, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
 
-    React.useEffect(() => {
+    // Handle scrollTo functionality
+    const handleScrollClick = React.useCallback(() => {
       if (scrollTo) {
-        const handleClick = () => {
-          // Check if we're on the homepage
-          if (window.location.pathname === '/') {
-            const element = document.getElementById(scrollTo);
-            if (element) {
-              element.scrollIntoView({ behavior: 'smooth' });
-            }
-          } else {
-            // If not on homepage, navigate home first then scroll
-            window.location.href = `/#${scrollTo}`;
-          }
-        };
-
-        // Fix: Check if ref is an object with current property
-        if (ref && 'current' in ref && ref.current) {
-          ref.current.addEventListener('click', handleClick);
-          return () => {
-            if (ref && 'current' in ref && ref.current) {
-              ref.current.removeEventListener('click', handleClick);
-            }
-          };
-        }
+        // Import and use the scrollToSection utility
+        const { scrollToSection } = require('@/lib/scrollUtils');
+        scrollToSection(scrollTo);
       }
-    }, [scrollTo, ref]);
+    }, [scrollTo]);
+
+    // Combine any existing onClick with our scroll handler
+    const originalOnClick = props.onClick;
+    props.onClick = (e) => {
+      if (originalOnClick) originalOnClick(e);
+      if (scrollTo) handleScrollClick();
+    };
 
     if (to) {
       return (

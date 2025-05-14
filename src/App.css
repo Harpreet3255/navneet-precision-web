@@ -3,6 +3,328 @@
   margin: 0 auto;
 }
 
+/* Service Transition Overlay */
+.transition-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: overlayFadeIn 0.3s ease forwards;
+}
+
+.transition-overlay.precision-cap {
+  background-color: rgba(248, 250, 252, 0.95);
+}
+
+.transition-overlay.die-making {
+  background-color: rgba(30, 41, 59, 0.95);
+}
+
+.transition-overlay.fix-progress {
+  background-color: rgba(226, 88, 34, 0.95);
+}
+
+.transition-content {
+  text-align: center;
+  max-width: 600px;
+  padding: 2rem;
+  animation: contentSlideIn 0.5s ease forwards;
+}
+
+.transition-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+.precision-cap .transition-title {
+  color: #1E293B;
+}
+
+.die-making .transition-title {
+  color: #F8FAFC;
+}
+
+.fix-progress .transition-title {
+  color: #F8FAFC;
+}
+
+.transition-animation {
+  margin: 0 auto;
+  max-width: 400px;
+}
+
+/* Animation Keyframes */
+@keyframes overlayFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes contentSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Precision Cap Animation */
+.precision-cap-animation .falling-cap {
+  animation: fallCap 1.2s infinite;
+}
+
+.precision-cap-animation .cap {
+  animation: moveCaps 2s infinite;
+}
+
+.precision-cap-animation .cap-1 {
+  animation-delay: 0s;
+}
+
+.precision-cap-animation .cap-2 {
+  animation-delay: 0.5s;
+}
+
+.precision-cap-animation .cap-3 {
+  animation-delay: 1s;
+}
+
+.precision-cap-animation .cap-4 {
+  animation-delay: 1.5s;
+}
+
+.precision-cap-animation .control-light {
+  animation: blink 1s infinite;
+}
+
+@keyframes fallCap {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(25px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(35px);
+    opacity: 0;
+  }
+}
+
+@keyframes moveCaps {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(10px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Die Making Animation */
+.die-making-animation .cutting-tool {
+  animation: cuttingTool 1.5s infinite;
+}
+
+.die-making-animation .spark {
+  opacity: 0;
+  animation: sparkle 0.8s infinite;
+}
+
+.die-making-animation .spark-1 {
+  animation-delay: 0s;
+}
+
+.die-making-animation .spark-2 {
+  animation-delay: 0.1s;
+}
+
+.die-making-animation .spark-3 {
+  animation-delay: 0.2s;
+}
+
+.die-making-animation .spark-4 {
+  animation-delay: 0.3s;
+}
+
+.die-making-animation .spark-5 {
+  animation-delay: 0.4s;
+}
+
+.die-making-animation .engraving-line-1,
+.die-making-animation .engraving-line-2,
+.die-making-animation .engraving-line-3 {
+  animation: engraveLine 2s infinite;
+}
+
+.die-making-animation .engraving-line-2 {
+  animation-delay: 0.7s;
+}
+
+.die-making-animation .engraving-line-3 {
+  animation-delay: 1.4s;
+}
+
+@keyframes cuttingTool {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes sparkle {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes engraveLine {
+  0% {
+    stroke-dasharray: 0 50;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 50 0;
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dasharray: 50 0;
+    stroke-dashoffset: -50;
+  }
+}
+
+/* Fix Progress Animation */
+.fix-progress-animation .gear-large {
+  transform-origin: 70px 50px;
+  animation: rotateGearLarge 4s linear infinite;
+}
+
+.fix-progress-animation .gear-tooth-1,
+.fix-progress-animation .gear-tooth-2,
+.fix-progress-animation .gear-tooth-3,
+.fix-progress-animation .gear-tooth-4 {
+  transform-origin: 70px 50px;
+  animation: rotateGearLarge 4s linear infinite;
+}
+
+.fix-progress-animation .gear-small {
+  transform-origin: 100px 40px;
+  animation: rotateGearSmall 4s linear infinite;
+}
+
+.fix-progress-animation .gear-tooth-small-1,
+.fix-progress-animation .gear-tooth-small-2,
+.fix-progress-animation .gear-tooth-small-3,
+.fix-progress-animation .gear-tooth-small-4 {
+  transform-origin: 100px 40px;
+  animation: rotateGearSmall 4s linear infinite;
+}
+
+.fix-progress-animation .wrench {
+  transform-origin: 125px 42px;
+  animation: moveWrench 2s infinite;
+}
+
+.fix-progress-animation .progress-bar-fill {
+  animation: fillProgress 2s infinite;
+}
+
+@keyframes rotateGearLarge {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotateGearSmall {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes moveWrench {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(15deg);
+  }
+  75% {
+    transform: rotate(-15deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes fillProgress {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100px;
+  }
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* For users who prefer reduced motion */
+@media (prefers-reduced-motion) {
+  .transition-overlay,
+  .transition-content,
+  .precision-cap-animation .falling-cap,
+  .precision-cap-animation .cap,
+  .die-making-animation .cutting-tool,
+  .die-making-animation .spark,
+  .fix-progress-animation .gear-large,
+  .fix-progress-animation .gear-small,
+  .fix-progress-animation .wrench,
+  .fix-progress-animation .progress-bar-fill {
+    animation: none !important;
+  }
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -14,21 +336,6 @@
 }
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
 }
 
 .card {

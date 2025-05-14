@@ -7,7 +7,7 @@ const machines = [
     category: "lathe",
     title: "Lathe Machines",
     description: "Our precision lathe machines are capable of producing high-quality turned parts with tight tolerances. We specialize in both manual and CNC lathe operations for various materials including metals and plastics.",
-    image: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=1740&auto=format&fit=crop",
+    image: "/images/machines/lathe-machine.svg",
     specs: [
       "Max Diameter: 400mm",
       "Max Length: 1000mm",
@@ -18,7 +18,7 @@ const machines = [
     category: "milling",
     title: "Milling Machines",
     description: "Our milling machines enable precise cutting and shaping of solid materials. These versatile machines allow us to create complex shapes and features on parts for various industrial applications.",
-    image: "https://images.unsplash.com/photo-1626208465488-56bb695c67ce?q=80&w=1470&auto=format&fit=crop",
+    image: "/images/machines/milling-machine.svg",
     specs: [
       "X-Axis Travel: 600mm",
       "Y-Axis Travel: 400mm",
@@ -29,7 +29,7 @@ const machines = [
     category: "drilling",
     title: "Drilling Machines",
     description: "We utilize advanced drilling equipment for creating precise holes in various materials. Our drilling capabilities ensure accurate hole placement and sizing for critical components.",
-    image: "https://images.unsplash.com/photo-1621913360966-dff01e2de71c?q=80&w=1740&auto=format&fit=crop",
+    image: "/images/machines/drilling-machine.svg",
     specs: [
       "Max Drilling Capacity: 50mm",
       "Table Size: 500x500mm",
@@ -40,7 +40,7 @@ const machines = [
     category: "injection",
     title: "Injection Molding Machines",
     description: "Our advanced injection molding systems produce high-quality, eco-friendly plastic protective caps and components with consistent precision. These energy-efficient machines form the core of our sustainable plastic manufacturing capabilities.",
-    image: "https://images.unsplash.com/photo-1574170609519-d1d8d4b71f60?q=80&w=1470&auto=format&fit=crop",
+    image: "/images/machines/injection-molding-machine.svg",
     specs: [
       "Clamping Force: 150 tons",
       "Shot Weight: 100-450g",
@@ -79,7 +79,7 @@ const MachinesSection = () => {
                     <img
                       src={machine.image}
                       alt={machine.title}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain bg-navneet-light/50 p-4"
                     />
                   </div>
                   <div className="p-8">

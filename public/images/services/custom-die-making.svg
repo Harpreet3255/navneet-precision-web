@@ -1,0 +1,38 @@
+<svg width="800" height="500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="500" fill="#f8fafc" />
+  
+  <!-- Machine Base -->
+  <rect x="150" y="350" width="500" height="100" fill="#1E293B" />
+  
+  <!-- CNC Machine Body -->
+  <rect x="200" y="150" width="400" height="200" fill="#64748B" />
+  
+  <!-- Control Panel -->
+  <rect x="550" y="200" width="80" height="100" fill="#0EA5E9" />
+  <rect x="565" y="220" width="50" height="30" fill="#F8FAFC" />
+  <circle cx="590" cy="270" r="10" fill="#E25822" />
+  
+  <!-- Cutting Tool -->
+  <rect x="390" y="100" width="20" height="50" fill="#E25822" />
+  
+  <!-- Die Block -->
+  <rect x="300" y="250" width="200" height="50" fill="#94A3B8" />
+  
+  <!-- Engraving Lines -->
+  <line x1="320" y1="260" x2="480" y2="260" stroke="#1E293B" stroke-width="2" />
+  <line x1="320" y1="275" x2="480" y2="275" stroke="#1E293B" stroke-width="2" />
+  <line x1="320" y1="290" x2="480" y2="290" stroke="#1E293B" stroke-width="2" />
+  
+  <!-- Sparks -->
+  <circle cx="400" cy="200" r="5" fill="#FBBF24" />
+  <circle cx="410" cy="190" r="3" fill="#FBBF24" />
+  <circle cx="390" cy="195" r="4" fill="#FBBF24" />
+  <circle cx="405" cy="185" r="2" fill="#FBBF24" />
+  
+  <!-- Title -->
+  <text x="400" y="50" font-family="Arial" font-size="24" text-anchor="middle" fill="#1E293B">Custom Die Making</text>
+  
+  <!-- Navneet Industries Logo -->
+  <text x="400" y="450" font-family="Arial" font-size="18" text-anchor="middle" fill="#F8FAFC">Navneet Industries</text>
+</svg>

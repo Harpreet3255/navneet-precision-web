@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -7,6 +7,45 @@ import Footer from '@/components/Footer';
 import ServiceDetailHeader from '@/components/ServiceDetailHeader';
 
 const CustomDieMaking = () => {
+  // Add animation classes to elements as they come into view
+  useEffect(() => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1
+    };
+
+    const handleIntersect = (entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Remove opacity-0 and add the animation class
+          entry.target.classList.remove('opacity-0');
+          entry.target.classList.add('animate-fade-in');
+          observer.unobserve(entry.target);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(handleIntersect, observerOptions);
+
+    // Wait a bit for the DOM to be fully rendered
+    setTimeout(() => {
+      // Select all elements to animate
+      const animateElements = document.querySelectorAll('.animate-on-scroll');
+      animateElements.forEach(el => {
+        // Add opacity-0 to hide elements initially
+        el.classList.add('opacity-0');
+        observer.observe(el);
+      });
+    }, 100);
+
+    return () => {
+      // Clean up the observer
+      const animateElements = document.querySelectorAll('.animate-on-scroll');
+      animateElements.forEach(el => observer.unobserve(el));
+    };
+  }, []);
+
   return (
     <>
       <Helmet>
@@ -15,16 +54,16 @@ const CustomDieMaking = () => {
       </Helmet>
 
       <ServiceDetailHeader />
-      
-      <main className="min-h-screen pt-24">
+
+      <main className="min-h-screen pt-32">
         <div className="bg-navneet-orange/10 py-12">
           <div className="container mx-auto px-4">
             <Link to="/#services" className="inline-flex items-center text-navneet-dark hover:text-navneet-orange mb-6 transition-colors">
               <ArrowLeft className="mr-2 h-5 w-5" />
               Back to Services
             </Link>
-            <h1 className="text-4xl md:text-5xl font-bold text-navneet-dark mb-6">Custom Die Making</h1>
-            <p className="text-xl text-navneet-gray max-w-3xl">
+            <h1 className="text-4xl md:text-5xl font-bold text-navneet-dark mb-6 animate-on-scroll">Custom Die Making</h1>
+            <p className="text-xl text-navneet-gray max-w-3xl animate-on-scroll">
               High-precision plastic mold dies designed and manufactured to your exact specifications with exceptional durability.
             </p>
           </div>
@@ -33,21 +72,21 @@ const CustomDieMaking = () => {
         <div className="container mx-auto px-4 py-16">
           <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
             <div>
-              <img 
-                src="/public/machinery-image.jpg" 
+              <img
+                src="/images/services/custom-die-making.svg"
                 alt="Custom die manufacturing machinery"
-                className="rounded-lg shadow-lg w-full"
+                className="rounded-lg shadow-lg w-full animate-on-scroll"
               />
             </div>
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold mb-6 text-navneet-dark">Precision Die Manufacturing</h2>
-              <p className="mb-4 text-navneet-gray">
+              <h2 className="text-2xl md:text-3xl font-bold mb-6 text-navneet-dark animate-on-scroll">Precision Die Manufacturing</h2>
+              <p className="mb-4 text-navneet-gray animate-on-scroll">
                 At Navneet Industries, we specialize in the design and fabrication of high-precision dies for plastic injection molding. Our expert engineers and technicians collaborate closely with clients to develop dies that deliver exceptional performance, longevity, and dimensional accuracy.
               </p>
-              <p className="mb-4 text-navneet-gray">
+              <p className="mb-4 text-navneet-gray animate-on-scroll">
                 Using advanced CNC machining centers and precision grinding equipment, we create dies that meet the most demanding specifications for complex components and high-volume production.
               </p>
-              <p className="text-navneet-gray">
+              <p className="text-navneet-gray animate-on-scroll">
                 Our comprehensive die-making capabilities ensure that your plastic molding projects achieve optimal results in terms of part quality, cycle time, and production efficiency.
               </p>
             </div>
@@ -55,7 +94,7 @@ const CustomDieMaking = () => {
 
           <div className="bg-navneet-light rounded-lg p-8 mb-16">
             <h2 className="text-2xl md:text-3xl font-bold mb-6 text-navneet-dark">Our Die-Making Process</h2>
-            
+
             <div className="grid md:grid-cols-4 gap-6 mb-8">
               <div className="bg-white p-6 rounded-lg shadow-sm">
                 <div className="bg-navneet-orange/10 text-navneet-orange text-xl font-bold rounded-full h-12 w-12 flex items-center justify-center mb-4">1</div>
@@ -100,7 +139,7 @@ const CustomDieMaking = () => {
 
           <div className="mb-16">
             <h2 className="text-2xl md:text-3xl font-bold mb-6 text-navneet-dark">Die Types We Manufacture</h2>
-            
+
             <div className="grid md:grid-cols-3 gap-6">
               <div className="border border-navneet-orange/20 p-6 rounded-lg">
                 <h3 className="font-bold text-xl mb-3 text-navneet-dark">Single-Cavity Dies</h3>
@@ -128,7 +167,7 @@ const CustomDieMaking = () => {
             <p className="mb-8 text-navneet-gray max-w-2xl mx-auto">
               Contact our team today to discuss your custom die requirements and how we can help bring your project to life.
             </p>
-            <Button 
+            <Button
               scrollTo="contact"
               className="bg-navneet-orange hover:bg-navneet-orange/90 text-white px-8 py-3"
             >
@@ -137,7 +176,7 @@ const CustomDieMaking = () => {
           </div>
         </div>
       </main>
-      
+
       <Footer />
     </>
   );

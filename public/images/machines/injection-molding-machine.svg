@@ -1,0 +1,51 @@
+<svg width="800" height="500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="500" fill="#f8fafc" />
+  
+  <!-- Machine Base -->
+  <rect x="100" y="350" width="600" height="50" fill="#1E293B" />
+  
+  <!-- Injection Unit -->
+  <rect x="100" y="250" width="250" height="100" fill="#64748B" />
+  <rect x="350" y="275" width="50" height="50" fill="#475569" />
+  
+  <!-- Hopper -->
+  <polygon points="200,250 150,150 250,150" fill="#334155" />
+  <rect x="175" y="150" width="50" height="50" fill="#334155" />
+  
+  <!-- Barrel -->
+  <rect x="250" y="275" width="150" height="50" fill="#475569" />
+  
+  <!-- Clamping Unit -->
+  <rect x="400" y="250" width="300" height="100" fill="#64748B" />
+  
+  <!-- Mold -->
+  <rect x="400" y="275" width="100" height="50" fill="#334155" />
+  <rect x="500" y="275" width="100" height="50" fill="#334155" />
+  
+  <!-- Hydraulic Cylinders -->
+  <rect x="600" y="275" width="80" height="20" fill="#0EA5E9" />
+  <rect x="600" y="305" width="80" height="20" fill="#0EA5E9" />
+  
+  <!-- Control Panel -->
+  <rect x="150" y="150" width="100" height="80" fill="#0EA5E9" />
+  <rect x="170" y="170" width="60" height="30" fill="#F8FAFC" />
+  <circle cx="190" cy="210" r="8" fill="#F8FAFC" />
+  <circle cx="210" cy="210" r="8" fill="#F8FAFC" />
+  
+  <!-- Plastic Caps (Products) -->
+  <circle cx="650" cy="240" r="10" fill="#E25822" />
+  <circle cx="670" cy="240" r="10" fill="#E25822" />
+  <circle cx="690" cy="240" r="10" fill="#E25822" />
+  
+  <!-- Conveyor Belt -->
+  <rect x="600" y="250" width="100" height="5" fill="#475569" />
+  <circle cx="600" cy="252.5" r="7.5" fill="#334155" />
+  <circle cx="700" cy="252.5" r="7.5" fill="#334155" />
+  
+  <!-- Title -->
+  <text x="400" y="50" font-family="Arial" font-size="24" text-anchor="middle" fill="#1E293B">Injection Molding Machine</text>
+  
+  <!-- Navneet Industries Logo -->
+  <text x="400" y="450" font-family="Arial" font-size="18" text-anchor="middle" fill="#1E293B">Navneet Industries</text>
+</svg>

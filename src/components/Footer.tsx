@@ -1,17 +1,30 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Phone, Mail, MapPin, Clock, ArrowRight, Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
 import { scrollToSection } from '@/lib/scrollUtils';
+import { useTransition, TransitionType } from '@/contexts/TransitionContext';
 
 const Footer = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isHomePage = location.pathname === '/';
+  const { setTransition, setIsTransitioning } = useTransition();
+
   // Function to handle section navigation
   const handleSectionClick = (sectionId: string, event: React.MouseEvent) => {
     event.preventDefault();
-    scrollToSection(sectionId);
-    // Scroll to top if clicking on home
-    if (sectionId === 'hero') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if (isHomePage) {
+      // If on homepage, just scroll to the section
+      scrollToSection(sectionId);
+      // Scroll to top if clicking on home
+      if (sectionId === 'hero') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    } else {
+      // If on another page, navigate to homepage with hash
+      navigate(`/#${sectionId}`);
     }
   };
 
@@ -142,13 +155,14 @@ const Footer = () => {
             <ul className="space-y-3 text-gray-300">
               <li>
                 <a
-                  href="#services"
+                  href="#"
                   onClick={(e) => {
                     e.preventDefault();
-                    scrollToSection('services');
-                    // You could add additional logic here to scroll to specific service
-                    const serviceElement = document.getElementById('plastic-cap-manufacturing');
-                    if (serviceElement) serviceElement.scrollIntoView({ behavior: 'smooth' });
+                    setTransition('precision-cap');
+                    setIsTransitioning(true);
+                    setTimeout(() => {
+                      navigate('/services/caps');
+                    }, 1800);
                   }}
                   className="inline-flex items-center hover:text-navneet-orange transition-colors"
                 >
@@ -157,13 +171,14 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="#services"
+                  href="#"
                   onClick={(e) => {
                     e.preventDefault();
-                    scrollToSection('services');
-                    // You could add additional logic here to scroll to specific service
-                    const serviceElement = document.getElementById('custom-die-making');
-                    if (serviceElement) serviceElement.scrollIntoView({ behavior: 'smooth' });
+                    setTransition('die-making');
+                    setIsTransitioning(true);
+                    setTimeout(() => {
+                      navigate('/services/dies');
+                    }, 1800);
                   }}
                   className="inline-flex items-center hover:text-navneet-orange transition-colors"
                 >
@@ -172,13 +187,14 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="#services"
+                  href="#"
                   onClick={(e) => {
                     e.preventDefault();
-                    scrollToSection('services');
-                    // You could add additional logic here to scroll to specific service
-                    const serviceElement = document.getElementById('machine-maintenance');
-                    if (serviceElement) serviceElement.scrollIntoView({ behavior: 'smooth' });
+                    setTransition('fix-progress');
+                    setIsTransitioning(true);
+                    setTimeout(() => {
+                      navigate('/services/maintenance');
+                    }, 1800);
                   }}
                   className="inline-flex items-center hover:text-navneet-orange transition-colors"
                 >
@@ -190,10 +206,13 @@ const Footer = () => {
                   href="#services"
                   onClick={(e) => {
                     e.preventDefault();
-                    scrollToSection('services');
-                    // You could add additional logic here to scroll to specific service
-                    const serviceElement = document.getElementById('machining-operations');
-                    if (serviceElement) serviceElement.scrollIntoView({ behavior: 'smooth' });
+                    if (isHomePage) {
+                      scrollToSection('services');
+                      const serviceElement = document.getElementById('machining-operations');
+                      if (serviceElement) serviceElement.scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                      navigate('/#services');
+                    }
                   }}
                   className="inline-flex items-center hover:text-navneet-orange transition-colors"
                 >
@@ -217,35 +236,35 @@ const Footer = () => {
             <ul className="space-y-4 text-gray-300">
               <li className="flex items-start">
                 <a
-                  href="https://maps.google.com/?q=Plot+No.+123,+Industrial+Area+Phase+II,+Adityapur,+Jamshedpur+-+831013,+Jharkhand,+India"
+                  href="https://maps.google.com/?q=New+Development+Area,+25/A,+Golmuri,+Jamshedpur,+Jharkhand+831003,+India"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-start hover:text-navneet-orange transition-colors"
                 >
                   <MapPin className="h-5 w-5 mr-3 text-navneet-orange flex-shrink-0 mt-0.5" />
                   <span>
-                    Plot No. 123, Industrial Area Phase II<br />
-                    Adityapur, Jamshedpur - 831013<br />
-                    Jharkhand, India
+                    New Development Area, 25/A, Golmuri<br />
+                    Jamshedpur, Jharkhand 831003<br />
+                    India
                   </span>
                 </a>
               </li>
               <li className="flex items-center">
                 <a
-                  href="tel:+911234567890"
+                  href="tel:+919263391309"
                   className="flex items-center hover:text-navneet-orange transition-colors"
                 >
                   <Phone className="h-5 w-5 mr-3 text-navneet-orange flex-shrink-0" />
-                  <span>+91 12345 67890</span>
+                  <span>+91-9263391309</span>
                 </a>
               </li>
               <li className="flex items-center">
                 <a
-                  href="mailto:info@navneetindustries.com"
+                  href="mailto:navneetindustries@gmail.com"
                   className="flex items-center hover:text-navneet-orange transition-colors"
                 >
                   <Mail className="h-5 w-5 mr-3 text-navneet-orange flex-shrink-0" />
-                  <span>info@navneetindustries.com</span>
+                  <span>navneetindustries@gmail.com</span>
                 </a>
               </li>
               <li className="flex items-center">
