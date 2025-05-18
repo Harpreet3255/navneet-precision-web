@@ -51,19 +51,22 @@ const ContactSection = () => {
   const [submitError, setSubmitError] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
 
-  // EmailJS configuration with actual credentials
-  const useFallbackSubmission = false; // Using real EmailJS now
+  // Use fallback submission for now until EmailJS is properly configured
+  const useFallbackSubmission = true;
 
-  // EmailJS configuration - using public values since these are client-side anyway
-  const emailjsServiceId = 'service_rnvneet';
+  // These would be the actual EmailJS credentials in production
+  // For now, we'll use the fallback submission method
+  const emailjsServiceId = 'service_navneet';
   const emailjsTemplateId = 'template_navneet';
-  const emailjsPublicKey = 'Dn7zZZ9vaf9tKfLZm';
+  const emailjsPublicKey = 'your_public_key';
 
-  // Initialize EmailJS
-  try {
-    emailjs.init(emailjsPublicKey);
-  } catch (error) {
-    console.error('Failed to initialize EmailJS:', error);
+  // Initialize EmailJS only if not using fallback
+  if (!useFallbackSubmission) {
+    try {
+      emailjs.init(emailjsPublicKey);
+    } catch (error) {
+      console.error('Failed to initialize EmailJS:', error);
+    }
   }
 
   // Handle input changes
@@ -158,17 +161,29 @@ const ContactSection = () => {
         to_name: 'Navneet Industries',
       };
 
-      // Send email using EmailJS
-      console.log('Sending email with params:', templateParams);
+      if (useFallbackSubmission) {
+        // Simulate API call with timeout for demo purposes
+        await new Promise(resolve => setTimeout(resolve, 1500));
 
-      const response = await emailjs.send(
-        emailjsServiceId,
-        emailjsTemplateId,
-        templateParams
-      );
+        // Log the form data that would be sent
+        console.log('Form submission (fallback mode):', templateParams);
 
-      console.log('Email sent successfully:', response);
-      setSubmitSuccess(true);
+        // In a real implementation, you would send this data to your server
+        // For now, we'll simulate a successful submission
+        setSubmitSuccess(true);
+      } else {
+        // Send email using EmailJS in production
+        console.log('Sending email with params:', templateParams);
+
+        const response = await emailjs.send(
+          emailjsServiceId,
+          emailjsTemplateId,
+          templateParams
+        );
+
+        console.log('Email sent successfully:', response);
+        setSubmitSuccess(true);
+      }
 
       // Reset form
       setFormData({
@@ -275,8 +290,16 @@ const ContactSection = () => {
                   </p>
                   <p className="text-green-700 text-sm">
                     <strong>What happens next?</strong> Our team will review your inquiry and contact you within 24-48 business hours.
-                    You should receive a confirmation email at the address you provided.
+                    {!useFallbackSubmission && (
+                      <span> You should receive a confirmation email at the address you provided.</span>
+                    )}
                   </p>
+                  {useFallbackSubmission && (
+                    <div className="mt-3 p-2 bg-blue-50 border border-blue-100 rounded text-xs text-blue-700">
+                      <strong>Demo Mode:</strong> This form is currently in demo mode. In a production environment,
+                      this would send an actual email notification to Navneet Industries.
+                    </div>
+                  )}
                 </div>
               </div>
             )}
