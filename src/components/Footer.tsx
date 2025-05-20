@@ -1,15 +1,17 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Phone, Mail, MapPin, Clock, ArrowRight, Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
 import { scrollToSection } from '@/lib/scrollUtils';
 import { useTransition, TransitionType } from '@/contexts/TransitionContext';
+import ComingSoonDialog from './ComingSoonDialog';
 
 const Footer = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const isHomePage = location.pathname === '/';
   const { setTransition, setIsTransitioning } = useTransition();
+  const [showMaintenanceDialog, setShowMaintenanceDialog] = useState(false);
 
   // Function to handle section navigation
   const handleSectionClick = (sectionId: string, event: React.MouseEvent) => {
@@ -30,6 +32,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-navneet-dark text-white pt-16 pb-8">
+      <ComingSoonDialog open={showMaintenanceDialog} onOpenChange={setShowMaintenanceDialog} />
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Company Information */}
@@ -220,12 +223,16 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <Link
-                  to="/maintenance-portal"
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowMaintenanceDialog(true);
+                  }}
                   className="inline-flex items-center hover:text-navneet-orange transition-colors"
                 >
                   <ArrowRight className="h-3 w-3 mr-2" /> Client Maintenance Portal
-                </Link>
+                </a>
               </li>
             </ul>
           </div>

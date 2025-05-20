@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import PlasticCapManufacturing from "./pages/PlasticCapManufacturing";
 import CustomDieMaking from "./pages/CustomDieMaking";
 import MachineMaintenance from "./pages/MachineMaintenance";
+import MaintenancePortal from "./pages/MaintenancePortal";
 import TransitionOverlay from "./components/TransitionOverlay";
 import { TransitionProvider } from "./contexts/TransitionContext";
 import './App.css';
@@ -25,6 +26,7 @@ const AppRoutes = () => {
       <Route path="/services/caps" element={<PlasticCapManufacturing />} />
       <Route path="/services/dies" element={<CustomDieMaking />} />
       <Route path="/services/maintenance" element={<MachineMaintenance />} />
+      <Route path="/maintenance-portal" element={<MaintenancePortal />} />
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
     </Routes>

@@ -75,7 +75,7 @@ const MachinesSection = () => {
             <TabsContent key={machine.category} value={machine.category} className="animate-fade-in">
               <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                 <div className="grid md:grid-cols-2">
-                  <div className="h-full">
+                  <div className="h-full flex flex-col items-center">
                     <img
                       src={machine.image}
                       alt={machine.title}

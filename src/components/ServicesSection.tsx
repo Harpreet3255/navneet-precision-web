@@ -111,7 +111,14 @@ const ServicesSection = () => {
               </p>
               <Button
                 className="bg-navneet-orange hover:bg-navneet-orange/90 text-white"
-                scrollTo="contact"
+                onClick={() => {
+                  const contactSection = document.getElementById('contact');
+                  if (contactSection) {
+                    contactSection.scrollIntoView({ behavior: 'smooth' });
+                  } else {
+                    window.location.href = '/#contact';
+                  }
+                }}
               >
                 Request Quote
               </Button>
