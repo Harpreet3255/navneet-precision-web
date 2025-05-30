@@ -7,8 +7,11 @@ import Footer from '@/components/Footer';
 import ServiceDetailHeader from '@/components/ServiceDetailHeader';
 
 const CustomDieMaking = () => {
-  // Add animation classes to elements as they come into view
+  // Scroll to top when component mounts and add animation classes
   useEffect(() => {
+    // Scroll to top when the page loads
+    window.scrollTo(0, 0);
+
     const observerOptions = {
       root: null,
       rootMargin: '0px',
@@ -168,8 +171,11 @@ const CustomDieMaking = () => {
               Contact our team today to discuss your custom die requirements and how we can help bring your project to life.
             </p>
             <Button
-              scrollTo="contact"
               className="bg-navneet-orange hover:bg-navneet-orange/90 text-white px-8 py-3"
+              onClick={() => {
+                // Navigate to home page and scroll to contact section
+                window.location.href = '/#contact';
+              }}
             >
               Contact Our Die Experts
             </Button>

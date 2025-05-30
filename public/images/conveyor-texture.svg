@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="256" viewBox="0 0 1024 256" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1024" height="256" fill="#2C3E50" />
+  
+  <!-- Conveyor Belt Pattern -->
+  <!-- Repeating every 128px for seamless tiling -->
+  
+  <!-- First segment -->
+  <g>
+    <!-- Roller -->
+    <rect x="0" y="96" width="120" height="64" rx="8" fill="#475569" />
+    <rect x="0" y="104" width="120" height="48" rx="4" fill="#334155" />
+    <line x1="0" y1="128" x2="120" y2="128" stroke="#1E293B" stroke-width="2" />
+    
+    <!-- Highlights -->
+    <rect x="10" y="108" width="100" height="4" rx="2" fill="#64748B" opacity="0.5" />
+    <rect x="10" y="144" width="100" height="4" rx="2" fill="#64748B" opacity="0.5" />
+    
+    <!-- Connector -->
+    <rect x="120" y="120" width="8" height="16" fill="#1E293B" />
+  </g>
+  
+  <!-- Second segment -->
+  <g>
+    <!-- Roller -->
+    <rect x="128" y="96" width="120" height="64" rx="8" fill="#475569" />
+    <rect x="128" y="104" width="120" height="48" rx="4" fill="#334155" />
+    <line x1="128" y1="128" x2="248" y2="128" stroke="#1E293B" stroke-width="2" />
+    
+    <!-- Highlights -->
+    <rect x="138" y="108" width="100" height="4" rx="2" fill="#64748B" opacity="0.5" />
+    <rect x="138" y="144" width="100" height="4" rx="2" fill="#64748B" opacity="0.5" />
+    
+    <!-- Connector -->
+    <rect x="248" y="120" width="8" height="16" fill="#1E293B" />
+  </g>
+  
+  <!-- Third segment -->
+  <g>
+    <!-- Roller -->
+    <rect x="256" y="96" width="120" height="64" rx="8" fill="#475569" />
+    <rect x="256" y="104" width="120" height="48" rx="4" fill="#334155" />
+    <line x1="256" y1="128" x2="376" y2="128" stroke="#1E293B" stroke-width="2" />
+    
+    <!-- Highlights -->
+    <rect x="266" y="108" width="100" height="4" rx="2" fill="#64748B" opacity="0.5" />
+    <rect x="266" y="144" width="100" height="4" rx="2" fill="#64748B" opacity="0.5" />
+    
+    <!-- Connector -->
+    <rect x="376" y="120" width="8" height="16" fill="#1E293B" />
+  </g>
+  
+  <!-- Fourth segment -->
+  <g>
+    <!-- Roller -->
+    <rect x="384" y="96" width="120" height="64" rx="8" fill="#475569" />
+    <rect x="384" y="104" width="120" height="48" rx="4" fill="#334155" />
+    <line x1="384" y1="128" x2="504" y2="128" stroke="#1E293B" stroke-width="2" />
+    
+    <!-- Highlights -->
+    <rect x="394" y="108" width="100" height="4" rx="2" fill="#64748B" opacity="0.5" />
+    <rect x="394" y="144" width="100" height="4" rx="2" fill="#64748B" opacity="0.5" />
+    
+    <!-- Connector -->
+    <rect x="504" y="120" width="8" height="16" fill="#1E293B" />
+  </g>
+  
+  <!-- Fifth segment -->
+  <g>
+    <!-- Roller -->
+    <rect x="512" y="96" width="120" height="64" rx="8" fill="#475569" />
+    <rect x="512" y="104" width="120" height="48" rx="4" fill="#334155" />
+    <line x1="512" y1="128" x2="632" y2="128" stroke="#1E293B" stroke-width="2" />
+    
+    <!-- Highlights -->
+    <rect x="522" y="108" width="100" height="4" rx="2" fill="#64748B" opacity="0.5" />
+    <rect x="522" y="144" width="100" height="4" rx="2" fill="#64748B" opacity="0.5" />
+    
+    <!-- Connector -->
+    <rect x="632" y="120" width="8" height="16" fill="#1E293B" />
+  </g>
+  
+  <!-- Sixth segment -->
+  <g>
+    <!-- Roller -->
+    <rect x="640" y="96" width="120" height="64" rx="8" fill="#475569" />
+    <rect x="640" y="104" width="120" height="48" rx="4" fill="#334155" />
+    <line x1="640" y1="128" x2="760" y2="128" stroke="#1E293B" stroke-width="2" />
+    
+    <!-- Highlights -->
+    <rect x="650" y="108" width="100" height="4" rx="2" fill="#64748B" opacity="0.5" />
+    <rect x="650" y="144" width="100" height="4" rx="2" fill="#64748B" opacity="0.5" />
+    
+    <!-- Connector -->
+    <rect x="760" y="120" width="8" height="16" fill="#1E293B" />
+  </g>
+  
+  <!-- Seventh segment -->
+  <g>
+    <!-- Roller -->
+    <rect x="768" y="96" width="120" height="64" rx="8" fill="#475569" />
+    <rect x="768" y="104" width="120" height="48" rx="4" fill="#334155" />
+    <line x1="768" y1="128" x2="888" y2="128" stroke="#1E293B" stroke-width="2" />
+    
+    <!-- Highlights -->
+    <rect x="778" y="108" width="100" height="4" rx="2" fill="#64748B" opacity="0.5" />
+    <rect x="778" y="144" width="100" height="4" rx="2" fill="#64748B" opacity="0.5" />
+    
+    <!-- Connector -->
+    <rect x="888" y="120" width="8" height="16" fill="#1E293B" />
+  </g>
+  
+  <!-- Eighth segment -->
+  <g>
+    <!-- Roller -->
+    <rect x="896" y="96" width="120" height="64" rx="8" fill="#475569" />
+    <rect x="896" y="104" width="120" height="48" rx="4" fill="#334155" />
+    <line x1="896" y1="128" x2="1016" y2="128" stroke="#1E293B" stroke-width="2" />
+    
+    <!-- Highlights -->
+    <rect x="906" y="108" width="100" height="4" rx="2" fill="#64748B" opacity="0.5" />
+    <rect x="906" y="144" width="100" height="4" rx="2" fill="#64748B" opacity="0.5" />
+    
+    <!-- Connector -->
+    <rect x="1016" y="120" width="8" height="16" fill="#1E293B" />
+  </g>
+</svg>

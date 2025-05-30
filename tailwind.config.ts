@@ -107,33 +107,57 @@ export default {
 					}
 				},
 				'fade-in': {
-					'0%': { 
+					'0%': {
 						opacity: '0',
 						transform: 'translateY(10px)',
 					},
-					'100%': { 
+					'100%': {
 						opacity: '1',
 						transform: 'translateY(0)',
 					},
 				},
 				'slide-in': {
-					'0%': { 
+					'0%': {
 						transform: 'translateY(20px)',
 						opacity: '0',
 					},
-					'100%': { 
+					'100%': {
 						transform: 'translateY(0)',
-						opacity: '1', 
+						opacity: '1',
 					},
 				},
 				'slide-in-right': {
-					'0%': { 
+					'0%': {
 						transform: 'translateX(20px)',
 						opacity: '0',
 					},
-					'100%': { 
+					'100%': {
 						transform: 'translateX(0)',
-						opacity: '1', 
+						opacity: '1',
+					},
+				},
+				'spin-reverse': {
+					'0%': {
+						transform: 'rotate(0deg)',
+					},
+					'100%': {
+						transform: 'rotate(-360deg)',
+					},
+				},
+				'float': {
+					'0%': {
+						transform: 'translateY(100vh)',
+						opacity: '0',
+					},
+					'20%': {
+						opacity: '0.6',
+					},
+					'80%': {
+						opacity: '0.6',
+					},
+					'100%': {
+						transform: 'translateY(-100px)',
+						opacity: '0',
 					},
 				},
 			},
@@ -143,6 +167,10 @@ export default {
 				'fade-in': 'fade-in 0.6s ease-out',
 				'slide-in': 'slide-in 0.7s ease-out',
 				'slide-in-right': 'slide-in-right 0.5s ease-out',
+				'spin-slow': 'spin 20s linear infinite',
+				'spin-slow-reverse': 'spin-reverse 15s linear infinite',
+				'spin-medium': 'spin 10s linear infinite',
+				'float-particle': 'float 5s ease-in-out infinite',
 			}
 		}
 	},

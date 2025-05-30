@@ -1,15 +1,15 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { Suspense } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, ChevronRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { scrollToSection } from '@/lib/scrollUtils';
-import './heroAnimations.css';
 
 // Using the industrial machinery image as the main background
-// Using a direct URL to the image that closely matches the dark industrial machinery theme with gears
 const backgroundImage = 'https://images.unsplash.com/photo-1537462715879-360eeb61a0ad?q=80&w=2070&auto=format&fit=crop';
 
-const Hero = () => {
+// Lazy load the 3D scene
+const BasicScene = React.lazy(() => import('./BasicScene'));
+
+const SimpleHero = () => {
   return (
     <section id="hero" className="relative h-screen overflow-hidden pt-24">
       {/* Background Image */}
@@ -23,24 +23,13 @@ const Hero = () => {
           alt="Navneet Industries - Precision Machinery"
           className="w-full h-full object-cover"
         />
-
-        {/* Animated Industrial Elements */}
-        <div className="gear large-gear"></div>
-        <div className="gear medium-gear"></div>
-        <div className="gear small-gear"></div>
-
-        {/* Particles */}
-        {[...Array(15)].map((_, i) => (
-          <div
-            key={i}
-            className="particle"
-            style={{
-              left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${3 + Math.random() * 7}s`
-            }}
-          ></div>
-        ))}
+      </div>
+      
+      {/* 3D Scene - wrapped in error boundary and suspense */}
+      <div className="absolute inset-0 z-10 opacity-70">
+        <Suspense fallback={null}>
+          <BasicScene />
+        </Suspense>
       </div>
 
       {/* Content overlay */}
@@ -63,13 +52,6 @@ const Hero = () => {
               >
                 Explore Services <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-              <Button
-                variant="outline"
-                className="bg-transparent border-white text-white hover:bg-white hover:text-navneet-dark font-medium px-6 py-2.5 h-auto"
-                onClick={() => scrollToSection('contact')}
-              >
-                Contact Us <ChevronRight className="ml-2 h-4 w-4" />
-              </Button>
             </div>
           </div>
         </div>
@@ -78,4 +60,4 @@ const Hero = () => {
   );
 };
 
-export default Hero;
+export default SimpleHero;

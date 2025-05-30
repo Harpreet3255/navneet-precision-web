@@ -7,8 +7,11 @@ import Footer from '@/components/Footer';
 import ServiceDetailHeader from '@/components/ServiceDetailHeader';
 
 const PlasticCapManufacturing = () => {
-  // Add animation classes to elements as they come into view
+  // Scroll to top when component mounts and add animation classes
   useEffect(() => {
+    // Scroll to top when the page loads
+    window.scrollTo(0, 0);
+
     const observerOptions = {
       root: null,
       rootMargin: '0px',
@@ -162,8 +165,11 @@ const PlasticCapManufacturing = () => {
               Contact our team today to discuss how our plastic cap manufacturing capabilities can meet your specific needs.
             </p>
             <Button
-              scrollTo="contact"
               className="bg-navneet-orange hover:bg-navneet-orange/90 text-white px-8 py-3"
+              onClick={() => {
+                // Navigate to home page and scroll to contact section
+                window.location.href = '/#contact';
+              }}
             >
               Request a Quote
             </Button>

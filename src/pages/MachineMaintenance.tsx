@@ -7,8 +7,11 @@ import Footer from '@/components/Footer';
 import ServiceDetailHeader from '@/components/ServiceDetailHeader';
 
 const MachineMaintenance = () => {
-  // Add animation classes to elements as they come into view
+  // Scroll to top when component mounts and add animation classes
   useEffect(() => {
+    // Scroll to top when the page loads
+    window.scrollTo(0, 0);
+
     const observerOptions = {
       root: null,
       rootMargin: '0px',

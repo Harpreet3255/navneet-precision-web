@@ -1,15 +1,47 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ChevronRight } from 'lucide-react';
 import { scrollToSection } from '@/lib/scrollUtils';
-import './heroAnimations.css';
+import { ErrorBoundary } from 'react-error-boundary';
 
 // Using the industrial machinery image as the main background
-// Using a direct URL to the image that closely matches the dark industrial machinery theme with gears
 const backgroundImage = 'https://images.unsplash.com/photo-1537462715879-360eeb61a0ad?q=80&w=2070&auto=format&fit=crop';
 
-const Hero = () => {
+// Lazy load the 3D scene to improve initial load time
+const SimpleIndustrialScene = React.lazy(() => 
+  import('./3d/SimpleIndustrialScene').catch(() => ({ 
+    default: () => null 
+  }))
+);
+
+// Fallback component for when 3D scene is loading
+const SceneLoader = () => (
+  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white">
+    <div className="animate-pulse">Loading 3D scene...</div>
+  </div>
+);
+
+// Error fallback for the 3D scene
+const ErrorFallback = ({ error }: { error: Error }) => {
+  console.error('Error in 3D scene:', error);
+  return null; // Return null to silently fail and just show the background image
+};
+
+const EnhancedHero = () => {
+  const [is3DSupported, setIs3DSupported] = useState(true);
+  
+  // Check if WebGL is supported
+  useEffect(() => {
+    try {
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      setIs3DSupported(!!gl);
+    } catch (e) {
+      setIs3DSupported(false);
+      console.warn('WebGL not supported, falling back to static image');
+    }
+  }, []);
+
   return (
     <section id="hero" className="relative h-screen overflow-hidden pt-24">
       {/* Background Image */}
@@ -23,25 +55,18 @@ const Hero = () => {
           alt="Navneet Industries - Precision Machinery"
           className="w-full h-full object-cover"
         />
-
-        {/* Animated Industrial Elements */}
-        <div className="gear large-gear"></div>
-        <div className="gear medium-gear"></div>
-        <div className="gear small-gear"></div>
-
-        {/* Particles */}
-        {[...Array(15)].map((_, i) => (
-          <div
-            key={i}
-            className="particle"
-            style={{
-              left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${3 + Math.random() * 7}s`
-            }}
-          ></div>
-        ))}
       </div>
+      
+      {/* 3D Scene Overlay - only shown if WebGL is supported */}
+      {is3DSupported && (
+        <div className="absolute inset-0 z-10 opacity-80">
+          <ErrorBoundary FallbackComponent={ErrorFallback}>
+            <Suspense fallback={<SceneLoader />}>
+              <SimpleIndustrialScene />
+            </Suspense>
+          </ErrorBoundary>
+        </div>
+      )}
 
       {/* Content overlay */}
       <div className="relative z-20 h-full flex items-center">
@@ -78,4 +103,4 @@ const Hero = () => {
   );
 };
 
-export default Hero;
+export default EnhancedHero;

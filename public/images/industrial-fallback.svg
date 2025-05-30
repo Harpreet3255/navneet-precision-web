@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dark background -->
+  <rect width="1920" height="1080" fill="#1E293B" />
+  
+  <!-- Grid pattern -->
+  <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+    <rect width="50" height="50" fill="none" stroke="#334155" stroke-width="0.5" />
+  </pattern>
+  <rect width="1920" height="1080" fill="url(#grid)" opacity="0.3" />
+  
+  <!-- Abstract industrial elements -->
+  
+  <!-- Large gear -->
+  <circle cx="500" cy="400" r="200" fill="#334155" stroke="#475569" stroke-width="5" />
+  <circle cx="500" cy="400" r="150" fill="none" stroke="#475569" stroke-width="10" />
+  <circle cx="500" cy="400" r="50" fill="#1E293B" stroke="#475569" stroke-width="5" />
+  
+  <!-- Gear teeth -->
+  <g>
+    <path d="M500,200 L520,150 L480,150 Z" fill="#475569" />
+    <path d="M610,230 L650,200 L630,170 Z" fill="#475569" />
+    <path d="M670,310 L720,310 L700,270 Z" fill="#475569" />
+    <path d="M670,490 L720,490 L700,530 Z" fill="#475569" />
+    <path d="M610,570 L650,600 L630,630 Z" fill="#475569" />
+    <path d="M500,600 L520,650 L480,650 Z" fill="#475569" />
+    <path d="M390,570 L350,600 L370,630 Z" fill="#475569" />
+    <path d="M330,490 L280,490 L300,530 Z" fill="#475569" />
+    <path d="M330,310 L280,310 L300,270 Z" fill="#475569" />
+    <path d="M390,230 L350,200 L370,170 Z" fill="#475569" />
+  </g>
+  
+  <!-- Small gears -->
+  <circle cx="800" cy="300" r="100" fill="#475569" stroke="#64748B" stroke-width="3" />
+  <circle cx="800" cy="300" r="30" fill="#1E293B" />
+  <circle cx="1200" cy="500" r="120" fill="#334155" stroke="#475569" stroke-width="3" />
+  <circle cx="1200" cy="500" r="40" fill="#1E293B" />
+  
+  <!-- Machine parts -->
+  <rect x="900" y="600" width="400" height="200" rx="10" fill="#475569" />
+  <rect x="950" y="650" width="300" height="100" rx="5" fill="#334155" />
+  <rect x="1000" y="675" width="200" height="50" rx="5" fill="#64748B" />
+  
+  <!-- Control panel -->
+  <rect x="1300" y="400" width="150" height="250" rx="10" fill="#334155" />
+  <rect x="1325" y="425" width="100" height="150" rx="5" fill="#0EA5E9" opacity="0.8" />
+  <circle cx="1350" cy="600" r="15" fill="#E25822" />
+  <circle cx="1400" cy="600" r="15" fill="#F8FAFC" />
+  
+  <!-- Conveyor belt -->
+  <rect x="300" y="800" width="1200" height="50" fill="#334155" />
+  <g>
+    <rect x="300" y="800" width="100" height="50" fill="#475569" />
+    <rect x="500" y="800" width="100" height="50" fill="#475569" />
+    <rect x="700" y="800" width="100" height="50" fill="#475569" />
+    <rect x="900" y="800" width="100" height="50" fill="#475569" />
+    <rect x="1100" y="800" width="100" height="50" fill="#475569" />
+    <rect x="1300" y="800" width="100" height="50" fill="#475569" />
+  </g>
+  
+  <!-- Pipes -->
+  <path d="M200,200 L200,900 L300,900" fill="none" stroke="#64748B" stroke-width="20" />
+  <path d="M1600,300 L1600,900 L1500,900" fill="none" stroke="#64748B" stroke-width="20" />
+  
+  <!-- Particles -->
+  <g opacity="0.6">
+    <circle cx="400" cy="500" r="5" fill="#E25822" />
+    <circle cx="450" cy="550" r="3" fill="#E25822" />
+    <circle cx="600" cy="450" r="4" fill="#E25822" />
+    <circle cx="900" cy="350" r="6" fill="#E25822" />
+    <circle cx="1000" cy="400" r="3" fill="#E25822" />
+    <circle cx="1100" cy="600" r="5" fill="#E25822" />
+    <circle cx="1300" cy="700" r="4" fill="#E25822" />
+    <circle cx="700" cy="650" r="3" fill="#E25822" />
+    <circle cx="800" cy="700" r="5" fill="#E25822" />
+    <circle cx="1400" cy="500" r="4" fill="#E25822" />
+    <circle cx="1200" cy="300" r="3" fill="#E25822" />
+    <circle cx="500" cy="300" r="4" fill="#E25822" />
+  </g>
+</svg>
