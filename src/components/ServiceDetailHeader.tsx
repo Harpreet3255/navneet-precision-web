@@ -1,183 +1,112 @@
 
-import React from 'react';
-import { Menu, X, Mail, Phone } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
+import { scrollToSection } from '@/lib/scrollUtils';
 
 const ServiceDetailHeader = () => {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   const handleNavClick = (sectionId: string) => {
-    // Navigate to homepage and then scroll to section
     navigate('/');
     setTimeout(() => {
-      const element = document.getElementById(sectionId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
+      scrollToSection(sectionId);
     }, 100);
-
     if (isMenuOpen) {
       setIsMenuOpen(false);
     }
   };
 
   return (
-    <header className="fixed w-full z-50 transition-all duration-300 bg-white shadow-md">
-      {/* Top bar with contact info */}
-      <div className="hidden md:block bg-navneet-dark text-white py-2">
-        <div className="container mx-auto px-4 flex justify-end items-center space-x-6">
-          <a href="tel:+919263391309" className="flex items-center text-white hover:text-navneet-orange transition-colors text-sm">
-            <Phone size={14} className="mr-2" />
-            <span>+91-9263391309</span>
-          </a>
-          <a href="mailto:navneetindustries@gmail.com" className="flex items-center text-white hover:text-navneet-orange transition-colors text-sm">
-            <Mail size={14} className="mr-2" />
-            <span>navneetindustries@gmail.com</span>
-          </a>
-        </div>
-      </div>
-
-      {/* Main navigation */}
-      <div className="container mx-auto px-4 flex justify-between items-center py-4">
-        <div className="flex items-center">
-          <Link to="/" className="text-2xl font-bold text-navneet-dark">
-            NAVNEET <span className="text-navneet-orange">INDUSTRIES</span>
-          </Link>
-        </div>
-
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center">
-          <div className="flex space-x-1">
-            <div className="relative px-1">
-              <button
-                onClick={() => navigate('/')}
-                className="font-medium transition-colors px-4 py-2 rounded-md text-navneet-dark hover:bg-navneet-orange/10"
-              >
-                Home
-              </button>
-            </div>
-            <div className="relative px-1">
-              <button
-                onClick={() => handleNavClick('about')}
-                className="font-medium transition-colors px-4 py-2 rounded-md text-navneet-dark hover:bg-navneet-orange/10"
-              >
-                About Us
-              </button>
-            </div>
-            <div className="relative px-1">
-              <button
-                onClick={() => handleNavClick('services')}
-                className="font-medium transition-colors px-4 py-2 rounded-md text-white bg-navneet-orange"
-              >
-                Services
-              </button>
-            </div>
-            <div className="relative px-1">
-              <button
-                onClick={() => handleNavClick('industries')}
-                className="font-medium transition-colors px-4 py-2 rounded-md text-navneet-dark hover:bg-navneet-orange/10"
-              >
-                Industries
-              </button>
-            </div>
-            <div className="relative px-1">
-              <button
-                onClick={() => handleNavClick('machines')}
-                className="font-medium transition-colors px-4 py-2 rounded-md text-navneet-dark hover:bg-navneet-orange/10"
-              >
-                Machines
-              </button>
-            </div>
-            <div className="relative px-1">
-              <button
-                onClick={() => handleNavClick('why-choose-us')}
-                className="font-medium transition-colors px-4 py-2 rounded-md text-navneet-dark hover:bg-navneet-orange/10"
-              >
-                Why Us
-              </button>
-            </div>
-            <div className="relative px-1">
-              <button
-                onClick={() => handleNavClick('contact')}
-                className="font-medium transition-colors px-4 py-2 rounded-md text-navneet-dark hover:bg-navneet-orange/10"
-              >
-                Contact
-              </button>
-            </div>
+    <header
+      className={`fixed w-full z-50 transition-all duration-300 ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}
+    >
+      {/* Glassmorphism Header */}
+      <div className="bg-black/40 backdrop-blur-xl border-b border-white/10">
+        <div className="container mx-auto px-4 flex justify-between items-center py-4">
+          <div className="flex items-center">
+            <Link to="/" className="text-2xl font-bold text-white">
+              NAVNEET <span className="text-white/90">INDUSTRIES</span>
+            </Link>
           </div>
-        </nav>
 
-        {/* Mobile contact info - shown in mobile menu */}
-        <div className="hidden"></div>
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center">
+            <div className="flex space-x-1">
+              {[
+                { id: 'hero', label: 'Home' },
+                { id: 'about', label: 'About Us' },
+                { id: 'services', label: 'Services' },
+                { id: 'industries', label: 'Industries' },
+                { id: 'machines', label: 'Machines' },
+                { id: 'why-choose-us', label: 'Why Us' },
+                { id: 'contact', label: 'Contact' }
+              ].map((item) => (
+                <div key={item.id} className="relative px-1">
+                  <button
+                    onClick={() => handleNavClick(item.id)}
+                    className="font-medium transition-all duration-300 px-4 py-2 rounded-lg text-white/80 hover:text-white hover:bg-white/10"
+                  >
+                    {item.label}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </nav>
 
-        {/* Mobile Menu Button */}
-        <button className="md:hidden text-navneet-dark" onClick={toggleMenu}>
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+          {/* Mobile Menu Button */}
+          <button className="md:hidden text-white hover:scale-110 transition-transform" onClick={toggleMenu}>
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Navigation Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white shadow-lg">
+        <div className="md:hidden bg-black/90 backdrop-blur-xl border-b border-white/10">
           <div className="container mx-auto px-4 py-4">
             <nav className="flex flex-col space-y-2">
-              <button
-                onClick={() => navigate('/')}
-                className="font-medium py-3 px-4 text-left rounded-md text-navneet-dark hover:bg-navneet-orange/10"
-              >
-                Home
-              </button>
-              <button
-                onClick={() => handleNavClick('about')}
-                className="font-medium py-3 px-4 text-left rounded-md text-navneet-dark hover:bg-navneet-orange/10"
-              >
-                About Us
-              </button>
-              <button
-                onClick={() => handleNavClick('services')}
-                className="font-medium py-3 px-4 text-left rounded-md bg-navneet-orange text-white"
-              >
-                Services
-              </button>
-              <button
-                onClick={() => handleNavClick('industries')}
-                className="font-medium py-3 px-4 text-left rounded-md text-navneet-dark hover:bg-navneet-orange/10"
-              >
-                Industries
-              </button>
-              <button
-                onClick={() => handleNavClick('machines')}
-                className="font-medium py-3 px-4 text-left rounded-md text-navneet-dark hover:bg-navneet-orange/10"
-              >
-                Machines
-              </button>
-              <button
-                onClick={() => handleNavClick('why-choose-us')}
-                className="font-medium py-3 px-4 text-left rounded-md text-navneet-dark hover:bg-navneet-orange/10"
-              >
-                Why Us
-              </button>
-              <button
-                onClick={() => handleNavClick('contact')}
-                className="font-medium py-3 px-4 text-left rounded-md text-navneet-dark hover:bg-navneet-orange/10"
-              >
-                Contact
-              </button>
-
-              <div className="mt-4 pt-4 border-t border-gray-200 bg-navneet-dark/5 rounded-lg p-4">
-                <h3 className="font-semibold text-navneet-dark mb-3">Contact Us</h3>
-                <a href="tel:+919263391309" className="flex items-center text-navneet-dark hover:text-navneet-orange py-2">
-                  <Phone size={16} className="mr-2 text-navneet-orange" />
-                  <span>+91-9263391309</span>
-                </a>
-                <a href="mailto:navneetindustries@gmail.com" className="flex items-center text-navneet-dark hover:text-navneet-orange py-2">
-                  <Mail size={16} className="mr-2 text-navneet-orange" />
-                  <span>navneetindustries@gmail.com</span>
-                </a>
-              </div>
+              {[
+                { id: 'hero', label: 'Home' },
+                { id: 'about', label: 'About Us' },
+                { id: 'services', label: 'Services' },
+                { id: 'industries', label: 'Industries' },
+                { id: 'machines', label: 'Machines' },
+                { id: 'why-choose-us', label: 'Why Us' },
+                { id: 'contact', label: 'Contact' }
+              ].map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => handleNavClick(item.id)}
+                  className="font-medium py-3 px-4 text-left rounded-lg transition-all duration-300 text-white/80 hover:text-white hover:bg-white/10"
+                >
+                  {item.label}
+                </button>
+              ))}
             </nav>
           </div>
         </div>

@@ -97,5 +97,105 @@
 
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: 'ss01', 'ss02', 'cv01', 'cv03';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer utilities {
+
+  /* Glass utilities */
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+
+  /* Futuristic glassmorphism with cyan glow */
+  .glass-cyber {
+    background: linear-gradient(135deg, rgba(0, 217, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(0, 217, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(0, 217, 255, 0.2),
+      inset 0 0 20px rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-cyber-strong {
+    background: linear-gradient(135deg, rgba(0, 217, 255, 0.18) 0%, rgba(255, 255, 255, 0.1) 100%);
+    backdrop-filter: blur(24px) saturate(200%);
+    -webkit-backdrop-filter: blur(24px) saturate(200%);
+    border: 2px solid rgba(0, 217, 255, 0.4);
+    box-shadow: 0 12px 48px 0 rgba(0, 217, 255, 0.3),
+      inset 0 0 30px rgba(255, 255, 255, 0.15);
+  }
+
+  /* Gradient backgrounds */
+  .gradient-cyber {
+    background: linear-gradient(135deg, #00D9FF 0%, #0099CC 50%, #006699 100%);
+    background-size: 200% 200%;
+  }
+
+  .gradient-cyber-radial {
+    background: radial-gradient(ellipse at top, rgba(0, 217, 255, 0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at bottom, rgba(0, 217, 255, 0.1) 0%, transparent 60%);
+  }
+
+  /* Text gradients */
+  .text-gradient-cyber {
+    background: linear-gradient(135deg, #00F5FF 0%, #00D9FF 50%, #00BCD4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Caustic light effect */
+  .caustic-overlay {
+    position: relative;
+  }
+
+  .caustic-overlay::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 20% 40%, rgba(0, 217, 255, 0.25) 0%, transparent 50%),
+      radial-gradient(circle at 80% 60%, rgba(0, 217, 255, 0.2) 0%, transparent 50%);
+    mix-blend-mode: screen;
+    pointer-events: none;
+    animation: caustic 10s infinite alternate ease-in-out;
+  }
+
+  @keyframes caustic {
+    0% {
+      opacity: 0.4;
+      transform: scale(1) rotate(0deg);
+    }
+
+    50% {
+      opacity: 0.7;
+      transform: scale(1.15) rotate(5deg);
+    }
+
+    100% {
+      opacity: 0.4;
+      transform: scale(1) rotate(0deg);
+    }
   }
 }

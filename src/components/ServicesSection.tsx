@@ -39,59 +39,68 @@ const ServicesSection = () => {
   const { setTransition, setIsTransitioning } = useTransition();
 
   const handleLearnMore = (path: string, transitionType: TransitionType) => {
-    // Set the transition type and show the transition overlay
     setTransition(transitionType);
     setIsTransitioning(true);
-
-    // Navigate after a short delay to allow the animation to play
     setTimeout(() => {
       navigate(path);
-    }, 1800); // Match this with the animation duration in TransitionOverlay
+    }, 1800);
   };
 
   return (
-    <section id="services" className="py-20 bg-navneet-light">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-navneet-dark">Our Services</h2>
-          <div className="w-20 h-1 bg-navneet-orange mx-auto mb-6"></div>
-          <p className="max-w-2xl mx-auto text-lg text-navneet-gray">
-            We offer a comprehensive range of manufacturing and maintenance services
-            to support your industrial needs with precision and reliability.
+    <section id="services" className="py-32 bg-black relative overflow-hidden">
+      {/* Volumetric background */}
+      <div className="absolute inset-0 gradient-cyber-radial opacity-40"></div>
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyber-cyan/10 rounded-full blur-3xl animate-glass-float"></div>
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyber-blue/10 rounded-full blur-3xl animate-glass-float" style={{ animationDelay: '3s' }}></div>
+
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="text-center mb-20 animate-fade-in">
+          <div className="inline-block px-6 py-2 glass-cyber rounded-full mb-6 shadow-glow-cyan">
+            <span className="text-sm text-cyber-cyan font-medium tracking-widest">OUR CAPABILITIES</span>
+          </div>
+          <h2 className="text-5xl md:text-6xl font-bold mb-6">
+            <span className="text-gradient-cyber">ADVANCED</span>
+            <span className="text-white"> SYSTEMS</span>
+          </h2>
+          <p className="max-w-3xl mx-auto text-xl text-white/70 font-light leading-relaxed">
+            Next-generation manufacturing solutions engineered for precision and reliability
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {services.map((service, index) => (
             <Card
               key={index}
               id={service.title.toLowerCase().replace(/\s+/g, '-')}
-              className="bg-white border-none shadow-lg rounded-lg overflow-hidden h-full flex flex-col transform transition duration-300 hover:-translate-y-2"
+              className="glass-cyber-strong border-2 border-cyber-cyan/40 rounded-2xl overflow-hidden h-full flex flex-col transform transition-all duration-500 hover:scale-105 hover:shadow-glow-cyan-lg hover:border-cyber-cyan/60 group animate-scale-in bg-transparent"
+              style={{ animationDelay: `${index * 0.15}s` }}
             >
-              <CardHeader className="pb-0">
-                <div className="p-4 bg-navneet-orange/10 inline-flex rounded-full mb-4 items-center justify-center">
-                  <service.icon className="h-6 w-6 text-navneet-orange" />
+              <CardHeader className="pb-4 relative">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-cyber-cyan/5 rounded-full blur-2xl group-hover:bg-cyber-cyan/10 transition-all"></div>
+                <div className="p-5 bg-cyber-cyan/10 inline-flex rounded-2xl mb-6 items-center justify-center group-hover:bg-cyber-cyan/20 transition-all duration-300 border border-cyber-cyan/30 shadow-glow-cyan relative z-10">
+                  <service.icon className="h-8 w-8 text-cyber-cyan" />
                 </div>
-                <h3 className="text-xl font-bold mb-2 text-navneet-dark">{service.title}</h3>
+                <h3 className="text-2xl font-bold mb-2 text-white relative z-10">{service.title}</h3>
               </CardHeader>
-              <CardContent className="flex-grow">
-                <p className="text-navneet-gray">
+              <CardContent className="flex-grow relative z-10">
+                <p className="text-white/70 leading-relaxed text-lg font-light">
                   {service.description}
                 </p>
               </CardContent>
-              <CardFooter className="pt-0">
+              <CardFooter className="pt-0 relative z-10">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
-                        className="bg-transparent hover:bg-navneet-orange text-navneet-dark hover:text-white border border-navneet-dark hover:border-transparent"
+                        className="glass-cyber border-2 border-cyber-cyan/50 hover:border-cyber-cyan text-white w-full py-6 rounded-xl transition-all duration-300 hover:scale-105 shadow-glow-cyan hover:shadow-glow-cyan-lg group/btn relative overflow-hidden"
                         onClick={() => handleLearnMore(service.path, service.transitionType)}
                       >
-                        Learn More
+                        <span className="relative z-10">ACCESS SYSTEM</span>
+                        <div className="absolute inset-0 bg-gradient-to-r from-cyber-cyan/0 via-cyber-cyan/20 to-cyber-cyan/0 opacity-0 group-hover/btn:opacity-100 transition-opacity"></div>
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{service.transitionTooltip}</p>
+                    <TooltipContent className="glass-cyber border-cyber-cyan/50">
+                      <p className="text-white">{service.transitionTooltip}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -100,17 +109,21 @@ const ServicesSection = () => {
           ))}
         </div>
 
-        {/* Additional Service with updated machine image */}
-        <div id="machining-operations" className="mt-16 bg-navneet-dark rounded-lg shadow-xl p-8 text-white">
-          <div className="grid md:grid-cols-5 gap-8 items-center">
+        {/* Machining Operations - Futuristic Style */}
+        <div id="machining-operations" className="mt-20 glass-cyber-strong rounded-2xl p-12 border-2 border-cyber-cyan/40 shadow-glow-cyan hover:shadow-glow-cyan-lg transition-all duration-500 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-cyber-cyan/5 rounded-full blur-3xl"></div>
+          <div className="grid md:grid-cols-5 gap-10 items-center relative z-10">
             <div className="md:col-span-3">
-              <h3 className="text-2xl font-bold mb-4">Machining Operations</h3>
-              <p className="mb-6">
-                Our workshop is equipped with high-precision lathe, milling, and drilling machines
-                operated by skilled technicians to deliver precise parts for various industrial applications.
+              <div className="inline-block px-4 py-1 glass-cyber rounded-full mb-4 border border-cyber-cyan/30">
+                <span className="text-xs text-cyber-cyan font-medium tracking-widest">PRECISION ENGINEERING</span>
+              </div>
+              <h3 className="text-4xl font-bold mb-6 text-gradient-cyber">Machining Operations</h3>
+              <p className="mb-8 leading-relaxed text-white/70 text-lg font-light">
+                High-precision lathe, milling, and drilling systems operated by specialized technicians
+                to deliver micro-accurate components for advanced industrial applications.
               </p>
               <Button
-                className="bg-navneet-orange hover:bg-navneet-orange/90 text-white"
+                className="glass-cyber border-2 border-cyber-cyan/50 hover:border-cyber-cyan text-white px-10 py-6 rounded-xl transition-all duration-300 hover:scale-105 shadow-glow-cyan hover:shadow-glow-cyan-lg"
                 onClick={() => {
                   const contactSection = document.getElementById('contact');
                   if (contactSection) {
@@ -120,14 +133,15 @@ const ServicesSection = () => {
                   }
                 }}
               >
-                Request Quote
+                REQUEST QUOTE
               </Button>
             </div>
-            <div className="md:col-span-2">
+            <div className="md:col-span-2 relative">
+              <div className="absolute inset-0 bg-cyber-cyan/20 rounded-2xl blur-xl"></div>
               <img
                 src="https://images.unsplash.com/photo-1535813547-99c456a41d4a?q=80&w=1470&auto=format&fit=crop"
                 alt="Machining Operations"
-                className="rounded-lg object-cover w-full h-64"
+                className="rounded-2xl object-cover w-full h-72 border-2 border-cyber-cyan/30 shadow-glow-cyan relative z-10"
               />
             </div>
           </div>

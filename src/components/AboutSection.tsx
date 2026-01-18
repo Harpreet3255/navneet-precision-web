@@ -5,65 +5,78 @@ import { Shield, Clock, Users } from 'lucide-react';
 
 const AboutSection = () => {
   return (
-    <section className="py-20 bg-white">
-      <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-2 gap-10 items-center">
-          {/* Left column with updated workshop image */}
-          <div className="rounded-lg overflow-hidden shadow-xl">
-            <img 
-              src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=1740&auto=format&fit=crop" 
-              alt="Navneet Industries Workshop" 
-              className="w-full h-auto object-cover"
-            />
+    <section className="py-32 bg-gradient-to-b from-black to-gray-900 relative overflow-hidden">
+      {/* Volumetric lighting */}
+      <div className="absolute inset-0 gradient-cyber-radial opacity-30"></div>
+      <div className="absolute top-1/4 left-0 w-96 h-96 bg-cyber-blue/10 rounded-full blur-3xl animate-glass-float"></div>
+      <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-cyber-cyan/10 rounded-full blur-3xl animate-glass-float" style={{ animationDelay: '2s' }}></div>
+
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="grid md:grid-cols-2 gap-16 items-center max-w-7xl mx-auto">
+          {/* Image with futuristic frame */}
+          <div className="relative group">
+            <div className="absolute inset-0 bg-cyber-cyan/20 rounded-2xl blur-2xl group-hover:bg-cyber-cyan/30 transition-all duration-500"></div>
+            <div className="glass-cyber-strong rounded-2xl overflow-hidden border-2 border-cyber-cyan/40 shadow-glow-cyan group-hover:shadow-glow-cyan-lg transition-all duration-500 relative z-10">
+              <img
+                src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=1740&auto=format&fit=crop"
+                alt="Advanced Manufacturing Facility"
+                className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+            </div>
           </div>
-          
-          {/* Right column with text content */}
+
+          {/* Content */}
           <div className="animate-slide-in">
-            <h2 className="text-3xl md:text-4xl font-bold mb-2 text-navneet-dark">About Navneet Industries</h2>
-            <div className="w-20 h-1 bg-navneet-orange mb-6"></div>
-            
-            <p className="text-lg mb-6 text-navneet-gray">
-              Founded in Jamshedpur, Navneet Industries has built a reputation for excellence in 
-              plastic cap manufacturing, custom die making, and machine maintenance services. 
-              Working with India's leading industrial partners, we deliver precision engineering 
-              solutions with quick turnaround times.
+            <div className="inline-block px-6 py-2 glass-cyber rounded-full mb-6 border border-cyber-cyan/30">
+              <span className="text-sm text-cyber-cyan font-medium tracking-widest">ABOUT US</span>
+            </div>
+
+            <h2 className="text-5xl md:text-6xl font-bold mb-8">
+              <span className="text-gradient-cyber">Navneet</span>
+              <span className="text-white"> Industries</span>
+            </h2>
+
+            <p className="text-xl text-white/70 leading-relaxed mb-12 font-light">
+              Founded in Jamshedpur, we've established ourselves as pioneers in precision manufacturing,
+              delivering cutting-edge solutions to India's leading industrial partners with unmatched
+              technical excellence and rapid deployment capabilities.
             </p>
-            
-            {/* Core values */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="flex items-start">
-                <div className="mr-4 p-3 bg-navneet-orange/10 rounded-full">
-                  <Shield className="h-6 w-6 text-navneet-orange" />
+
+            {/* Core values - Futuristic cards */}
+            <div className="grid grid-cols-1 gap-6 mb-12">
+              <div className="glass-cyber p-6 rounded-xl flex items-start hover:shadow-glow-cyan transition-all duration-300 border border-cyber-cyan/30 group">
+                <div className="mr-5 p-4 bg-cyber-cyan/10 rounded-xl group-hover:bg-cyber-cyan/20 transition-all border border-cyber-cyan/30">
+                  <Shield className="h-7 w-7 text-cyber-cyan" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold mb-1">Reliability</h3>
-                  <p className="text-navneet-gray">Quality products that exceed industry standards</p>
+                  <h3 className="text-xl font-bold mb-2 text-white">RELIABILITY</h3>
+                  <p className="text-white/60 font-light">Quality systems that exceed industry standards</p>
                 </div>
               </div>
-              
-              <div className="flex items-start">
-                <div className="mr-4 p-3 bg-navneet-orange/10 rounded-full">
-                  <Clock className="h-6 w-6 text-navneet-orange" />
+
+              <div className="glass-cyber p-6 rounded-xl flex items-start hover:shadow-glow-cyan transition-all duration-300 border border-cyber-cyan/30 group">
+                <div className="mr-5 p-4 bg-cyber-cyan/10 rounded-xl group-hover:bg-cyber-cyan/20 transition-all border border-cyber-cyan/30">
+                  <Clock className="h-7 w-7 text-cyber-cyan" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold mb-1">Quick Turnaround</h3>
-                  <p className="text-navneet-gray">Efficient processes to meet tight deadlines</p>
+                  <h3 className="text-xl font-bold mb-2 text-white">RAPID DEPLOYMENT</h3>
+                  <p className="text-white/60 font-light">Optimized processes for accelerated timelines</p>
                 </div>
               </div>
-              
-              <div className="flex items-start">
-                <div className="mr-4 p-3 bg-navneet-orange/10 rounded-full">
-                  <Users className="h-6 w-6 text-navneet-orange" />
+
+              <div className="glass-cyber p-6 rounded-xl flex items-start hover:shadow-glow-cyan transition-all duration-300 border border-cyber-cyan/30 group">
+                <div className="mr-5 p-4 bg-cyber-cyan/10 rounded-xl group-hover:bg-cyber-cyan/20 transition-all border border-cyber-cyan/30">
+                  <Users className="h-7 w-7 text-cyber-cyan" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold mb-1">Local Trust</h3>
-                  <p className="text-navneet-gray">Deep relationships with India's industrial giants</p>
+                  <h3 className="text-xl font-bold mb-2 text-white">TRUSTED PARTNER</h3>
+                  <p className="text-white/60 font-light">Strategic relationships with India's industrial leaders</p>
                 </div>
               </div>
             </div>
-            
-            <Button className="bg-navneet-dark hover:bg-navneet-dark/90 text-white">
-              Learn More About Us
+
+            <Button className="glass-cyber border-2 border-cyber-cyan/50 hover:border-cyber-cyan text-white px-10 py-6 rounded-xl transition-all duration-300 hover:scale-105 shadow-glow-cyan hover:shadow-glow-cyan-lg">
+              LEARN MORE
             </Button>
           </div>
         </div>

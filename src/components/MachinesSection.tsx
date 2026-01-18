@@ -1,12 +1,12 @@
 
-import React from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import React, { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const machines = [
   {
     category: "lathe",
     title: "Lathe Machines",
-    description: "Our precision lathe machines are capable of producing high-quality turned parts with tight tolerances. We specialize in both manual and CNC lathe operations for various materials including metals and plastics.",
+    description: "Precision lathe machines capable of producing high-quality turned parts with tight tolerances for both manual and CNC operations.",
     image: "/images/machines/lathe-machine.svg",
     specs: [
       "Max Diameter: 400mm",
@@ -17,7 +17,7 @@ const machines = [
   {
     category: "milling",
     title: "Milling Machines",
-    description: "Our milling machines enable precise cutting and shaping of solid materials. These versatile machines allow us to create complex shapes and features on parts for various industrial applications.",
+    description: "Advanced milling equipment enabling precise cutting and shaping of solid materials for complex industrial components.",
     image: "/images/machines/milling-machine.svg",
     specs: [
       "X-Axis Travel: 600mm",
@@ -28,7 +28,7 @@ const machines = [
   {
     category: "drilling",
     title: "Drilling Machines",
-    description: "We utilize advanced drilling equipment for creating precise holes in various materials. Our drilling capabilities ensure accurate hole placement and sizing for critical components.",
+    description: "Professional drilling equipment for creating precise holes with accurate placement and sizing for critical components.",
     image: "/images/machines/drilling-machine.svg",
     specs: [
       "Max Drilling Capacity: 50mm",
@@ -38,68 +38,152 @@ const machines = [
   },
   {
     category: "injection",
-    title: "Injection Molding Machines",
-    description: "Our advanced injection molding systems produce high-quality, eco-friendly plastic protective caps and components with consistent precision. These energy-efficient machines form the core of our sustainable plastic manufacturing capabilities.",
+    title: "Injection Molding",
+    description: "Advanced injection molding systems producing high-quality plastic components with consistent precision and efficiency.",
     image: "/images/machines/injection-molding-machine.svg",
     specs: [
       "Clamping Force: 150 tons",
       "Shot Weight: 100-450g",
-      "Cycle Time: 15-40 sec",
-      "Material: Eco-friendly polymers"
+      "Cycle Time: 15-40 sec"
     ]
   }
 ];
 
 const MachinesSection = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    if (!isHovered) {
+      const interval = setInterval(() => {
+        setCurrentIndex((prev) => (prev + 1) % machines.length);
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [isHovered]);
+
+  const goToPrevious = () => {
+    setCurrentIndex((prev) => (prev - 1 + machines.length) % machines.length);
+  };
+
+  const goToNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % machines.length);
+  };
+
   return (
-    <section id="machines" className="py-20 bg-navneet-light">
+    <section id="machines" className="py-20 bg-gradient-to-b from-gray-900 to-black">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-navneet-dark">Machines & Workshop</h2>
-          <div className="w-20 h-1 bg-navneet-orange mx-auto mb-6"></div>
-          <p className="max-w-2xl mx-auto text-lg text-navneet-gray">
-            Our workshop is equipped with state-of-the-art machinery operated by skilled technicians
-            to deliver precision manufacturing and maintenance services.
+        {/* Header */}
+        <div className="text-center mb-16">
+          <div className="inline-block px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full mb-4 border border-white/10">
+            <span className="text-xs text-blue-500 font-medium tracking-widest uppercase">Our Equipment</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
+            Manufacturing Machines
+          </h2>
+          <p className="max-w-2xl mx-auto text-lg text-white/60">
+            State-of-the-art equipment for precision manufacturing
           </p>
         </div>
 
-        <Tabs defaultValue="lathe" className="w-full">
-          <TabsList className="grid grid-cols-2 md:grid-cols-4 mb-8">
-            <TabsTrigger value="lathe" className="text-lg">Lathe Machines</TabsTrigger>
-            <TabsTrigger value="milling" className="text-lg">Milling Machines</TabsTrigger>
-            <TabsTrigger value="drilling" className="text-lg">Drilling Machines</TabsTrigger>
-            <TabsTrigger value="injection" className="text-lg">Injection Molding</TabsTrigger>
-          </TabsList>
-
-          {machines.map((machine) => (
-            <TabsContent key={machine.category} value={machine.category} className="animate-fade-in">
-              <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-                <div className="grid md:grid-cols-2">
-                  <div className="h-full flex flex-col items-center">
-                    <img
-                      src={machine.image}
-                      alt={machine.title}
-                      className="w-full h-full object-contain bg-navneet-light/50 p-4"
-                    />
-                  </div>
-                  <div className="p-8">
-                    <h3 className="text-2xl font-bold mb-4 text-navneet-dark">{machine.title}</h3>
-                    <p className="mb-6 text-navneet-gray">{machine.description}</p>
-
-                    <div className="bg-navneet-light p-4 rounded-lg">
-                      <h4 className="font-semibold mb-2">Technical Specifications:</h4>
-                      <ul className="list-disc list-inside space-y-1">
-                        {machine.specs.map((spec, index) => (
-                          <li key={index} className="text-navneet-gray">{spec}</li>
-                        ))}
-                      </ul>
+        {/* Carousel */}
+        <div
+          className="relative max-w-6xl mx-auto"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
+            <div className="grid md:grid-cols-5 gap-8 p-8 md:p-12">
+              {/* Image Column */}
+              <div className="md:col-span-2 flex items-center justify-center">
+                <div className="relative w-full aspect-square">
+                  {machines.map((machine, index) => (
+                    <div
+                      key={machine.category}
+                      className={`absolute inset-0 transition-all duration-700 ${index === currentIndex
+                          ? 'opacity-100 scale-100'
+                          : 'opacity-0 scale-95'
+                        }`}
+                    >
+                      <img
+                        src={machine.image}
+                        alt={machine.title}
+                        className="w-full h-full object-contain"
+                      />
                     </div>
-                  </div>
+                  ))}
                 </div>
               </div>
-            </TabsContent>
-          ))}
-        </Tabs>
+
+              {/* Content Column */}
+              <div className="md:col-span-3 flex flex-col justify-center">
+                {machines.map((machine, index) => (
+                  <div
+                    key={machine.category}
+                    className={`transition-all duration-500 ${index === currentIndex
+                        ? 'opacity-100 translate-y-0'
+                        : 'opacity-0 translate-y-4 absolute'
+                      }`}
+                  >
+                    <h3 className="text-3xl font-bold mb-4 text-white">
+                      {machine.title}
+                    </h3>
+                    <p className="text-white/70 mb-6 leading-relaxed">
+                      {machine.description}
+                    </p>
+
+                    {/* Specs */}
+                    <div className="space-y-2">
+                      <p className="text-sm text-blue-500 font-semibold uppercase tracking-wider mb-3">
+                        Specifications
+                      </p>
+                      {machine.specs.map((spec, idx) => (
+                        <div key={idx} className="flex items-center text-white/60 text-sm">
+                          <span className="text-blue-500 mr-2">●</span>
+                          {spec}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Navigation */}
+            <div className="flex items-center justify-between px-8 pb-6">
+              <button
+                onClick={goToPrevious}
+                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
+                aria-label="Previous machine"
+              >
+                <ChevronLeft className="w-5 h-5 text-white" />
+              </button>
+
+              {/* Indicators */}
+              <div className="flex gap-2">
+                {machines.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentIndex(index)}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${index === currentIndex
+                        ? 'w-8 bg-blue-500'
+                        : 'w-1.5 bg-white/30 hover:bg-white/50'
+                      }`}
+                    aria-label={`Go to machine ${index + 1}`}
+                  />
+                ))}
+              </div>
+
+              <button
+                onClick={goToNext}
+                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
+                aria-label="Next machine"
+              >
+                <ChevronRight className="w-5 h-5 text-white" />
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
