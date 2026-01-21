@@ -91,7 +91,7 @@ const Header = () => {
               ))}
 
               {/* Admin Button */}
-              <div className="relative px-1 ml-2 border-l border-white/10 pl-3">
+              <div className="relative px-1">
                 <Link
                   to="/admin"
                   className="font-medium transition-all duration-300 px-4 py-2 rounded-lg bg-blue-500/80 text-white hover:bg-blue-500"

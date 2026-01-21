@@ -35,7 +35,7 @@ const InvoiceView = () => {
                 .select(`
           *,
           client:clients(*),
-          invoice_items(*)
+          invoice_items(*, po_line_items(purchase_orders(po_number)))
         `)
                 .eq('id', id)
                 .single();
@@ -174,11 +174,20 @@ const InvoiceView = () => {
                             <TableHeader className="bg-white/5">
                                 <TableRow className="border-white/10 hover:bg-transparent">
                                     <TableHead className="text-white/70">Description</TableHead>
+                                    <TableHead className="text-white/70">PO No.</TableHead>
                                     <TableHead className="text-white/70">HSN/SAC</TableHead>
                                     <TableHead className="text-white/70 text-right">Qty</TableHead>
                                     <TableHead className="text-white/70">Unit</TableHead>
                                     <TableHead className="text-white/70 text-right">Rate</TableHead>
                                     <TableHead className="text-white/70 text-right">Taxable</TableHead>
+                                    {invoice.igst_amount > 0 ? (
+                                        <TableHead className="text-white/70 text-right">IGST</TableHead>
+                                    ) : (
+                                        <>
+                                            <TableHead className="text-white/70 text-right">CGST</TableHead>
+                                            <TableHead className="text-white/70 text-right">SGST</TableHead>
+                                        </>
+                                    )}
                                     <TableHead className="text-white/70 text-right">Total</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -186,11 +195,23 @@ const InvoiceView = () => {
                                 {invoice.invoice_items.map((item) => (
                                     <TableRow key={item.id} className="border-white/5 hover:bg-white/5">
                                         <TableCell className="text-white/80">{item.description}</TableCell>
+                                        <TableCell className="text-white/60 text-xs">
+                                            {/* @ts-ignore */}
+                                            {item.po_line_items?.purchase_orders?.po_number || '-'}
+                                        </TableCell>
                                         <TableCell className="text-white/60">{item.hsn_code || item.sac_code}</TableCell>
                                         <TableCell className="text-white/80 text-right">{item.quantity}</TableCell>
                                         <TableCell className="text-white/60">{item.unit}</TableCell>
                                         <TableCell className="text-white/80 text-right">{formatCurrency(item.rate)}</TableCell>
                                         <TableCell className="text-white/80 text-right">{formatCurrency(item.taxable_value)}</TableCell>
+                                        {invoice.igst_amount > 0 ? (
+                                            <TableCell className="text-white/80 text-right">{formatCurrency(item.igst_amount)}</TableCell>
+                                        ) : (
+                                            <>
+                                                <TableCell className="text-white/80 text-right">{formatCurrency(item.cgst_amount)}</TableCell>
+                                                <TableCell className="text-white/80 text-right">{formatCurrency(item.sgst_amount)}</TableCell>
+                                            </>
+                                        )}
                                         <TableCell className="text-white font-medium text-right">{formatCurrency(item.total)}</TableCell>
                                     </TableRow>
                                 ))}

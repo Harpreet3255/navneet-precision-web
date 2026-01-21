@@ -169,7 +169,8 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({ invoice }) => {
                 {/* Items Table */}
                 <View style={styles.table}>
                     <View style={styles.tableHeader}>
-                        <Text style={styles.col1}>Description</Text>
+                        <Text style={{ ...styles.col1, width: '25%' }}>Description</Text>
+                        <Text style={{ ...styles.col2, width: '13%' }}>PO No.</Text>
                         <Text style={styles.col2}>HSN/SAC</Text>
                         <Text style={styles.col3}>Qty</Text>
                         <Text style={styles.col4}>Unit</Text>
@@ -178,7 +179,7 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({ invoice }) => {
                         {isInterState ? (
                             <Text style={{ ...styles.col7, width: '22%' }}>IGST 18%</Text>
                         ) : (
-                            <Text style={styles.col7}>CGST 9%</Text>
+                            <Text style={styles.col7}>CGST 9% {"\n"}(Jharkhand)</Text>
                         )}
                         {!isInterState && <Text style={styles.col8}>SGST 9%</Text>}
                         <Text style={styles.col8}>Total</Text>
@@ -186,7 +187,11 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({ invoice }) => {
 
                     {invoice.invoice_items.map((item) => (
                         <View key={item.id} style={styles.tableRow}>
-                            <Text style={styles.col1}>{safeValue(item.description)}</Text>
+                            <Text style={{ ...styles.col1, width: '25%' }}>{safeValue(item.description)}</Text>
+                            <Text style={{ ...styles.col2, width: '13%', fontSize: 7 }}>
+                                {/* @ts-ignore */}
+                                {safeValue(item.po_line_items?.purchase_orders?.po_number)}
+                            </Text>
                             <Text style={styles.col2}>{safeValue(item.hsn_code || item.sac_code)}</Text>
                             <Text style={styles.col3}>{safeValue(item.quantity)}</Text>
                             <Text style={styles.col4}>{safeValue(item.unit)}</Text>
@@ -202,6 +207,12 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({ invoice }) => {
                         </View>
                     ))}
                 </View>
+
+                {!isInterState && (
+                    <Text style={{ fontSize: 8, fontStyle: 'italic', marginBottom: 5 }}>
+                        * Intra-state Supply (Jharkhand) - CGST (9%) + SGST (9%)
+                    </Text>
+                )}
 
                 {/* Totals */}
                 <View style={styles.totals}>

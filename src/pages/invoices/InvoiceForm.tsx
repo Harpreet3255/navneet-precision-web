@@ -186,6 +186,29 @@ const InvoiceForm = () => {
 
     const onSubmit = async (data: InvoiceFormData) => {
         setLoading(true);
+
+        // Validation for Finalizing Invoice
+        if (data.status === 'finalized') {
+            if (!data.client_id) {
+                toast.error("Please select a client before finalizing.");
+                setLoading(false);
+                return;
+            }
+
+            if (!data.items || data.items.length === 0) {
+                toast.error("Please add at least one item to the invoice.");
+                setLoading(false);
+                return;
+            }
+
+            const invalidItems = data.items.filter(item => !item.product_id);
+            if (invalidItems.length > 0) {
+                toast.error("Please ensure all items have a product selected.");
+                setLoading(false);
+                return;
+            }
+        }
+
         try {
             const receiverStateCode = data.receiver_state_code || NAVNEET_STATE_CODE;
 
