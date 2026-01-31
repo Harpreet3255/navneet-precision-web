@@ -168,7 +168,20 @@ export default function DispatchInterface() {
 
             // Filter items to dispatch
             const productsToDispatch = Object.entries(dispatchQuantities)
-                .filter(([_, qty]) => qty > 0);
+                .filter(([_, qty]) => qty > 0)
+                .map(([prodId, qty]) => {
+                    // Find product details for price/name
+                    const prod = aggregatedProducts?.find(p => p.product_id === prodId);
+                    // Use the price from the tracking item (assuming uniform price per product or picking one)
+                    // Currently aggregatedProducts merges items, but unit_price was set from products table in Step 37 query.
+                    // So all items for one product have same price.
+                    return {
+                        product_id: prodId,
+                        product_name: prod?.product_name || 'Unknown Product',
+                        quantity: qty,
+                        unit_price: prod?.tracking_items[0]?.unit_price || 0
+                    };
+                });
 
             if (productsToDispatch.length === 0) throw new Error("Nothing to ship");
 
@@ -179,7 +192,7 @@ export default function DispatchInterface() {
             }
             // --------------------------------
 
-            // 1. Get Client Details
+            // 1. Get Client Details (Need specific fields for RPC)
             const { data: client, error: clientError } = await supabase
                 .from('clients')
                 .select('*')
@@ -187,97 +200,15 @@ export default function DispatchInterface() {
                 .single();
             if (clientError) throw clientError;
 
-            // 2. FIFO Allocation Logic
-            const invoiceItemsToInsert = [];
-            // We can't link an invoice to a SINGLE PO anymore if it spans multiple. 
-            // Ideally, we group items by PO and maybe create multiple invoices? 
-            // OR checks if schema supports null PO or multiple POs. 
-            // The prompt says: "Create one invoices record and multiple invoice_items (mapping each to its respective po_line_item_id)."
-            // This implies the 'po_id' on 'invoices' table might be optional or we just pick the first one/main one? 
-            // **Correction**: The user didn't explicitly say to remove `po_id` from invoices table, but the logic heavily implies purely item-based.
-            // Let's assume `po_id` on invoice is optional or we set it to null. If it's NOT nullable, we have a problem.
-            // Checking schema (mental model): `invoices` usually has `po_id` FK. 
-            // If strict FK, we map to the PO of the FIRST item allocated? Or maybe the prompt implies we don't care about the invoice-level PO link as much as the line-item link.
-            // Let's pick the PO of the first item dispatched as a fallback if needed.
-
-            let primaryPOId: string | null = null;
-
-            for (const [productId, qtyToDispatch] of productsToDispatch) {
-                const productAgg = aggregatedProducts?.find(p => p.product_id === productId);
-                if (!productAgg) continue;
-
-                let remainingToAllocates = qtyToDispatch;
-
-                // Iterate FIFO
-                for (const item of productAgg.tracking_items) {
-                    if (remainingToAllocates <= 0) break;
-
-                    const allocatable = Math.min(remainingToAllocates, item.qty_remaining);
-
-                    if (allocatable > 0) {
-                        if (!primaryPOId) primaryPOId = item.po_id;
-
-                        // Strict Price & Tax Logic (Jamshedpur 18%)
-                        // Price comes from Product (item.unit_price fed from aggregatedProducts)
-                        const rate = item.unit_price;
-                        const quantity = allocatable;
-                        const taxableValue = quantity * rate;
-
-                        // Tax Logic: 9% CGST + 9% SGST (Intra) OR 18% IGST (Inter)
-                        // Using Client State Code to decide. 
-                        const isInterState = client.state_code !== '20'; // 20 = Jharkhand
-
-                        let cgstAmount = 0;
-                        let sgstAmount = 0;
-                        let igstAmount = 0;
-
-                        if (isInterState) {
-                            igstAmount = taxableValue * 0.18;
-                        } else {
-                            cgstAmount = taxableValue * 0.09;
-                            sgstAmount = taxableValue * 0.09;
-                        }
-
-                        const total = taxableValue + cgstAmount + sgstAmount + igstAmount;
-
-                        invoiceItemsToInsert.push({
-                            product_id: item.product_id,
-                            description: item.product_name,
-                            quantity: quantity,
-                            rate: rate,
-                            unit: 'Nos',
-                            taxable_value: taxableValue,
-                            cgst_amount: cgstAmount,
-                            sgst_amount: sgstAmount,
-                            igst_amount: igstAmount,
-                            total: total,
-                            po_line_item_id: item.po_line_item_id
-                        });
-
-                        remainingToAllocates -= allocatable;
-                    }
-                }
-            }
-
-            // Recalculate Invoice Totals
-            const subtotal = invoiceItemsToInsert.reduce((sum, item) => sum + item.taxable_value, 0);
-            const totalCGST = invoiceItemsToInsert.reduce((sum, item) => sum + item.cgst_amount, 0);
-            const totalSGST = invoiceItemsToInsert.reduce((sum, item) => sum + item.sgst_amount, 0);
-            const totalIGST = invoiceItemsToInsert.reduce((sum, item) => sum + item.igst_amount, 0);
-            const totalAmount = subtotal + totalCGST + totalSGST + totalIGST;
-
-            // 3. Generate Invoice Number (FY Logic)
+            // 2. Generate Invoice Number (Client-side generation preserved for FY logic)
             const getNextInvoiceNumber = async () => {
                 const today = new Date();
-                const month = today.getMonth(); // 0-11 (Jan=0, Apr=3)
+                const month = today.getMonth(); // 0-11
                 const year = today.getFullYear();
-
-                // Calculate Financial Year (e.g., April 2026 starts FY 26-27)
                 const startYear = month >= 3 ? year : year - 1;
                 const fyString = `${(startYear % 100)}-${(startYear + 1) % 100}`;
                 const prefix = `NI/${fyString}/`;
 
-                // Fetch latest invoice for this FY
                 const { data: lastInvoice, error } = await supabase
                     .from('invoices')
                     .select('invoice_number')
@@ -286,7 +217,7 @@ export default function DispatchInterface() {
                     .limit(1)
                     .single();
 
-                if (error && error.code !== 'PGRST116') { // Ignore "no rows" error
+                if (error && error.code !== 'PGRST116') {
                     console.error("Error fetching last invoice:", error);
                 }
 
@@ -296,82 +227,48 @@ export default function DispatchInterface() {
                     const lastSeq = parseInt(parts[parts.length - 1]);
                     if (!isNaN(lastSeq)) nextSeq = lastSeq + 1;
                 }
-
                 return `${prefix}${nextSeq.toString().padStart(3, '0')}`;
             };
 
             const invoiceNumber = await getNextInvoiceNumber();
 
-            // 4. Create Invoice
-            const { data: invoice, error: invoiceError } = await supabase
-                .from('invoices')
-                .insert({
-                    invoice_number: invoiceNumber,
-                    client_id: selectedClient,
-                    receiver_name: client.name,
-                    receiver_address: client.address,
-                    receiver_city: client.city,
-                    receiver_state: client.state,
-                    receiver_state_code: client.state_code,
-                    receiver_gstin: client.gstin,
-                    status: 'draft',
-                    po_id: primaryPOId, // Linking to at least one involved PO
-                    subtotal: subtotal,
-                    cgst_amount: totalCGST,
-                    sgst_amount: totalSGST,
-                    igst_amount: totalIGST,
-                    total_amount: totalAmount,
-                    invoice_date: new Date().toISOString()
-                })
-                .select()
-                .single();
+            // 3. Call RPC for Transactional Execution
+            const { data: rpcResult, error: rpcError } = await supabase.rpc('create_dispatch_invoice', {
+                p_client_id: selectedClient,
+                p_invoice_number: invoiceNumber,
+                p_invoice_date: new Date().toISOString(),
+                p_receiver_details: {
+                    name: client.name,
+                    address: client.address,
+                    city: client.city,
+                    state: client.state,
+                    state_code: client.state_code,
+                    gstin: client.gstin
+                },
+                p_dispatch_items: productsToDispatch
+            });
 
-            if (invoiceError) throw invoiceError;
+            if (rpcError) throw rpcError;
 
-            // 4. Insert Invoice Items
-            const finalItemsPayload = invoiceItemsToInsert.map(item => ({
-                invoice_id: invoice.id,
-                ...item
-                // Tax calc will be triggered by trigger or we should calculate it? 
-                // Previous code calculated tax in JS. Let's consistency.
-            }));
-
-            // Calculate tax for each (since we don't have the calc function here, we assume DB trigger handles it OR we import it. 
-            // Previous code imported `calculateItemTax`. Let's assume we can rely on DB or simple insert for now. 
-            // Actually, the previous implementation did calculate tax. I should probably include that if I want 100% correctness.
-            // But let's check imports: I removed imports of calculations. Let me re-add if needed? 
-            // Wait, I am replacing the whole file. I should import `calculateItemTax`.
-
-            // Re-adding tax calculation helper support is better. But for brevity and "Step 1" focus, maybe skip? 
-            // No, User said: "Jamshedpur GST Logic Hardcoded... Ensure final invoice total is Taxable Value + 18%."
-            // This implies I need to ensure tax columns are filled.
-            // Let's import `calculateItemTax` and use it.
-
-            // (Wait, I need to check if I can import it easily. Yes, `@/lib/calculations`)
-
-            const { error: itemsError } = await supabase
-                .from('invoice_items')
-                .insert(finalItemsPayload);
-
-            if (itemsError) throw itemsError;
-
-            return invoice;
+            return rpcResult;
         },
         onSuccess: (data) => {
             if (trainingMode) {
                 toast.success("Training Invoice Generated! The order list has been updated (Simulated).");
             } else {
-                toast.success("Invoice Generated! The order list has been updated.");
+                toast.success("Invoice Generated Successfully! System updated.");
             }
             // Reset
             setDispatchQuantities({});
             setInvalidItems({});
             queryClient.invalidateQueries({ queryKey: ['client_products'] });
             queryClient.invalidateQueries({ queryKey: ['view_po_tracking'] });
+            // Only navigate if real mode
             if (!trainingMode) navigate('/admin/invoices');
         },
         onError: (error) => {
-            toast.error(`Failed to generate invoice: ${error.message}`);
+            console.error(error);
+            toast.error(`Transaction Failed: ${error.message}`);
         }
     });
 

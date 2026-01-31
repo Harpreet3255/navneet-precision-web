@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, TrendingUp, Users, Package, Clock, FileText } from "lucide-react";
+import { Loader2, TrendingUp, Users, Package, Clock, FileText, Cloud, CheckCircle2 } from "lucide-react";
 import {
     Select,
     SelectContent,
@@ -21,7 +21,10 @@ import {
     ResponsiveContainer
 } from "recharts";
 
+import { useNavigate } from "react-router-dom";
+
 export default function CRMDashboard() {
+    const navigate = useNavigate();
     const [clientFilter, setClientFilter] = useState<string>("all");
     const [periodFilter, setPeriodFilter] = useState<string>("week"); // today, week, month
     const [statusFilter, setStatusFilter] = useState<string>("all"); // all, open, completed
@@ -139,9 +142,18 @@ export default function CRMDashboard() {
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-10">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold text-white tracking-tight">Dashboard</h1>
-                    <p className="text-white/60 mt-1">Overview of your business performance</p>
+                <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-3xl font-bold text-white tracking-tight">Dashboard</h1>
+                        <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                            <div className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            </div>
+                            <span className="text-[10px] font-medium text-emerald-400 uppercase tracking-wider">Cloud Sync Active</span>
+                        </div>
+                    </div>
+                    <p className="text-white/60">Overview of your business performance</p>
                 </div>
 
                 {/* Filter Bar */}
@@ -184,7 +196,10 @@ export default function CRMDashboard() {
 
             {/* KPI Cards */}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                <Card className="glass-dark border-none shadow-lg hover:bg-white/5 transition-colors">
+                <Card
+                    className="glass-dark border-none shadow-lg hover:bg-white/5 transition-colors cursor-pointer"
+                    onClick={() => navigate('/admin/clients')}
+                >
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium text-white/80">Total Clients</CardTitle>
                         <Users className="h-4 w-4 text-blue-400" />
@@ -194,7 +209,10 @@ export default function CRMDashboard() {
                         <p className="text-xs text-white/60 mt-1">Total registered</p>
                     </CardContent>
                 </Card>
-                <Card className="glass-dark border-none shadow-lg hover:bg-white/5 transition-colors">
+                <Card
+                    className="glass-dark border-none shadow-lg hover:bg-white/5 transition-colors cursor-pointer"
+                    onClick={() => navigate('/admin/products')}
+                >
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium text-white/80">Active Products</CardTitle>
                         <Package className="h-4 w-4 text-purple-400" />
@@ -204,7 +222,10 @@ export default function CRMDashboard() {
                         <p className="text-xs text-white/60 mt-1">In catalog</p>
                     </CardContent>
                 </Card>
-                <Card className="glass-dark border-none shadow-lg hover:bg-white/5 transition-colors">
+                <Card
+                    className="glass-dark border-none shadow-lg hover:bg-white/5 transition-colors cursor-pointer"
+                    onClick={() => setStatusFilter("open")}
+                >
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium text-white/80">Open POs</CardTitle>
                         <Clock className="h-4 w-4 text-amber-400" />
@@ -214,7 +235,10 @@ export default function CRMDashboard() {
                         <p className="text-xs text-white/60 mt-1">Matching filters</p>
                     </CardContent>
                 </Card>
-                <Card className="glass-dark border-none shadow-lg hover:bg-white/5 transition-colors">
+                <Card
+                    className="glass-dark border-none shadow-lg hover:bg-white/5 transition-colors cursor-pointer"
+                    onClick={() => navigate('/admin/invoices')}
+                >
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium text-white/80">Sales ({periodFilter})</CardTitle>
                         <TrendingUp className="h-4 w-4 text-green-400" />
