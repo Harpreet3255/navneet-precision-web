@@ -24,9 +24,9 @@ const DashboardLayout = () => {
     const isActive = (path: string) => location.pathname.startsWith(path);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black text-white">
-            {/* Sidebar */}
-            <div className="fixed inset-y-0 left-0 w-64 bg-black/40 backdrop-blur-xl border-r border-white/10 z-50">
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black text-white text-base">
+            {/* Sidebar - Hidden on mobile */}
+            <div className="hidden md:block fixed inset-y-0 left-0 w-64 bg-black/40 backdrop-blur-xl border-r border-white/10 z-50">
                 <div className="flex flex-col h-full">
                     {/* Logo */}
                     <div className="p-6 border-b border-white/10">
@@ -75,9 +75,50 @@ const DashboardLayout = () => {
                 </div>
             </div>
 
+            {/* Bottom Navigation - Hidden on desktop */}
+            <div className="md:hidden fixed bottom-0 left-0 right-0 bg-gray-900/90 backdrop-blur-xl border-t border-white/10 z-50 pb-safe">
+                <nav className="flex justify-around items-center p-2">
+                    {navigation.filter(item => ['Dashboard', 'Invoices', 'Dispatch'].includes(item.name)).map((item) => {
+                        // Filter to show only key items or show all if they fit. User requested: Dispatch, Orders (PO?), Dashboard.
+                        // Let's see what maps to what.
+                        // Dashboard -> /admin/dashboard
+                        // Orders (assuming Create PO or Invoices?) -> Let's interpret "Orders" as "Create PO" or "Purchase Orders" generally? 
+                        // The user said "Icons: Dispatch, Orders, Dashboard". 
+                        // Existing items: Dashboard, Invoices, Clients, Products, Create PO, Dispatch.
+                        // I will show specific ones for mobile as requested, plus maybe Invoices/PO.
+                        // Let's prioritize: Dashboard, Dispatch, Create PO (Orders).
+
+                        const Icon = item.icon;
+                        const active = isActive(item.href);
+                        return (
+                            <Link
+                                key={item.name}
+                                to={item.href}
+                                className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors ${active
+                                    ? 'text-blue-500'
+                                    : 'text-white/60 hover:text-white'
+                                    }`}
+                            >
+                                <Icon className={`w-6 h-6 ${active ? 'fill-current' : ''}`} />
+                                <span className="text-[10px] font-medium">{item.name}</span>
+                            </Link>
+                        );
+                    })}
+                    {/* Add a "More" or ensure we cover "Orders". 
+                        The user asked for "Orders". I have "Create PO" and "Invoices". 
+                        I'll stick to the requested 3 for the bottom bar if possible, or maybe 4 to fit nicely.
+                        Let's verify the list:
+                        DashboardLayout defines: Dashboard, Invoices, Clients, Products, Create PO, Dispatch.
+                        User asked for: Dispatch, Orders, Dashboard.
+                        "Orders" likely translates to "Create PO" or "Invoices". I'll default to "Create PO" as "Orders" for now, or maybe keep all accessible?
+                        Actually, 4-5 icons fit fine on mobile. I will include: Dashboard, Dispatch, Invoices, Create PO.
+                     */}
+                </nav>
+            </div>
+
             {/* Main content */}
-            <div className="pl-64 min-h-screen">
-                <div className="p-8 max-w-7xl mx-auto">
+            <div className="md:pl-64 min-h-screen pb-20 md:pb-0"> {/* Add padding bottom for mobile nav */}
+                <div className="p-4 md:p-8 max-w-7xl mx-auto">
                     <Outlet />
                 </div>
             </div>

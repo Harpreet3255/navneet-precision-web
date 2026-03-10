@@ -5,18 +5,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from "@/components/ui/command";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Loader2, Truck, CheckCircle2, ArrowLeft, GraduationCap } from "lucide-react";
+import { Loader2, Truck, CheckCircle2, GraduationCap, Check, ChevronsUpDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 type TrackingItem = {
     po_id: string;
@@ -44,6 +50,7 @@ export default function DispatchInterface() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const [selectedClient, setSelectedClient] = useState<string>("");
+    const [clientOpen, setClientOpen] = useState(false);
     const [dispatchQuantities, setDispatchQuantities] = useState<Record<string, number>>({}); // product_id -> qty
     const [invalidItems, setInvalidItems] = useState<Record<string, boolean>>({});
     const [trainingMode, setTrainingMode] = useState<boolean>(false);
@@ -79,34 +86,45 @@ export default function DispatchInterface() {
             // 2. Fetch PO details (date) and Line Item details (price)
             // We need prices and PO dates for FIFO
             const poIds = [...new Set(tracking.map(t => t.po_id))];
-            const lineItemIds = tracking.map(t => t.po_line_item_id);
 
             if (poIds.length === 0) return [];
 
-            const [poRes, productRes] = await Promise.all([
+            const [poRes, productRes, clientProductRes] = await Promise.all([
                 supabase.from('purchase_orders').select('id, created_at, po_number, client_id').in('id', poIds),
-                supabase.from('products').select('id, unit_price').in('id', [...new Set(tracking.map(t => t.product_id))])
+                supabase.from('products').select('id, unit_price').in('id', [...new Set(tracking.map(t => t.product_id))]),
+                // Fallback: fetch ALL products for this client by name to resolve ₹0 prices
+                supabase.from('products').select('name, unit_price').eq('client_id', selectedClient)
             ]);
 
             if (poRes.error) throw poRes.error;
             if (productRes.error) throw productRes.error;
 
             const poMap = new Map(poRes.data.map(po => [po.id, po]));
+            // Primary price map: by product_id
             const priceMap = new Map(productRes.data.map(p => [p.id, p.unit_price]));
+            // Fallback price map: by product name (from master catalog)
+            const namePriceMap = new Map(
+                (clientProductRes.data || []).map(p => [p.name.trim().toUpperCase(), p.unit_price])
+            );
 
             // 3. Enrich and Group
             const enrichedTracking: TrackingItem[] = tracking.map(t => {
                 const po = poMap.get(t.po_id);
-                // Integrity Check: Warn if PO client doesn't match selected client (Shouldn't happen due to view filter)
+                // Integrity Check: Warn if PO client doesn't match selected client
                 if (po && po.client_id !== selectedClient) {
                     console.error(`PO ${po.po_number} belongs to client ${po.client_id}, expected ${selectedClient}`);
                 }
+
+                // Resolve price: primary by product_id, fallback by product name from master catalog
+                const priceByid = priceMap.get(t.product_id);
+                const priceByName = namePriceMap.get(t.product_name?.trim().toUpperCase());
+                const resolvedPrice = (priceByid && priceByid > 0) ? priceByid : (priceByName || 0);
 
                 return {
                     ...t,
                     po_number: po?.po_number || '',
                     po_date: po?.created_at || '',
-                    unit_price: priceMap.get(t.product_id) || 0 // Use Product Price, NOT PO price
+                    unit_price: resolvedPrice
                 }
             });
 
@@ -141,12 +159,32 @@ export default function DispatchInterface() {
     });
 
     const handleQuantityChange = (productId: string, qtyStr: string, totalRemaining: number) => {
+        // Allow empty string to clear input
+        if (qtyStr === "") {
+            setDispatchQuantities(prev => {
+                const newState = { ...prev };
+                delete newState[productId];
+                return newState;
+            });
+            // Clear invalid state if empty
+            if (invalidItems[productId]) {
+                setInvalidItems(prev => {
+                    const newState = { ...prev };
+                    delete newState[productId];
+                    return newState;
+                });
+            }
+            return;
+        }
+
         const val = parseFloat(qtyStr);
         const qty = isNaN(val) ? 0 : val;
 
         // "Over-shipping" Check
         if (qty > totalRemaining) {
-            toast.error(`You are sending ${qty} units, but they only have ${totalRemaining} left on order. Please check the count.`);
+            toast.error(`Over-shipping Alert! You entered ${qty}, but only ${totalRemaining} are remaining.`, {
+                style: { background: '#ef4444', color: 'white', border: 'none', fontSize: '16px' }
+            });
             setInvalidItems(prev => ({ ...prev, [productId]: true }));
         } else {
             setInvalidItems(prev => {
@@ -172,9 +210,6 @@ export default function DispatchInterface() {
                 .map(([prodId, qty]) => {
                     // Find product details for price/name
                     const prod = aggregatedProducts?.find(p => p.product_id === prodId);
-                    // Use the price from the tracking item (assuming uniform price per product or picking one)
-                    // Currently aggregatedProducts merges items, but unit_price was set from products table in Step 37 query.
-                    // So all items for one product have same price.
                     return {
                         product_id: prodId,
                         product_name: prod?.product_name || 'Unknown Product',
@@ -192,7 +227,7 @@ export default function DispatchInterface() {
             }
             // --------------------------------
 
-            // 1. Get Client Details (Need specific fields for RPC)
+            // 1. Get Client Details
             const { data: client, error: clientError } = await supabase
                 .from('clients')
                 .select('*')
@@ -200,7 +235,7 @@ export default function DispatchInterface() {
                 .single();
             if (clientError) throw clientError;
 
-            // 2. Generate Invoice Number (Client-side generation preserved for FY logic)
+            // 2. Generate Invoice Number
             const getNextInvoiceNumber = async () => {
                 const today = new Date();
                 const month = today.getMonth(); // 0-11
@@ -254,16 +289,15 @@ export default function DispatchInterface() {
         },
         onSuccess: (data) => {
             if (trainingMode) {
-                toast.success("Training Invoice Generated! The order list has been updated (Simulated).");
+                toast.success("Training Invoice Generated! (Simulated).");
             } else {
-                toast.success("Invoice Generated Successfully! System updated.");
+                toast.success("Invoice Generated Successfully!");
             }
             // Reset
             setDispatchQuantities({});
             setInvalidItems({});
             queryClient.invalidateQueries({ queryKey: ['client_products'] });
             queryClient.invalidateQueries({ queryKey: ['view_po_tracking'] });
-            // Only navigate if real mode
             if (!trainingMode) navigate('/admin/invoices');
         },
         onError: (error) => {
@@ -275,12 +309,12 @@ export default function DispatchInterface() {
     const handleGenerateClick = () => {
         const totalQty = Object.values(dispatchQuantities).reduce((a, b) => a + b, 0);
         if (totalQty === 0) {
-            toast.info("Please enter the quantity you are loading onto the truck today.");
+            toast.info("Please enter at least one quantity.");
             return;
         }
 
         if (Object.keys(invalidItems).length > 0) {
-            toast.error("Please fix the errors before proceeding.");
+            toast.error("Please fix errors before proceeding.");
             return;
         }
 
@@ -288,7 +322,7 @@ export default function DispatchInterface() {
     };
 
     return (
-        <div className="container mx-auto p-4 max-w-2xl pb-24 animate-in fade-in duration-500">
+        <div className="container mx-auto p-4 max-w-2xl pb-32 animate-in fade-in duration-500">
             <Card className="border-none shadow-none bg-transparent mb-6">
                 <CardHeader className="px-0 flex flex-row items-center justify-between">
                     <CardTitle className="flex items-center gap-2 text-2xl text-white">
@@ -297,7 +331,6 @@ export default function DispatchInterface() {
                     </CardTitle>
                     <div className="flex items-center space-x-2 bg-white/5 p-2 rounded-lg border border-white/10">
                         <GraduationCap className={`h-5 w-5 ${trainingMode ? 'text-amber-400' : 'text-white/40'}`} />
-                        <Label htmlFor="training-mode" className="text-white text-sm cursor-pointer">Training Mode</Label>
                         <Switch
                             id="training-mode"
                             checked={trainingMode}
@@ -309,18 +342,51 @@ export default function DispatchInterface() {
                 <CardContent className="px-0 space-y-6">
                     <div className="space-y-2">
                         <Label className="text-lg font-medium text-white/90">Select Client</Label>
-                        <Select onValueChange={(val) => { setSelectedClient(val); setDispatchQuantities({}); }} value={selectedClient}>
-                            <SelectTrigger className="h-14 text-lg bg-white/5 border-white/10 text-white shadow-sm hover:bg-white/10 transition-colors">
-                                <SelectValue placeholder="Choose Client" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-gray-900 border-white/10 text-white">
-                                {clients?.map(c => (
-                                    <SelectItem key={c.id} value={c.id} className="text-lg py-3">
-                                        {c.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        <Popover open={clientOpen} onOpenChange={setClientOpen}>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    role="combobox"
+                                    aria-expanded={clientOpen}
+                                    className="w-full h-14 justify-between bg-white/5 border-white/10 text-white hover:bg-white/10 text-lg"
+                                >
+                                    {selectedClient
+                                        ? clients?.find((client) => client.id === selectedClient)?.name
+                                        : "Search Client..."}
+                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-[--radix-popover-trigger-width] p-0 bg-gray-900 border-white/10 text-white">
+                                <Command className="bg-transparent">
+                                    <CommandInput placeholder="Search client..." className="h-12 text-base text-white" />
+                                    <CommandList>
+                                        <CommandEmpty>No client found.</CommandEmpty>
+                                        <CommandGroup>
+                                            {clients?.map((client) => (
+                                                <CommandItem
+                                                    key={client.id}
+                                                    value={client.name}
+                                                    onSelect={() => {
+                                                        setSelectedClient(client.id);
+                                                        setDispatchQuantities({});
+                                                        setClientOpen(false);
+                                                    }}
+                                                    className="text-lg py-3 aria-selected:bg-white/10 aria-selected:text-white"
+                                                >
+                                                    <Check
+                                                        className={cn(
+                                                            "mr-2 h-4 w-4 text-blue-500",
+                                                            selectedClient === client.id ? "opacity-100" : "opacity-0"
+                                                        )}
+                                                    />
+                                                    {client.name}
+                                                </CommandItem>
+                                            ))}
+                                        </CommandGroup>
+                                    </CommandList>
+                                </Command>
+                            </PopoverContent>
+                        </Popover>
                     </div>
                 </CardContent>
             </Card>
@@ -342,30 +408,39 @@ export default function DispatchInterface() {
                                 const isInvalid = invalidItems[product.product_id];
 
                                 return (
-                                    <Card key={product.product_id} className={`glass-dark border-none shadow-lg ${isInvalid ? 'ring-2 ring-red-500/50' : ''}`}>
-                                        <CardContent className="p-6">
-                                            <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
-                                                <div className="space-y-1">
-                                                    <h3 className="text-xl font-semibold text-white">{product.product_name}</h3>
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="text-blue-300 bg-blue-500/10 px-2 py-0.5 rounded text-sm font-medium">
-                                                            {product.total_remaining} Remaining
-                                                        </span>
-                                                        <span className="text-white/40 text-sm">
-                                                            (Across {product.tracking_items.length} POs)
+                                    <Card key={product.product_id} className={`glass-dark border-none shadow-lg transition-all duration-200 ${isInvalid ? 'ring-2 ring-red-500/50 bg-red-950/10' : 'bg-black/40'}`}>
+                                        <CardContent className="p-5">
+                                            <div className="flex flex-col gap-4">
+                                                {/* Header & Status */}
+                                                <div className="space-y-2">
+                                                    <h3 className="text-2xl font-bold text-white leading-tight">{product.product_name}</h3>
+                                                    <div className="flex items-center flex-wrap gap-2 text-sm">
+                                                        <span className="text-white/60">Ordered: <span className="text-white font-mono">{product.total_ordered}</span></span>
+                                                        <span className="text-white/20">|</span>
+                                                        <span className={`${product.total_remaining < 100 ? 'text-amber-400' : 'text-green-400'} font-bold`}>
+                                                            Remaining: {product.total_remaining}
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <div className="w-full md:w-32">
-                                                    <Label className="text-xs text-white/60 mb-1 block">Qty Today</Label>
+
+                                                {/* Input Area */}
+                                                <div className="relative">
+                                                    <Label className="text-xs text-white/40 mb-1.5 block uppercase tracking-wider">Dispatch Qty</Label>
                                                     <Input
                                                         type="number"
-                                                        className="h-12 text-lg bg-black/20 border-white/10 text-white"
+                                                        inputMode="numeric"
+                                                        pattern="[0-9]*"
+                                                        className={`h-16 text-2xl font-mono bg-black/40 border-white/10 text-white placeholder:text-white/10 focus:ring-blue-500/50 transition-all ${currentDispatch > 0 && !isInvalid ? 'border-green-500/50 bg-green-950/10' : ''}`}
                                                         placeholder="0"
                                                         min="0"
                                                         value={currentDispatch || ''}
                                                         onChange={(e) => handleQuantityChange(product.product_id, e.target.value, product.total_remaining)}
                                                     />
+                                                    {currentDispatch > 0 && !isInvalid && (
+                                                        <div className="absolute right-4 top-[38px] text-green-500 animate-in zoom-in spin-in-90 duration-300">
+                                                            <CheckCircle2 className="w-6 h-6" />
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </CardContent>
@@ -378,16 +453,25 @@ export default function DispatchInterface() {
             )}
 
             {selectedClient && (
-                <div className="fixed bottom-0 left-0 right-0 p-4 bg-black/80 backdrop-blur-lg border-t border-white/10 z-50">
-                    <div className="container max-w-2xl mx-auto">
+                <div className="fixed bottom-0 left-0 right-0 p-4 bg-gray-950/90 backdrop-blur-xl border-t border-white/10 z-[60] pb-safe">
+                    <div className="container max-w-2xl mx-auto flex gap-4">
                         <Button
-                            className={`w-full h-14 text-lg font-semibold shadow-lg ${trainingMode ? 'bg-amber-600 hover:bg-amber-500' : 'bg-blue-600 hover:bg-blue-500'} text-white disabled:opacity-50`}
-                            size="lg"
+                            variant="outline"
+                            className="flex-1 h-14 bg-white/5 border-white/10 text-white hover:bg-white/10"
+                            onClick={() => {
+                                setDispatchQuantities({});
+                                setInvalidItems({});
+                            }}
+                        >
+                            Reset
+                        </Button>
+                        <Button
+                            className={`flex-[2] h-14 text-lg font-bold shadow-xl shadow-blue-500/20 ${trainingMode ? 'bg-amber-600 hover:bg-amber-500' : 'bg-blue-600 hover:bg-blue-500'} text-white disabled:opacity-50`}
                             onClick={handleGenerateClick}
                             disabled={generateInvoice.isPending}
                         >
-                            {generateInvoice.isPending ? <Loader2 className="animate-spin mr-2" /> : <CheckCircle2 className="mr-2" />}
-                            {trainingMode ? 'Generate Training Invoice' : 'Generate Invoice'}
+                            {generateInvoice.isPending ? <Loader2 className="animate-spin mr-2" /> : <Truck className="mr-2" />}
+                            {trainingMode ? 'Generate Simulated' : 'Generate Invoice'}
                         </Button>
                     </div>
                 </div>

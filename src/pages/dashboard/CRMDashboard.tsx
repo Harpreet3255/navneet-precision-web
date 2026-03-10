@@ -140,9 +140,9 @@ export default function CRMDashboard() {
     }
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500 pb-10">
+        <div className="space-y-6 md:space-y-8 animate-in fade-in duration-500 pb-20 md:pb-10"> {/* Extra padding for mobile bottom nav */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1 w-full md:w-auto">
                     <div className="flex items-center gap-3">
                         <h1 className="text-3xl font-bold text-white tracking-tight">Dashboard</h1>
                         <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
@@ -150,16 +150,16 @@ export default function CRMDashboard() {
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                             </div>
-                            <span className="text-[10px] font-medium text-emerald-400 uppercase tracking-wider">Cloud Sync Active</span>
+                            <span className="text-[10px] font-medium text-emerald-400 uppercase tracking-wider">Live</span>
                         </div>
                     </div>
                     <p className="text-white/60">Overview of your business performance</p>
                 </div>
 
-                {/* Filter Bar */}
-                <div className="flex flex-wrap gap-3">
+                {/* Filter Bar - Full width on mobile */}
+                <div className="flex flex-col sm:flex-row w-full md:w-auto gap-3">
                     <Select value={clientFilter} onValueChange={setClientFilter}>
-                        <SelectTrigger className="w-[180px] bg-white/5 border-white/10 text-white">
+                        <SelectTrigger className="w-full sm:w-[180px] bg-white/5 border-white/10 text-white">
                             <SelectValue placeholder="All Clients" />
                         </SelectTrigger>
                         <SelectContent className="bg-gray-900 border-white/10 text-white">
@@ -170,122 +170,141 @@ export default function CRMDashboard() {
                         </SelectContent>
                     </Select>
 
-                    <Select value={periodFilter} onValueChange={setPeriodFilter}>
-                        <SelectTrigger className="w-[150px] bg-white/5 border-white/10 text-white">
-                            <SelectValue placeholder="Time Period" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-gray-900 border-white/10 text-white">
-                            <SelectItem value="today">Today</SelectItem>
-                            <SelectItem value="week">This Week</SelectItem>
-                            <SelectItem value="month">This Month</SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <div className="flex gap-3 w-full sm:w-auto">
+                        <Select value={periodFilter} onValueChange={setPeriodFilter}>
+                            <SelectTrigger className="flex-1 sm:w-[150px] bg-white/5 border-white/10 text-white">
+                                <SelectValue placeholder="Period" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-gray-900 border-white/10 text-white">
+                                <SelectItem value="today">Today</SelectItem>
+                                <SelectItem value="week">This Week</SelectItem>
+                                <SelectItem value="month">This Month</SelectItem>
+                            </SelectContent>
+                        </Select>
 
-                    <Select value={statusFilter} onValueChange={setStatusFilter}>
-                        <SelectTrigger className="w-[150px] bg-white/5 border-white/10 text-white">
-                            <SelectValue placeholder="Status" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-gray-900 border-white/10 text-white">
-                            <SelectItem value="all">All Status</SelectItem>
-                            <SelectItem value="open">Open / Partial</SelectItem>
-                            <SelectItem value="closed">Completed</SelectItem>
-                        </SelectContent>
-                    </Select>
+                        <Select value={statusFilter} onValueChange={setStatusFilter}>
+                            <SelectTrigger className="flex-1 sm:w-[150px] bg-white/5 border-white/10 text-white">
+                                <SelectValue placeholder="Status" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-gray-900 border-white/10 text-white">
+                                <SelectItem value="all">Status</SelectItem>
+                                <SelectItem value="open">Open</SelectItem>
+                                <SelectItem value="closed">Closed</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
             </div>
 
-            {/* KPI Cards */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {/* KPI Cards - Vertical Stack on Mobile, Grid on Desktop */}
+            <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
                 <Card
-                    className="glass-dark border-none shadow-lg hover:bg-white/5 transition-colors cursor-pointer"
+                    className="glass-dark border-none shadow-lg hover:bg-white/5 transition-colors cursor-pointer group"
                     onClick={() => navigate('/admin/clients')}
                 >
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-white/80">Total Clients</CardTitle>
-                        <Users className="h-4 w-4 text-blue-400" />
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-white/60 flex items-center justify-center md:justify-start gap-2 uppercase tracking-wider">
+                            <Users className="h-4 w-4 text-blue-400 group-hover:scale-110 transition-transform" />
+                            Total Clients
+                        </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-white">{stats?.clientCount}</div>
-                        <p className="text-xs text-white/60 mt-1">Total registered</p>
+                    <CardContent className="text-center md:text-left">
+                        <div className="text-4xl md:text-2xl font-bold text-white mb-1">{stats?.clientCount}</div>
+                        <p className="text-xs text-white/40">Registered Partners</p>
                     </CardContent>
                 </Card>
+
                 <Card
-                    className="glass-dark border-none shadow-lg hover:bg-white/5 transition-colors cursor-pointer"
+                    className="glass-dark border-none shadow-lg hover:bg-white/5 transition-colors cursor-pointer group"
                     onClick={() => navigate('/admin/products')}
                 >
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-white/80">Active Products</CardTitle>
-                        <Package className="h-4 w-4 text-purple-400" />
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-white/60 flex items-center justify-center md:justify-start gap-2 uppercase tracking-wider">
+                            <Package className="h-4 w-4 text-purple-400 group-hover:scale-110 transition-transform" />
+                            Active Products
+                        </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-white">{stats?.productCount}</div>
-                        <p className="text-xs text-white/60 mt-1">In catalog</p>
+                    <CardContent className="text-center md:text-left">
+                        <div className="text-4xl md:text-2xl font-bold text-white mb-1">{stats?.productCount}</div>
+                        <p className="text-xs text-white/40">In Catalog</p>
                     </CardContent>
                 </Card>
+
                 <Card
-                    className="glass-dark border-none shadow-lg hover:bg-white/5 transition-colors cursor-pointer"
+                    className="glass-dark border-none shadow-lg hover:bg-white/5 transition-colors cursor-pointer group"
                     onClick={() => setStatusFilter("open")}
                 >
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-white/80">Open POs</CardTitle>
-                        <Clock className="h-4 w-4 text-amber-400" />
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-white/60 flex items-center justify-center md:justify-start gap-2 uppercase tracking-wider">
+                            <Clock className="h-4 w-4 text-amber-400 group-hover:scale-110 transition-transform" />
+                            Open POs
+                        </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-white">{stats?.openPOCount}</div>
-                        <p className="text-xs text-white/60 mt-1">Matching filters</p>
+                    <CardContent className="text-center md:text-left">
+                        <div className="text-4xl md:text-2xl font-bold text-white mb-1">{stats?.openPOCount}</div>
+                        <p className="text-xs text-white/40">Pending Fulfillment</p>
                     </CardContent>
                 </Card>
+
                 <Card
-                    className="glass-dark border-none shadow-lg hover:bg-white/5 transition-colors cursor-pointer"
+                    className="glass-dark border-none shadow-lg hover:bg-white/5 transition-colors cursor-pointer group"
                     onClick={() => navigate('/admin/invoices')}
                 >
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-white/80">Sales ({periodFilter})</CardTitle>
-                        <TrendingUp className="h-4 w-4 text-green-400" />
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium text-white/60 flex items-center justify-center md:justify-start gap-2 uppercase tracking-wider">
+                            <TrendingUp className="h-4 w-4 text-green-400 group-hover:scale-110 transition-transform" />
+                            Sales
+                        </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-white">
-                            ₹{stats?.salesData.reduce((acc: number, curr: any) => acc + curr.amount, 0).toFixed(0) || '0'}
+                    <CardContent className="text-center md:text-left">
+                        <div className="text-4xl md:text-2xl font-bold text-white mb-1">
+                            ₹{stats?.salesData.reduce((acc: number, curr: any) => acc + curr.amount, 0).toLocaleString('en-IN') || '0'}
                         </div>
-                        <p className="text-xs text-white/60 mt-1">Total for period</p>
+                        <p className="text-xs text-white/40">For Selected Period</p>
                     </CardContent>
                 </Card>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+            {/* Charts Section - Vertical Stack on Mobile */}
+            <div className="flex flex-col gap-6 lg:grid lg:grid-cols-7">
                 {/* Sales Chart */}
-                <Card className="col-span-4 glass-dark border-none shadow-lg">
+                <Card className="lg:col-span-4 glass-dark border-none shadow-lg">
                     <CardHeader>
-                        <CardTitle className="text-white">Revenue Overview</CardTitle>
+                        <CardTitle className="text-white text-lg flex items-center gap-2">
+                            <TrendingUp className="h-5 w-5 text-blue-400" />
+                            Revenue Overview
+                        </CardTitle>
                     </CardHeader>
-                    <CardContent className="pl-2">
-                        <div className="h-[300px]">
+                    <CardContent className="pl-0 md:pl-2">
+                        <div className="h-[250px] md:h-[300px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={stats?.salesData}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
+                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
                                     <XAxis
                                         dataKey="date"
-                                        stroke="rgba(255,255,255,0.5)"
-                                        fontSize={12}
+                                        stroke="rgba(255,255,255,0.4)"
+                                        fontSize={10}
                                         tickLine={false}
                                         axisLine={false}
+                                        tickMargin={10}
                                     />
                                     <YAxis
-                                        stroke="rgba(255,255,255,0.5)"
-                                        fontSize={12}
+                                        stroke="rgba(255,255,255,0.4)"
+                                        fontSize={10}
                                         tickLine={false}
                                         axisLine={false}
                                         tickFormatter={(value) => `₹${value}`}
+                                        width={40}
                                     />
                                     <Tooltip
-                                        contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }}
+                                        contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff' }}
                                         cursor={{ fill: 'rgba(255,255,255,0.05)' }}
                                     />
                                     <Bar
                                         dataKey="amount"
                                         fill="#3b82f6"
                                         radius={[4, 4, 0, 0]}
-                                        barSize={40}
+                                        barSize={30}
                                     />
                                 </BarChart>
                             </ResponsiveContainer>
@@ -293,38 +312,42 @@ export default function CRMDashboard() {
                     </CardContent>
                 </Card>
 
-                {/* Production Backlog Chart (NEW) */}
-                <Card className="col-span-3 glass-dark border-none shadow-lg">
+                {/* Production Backlog Chart */}
+                <Card className="lg:col-span-3 glass-dark border-none shadow-lg">
                     <CardHeader>
-                        <CardTitle className="text-white">Production Backlog</CardTitle>
+                        <CardTitle className="text-white text-lg flex items-center gap-2">
+                            <Package className="h-5 w-5 text-amber-400" />
+                            Production Backlog
+                        </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="h-[300px]">
                             {stats?.backlogChartData.length === 0 ? (
-                                <div className="flex items-center justify-center h-full text-white/60">No pending orders</div>
+                                <div className="flex items-center justify-center h-full text-white/40 text-sm">No pending production</div>
                             ) : (
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={stats?.backlogChartData} layout="vertical" margin={{ left: 20 }}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" horizontal={false} />
+                                    <BarChart data={stats?.backlogChartData} layout="vertical" margin={{ left: 0, right: 10 }}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" horizontal={false} />
                                         <XAxis type="number" hide />
                                         <YAxis
                                             dataKey="name"
                                             type="category"
-                                            width={100}
-                                            stroke="rgba(255,255,255,0.7)"
+                                            width={110}
+                                            stroke="rgba(255,255,255,0.6)"
                                             fontSize={11}
                                             tickLine={false}
                                             axisLine={false}
+                                            tick={{ fill: 'rgba(255,255,255,0.8)' }}
                                         />
                                         <Tooltip
-                                            contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }}
+                                            contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff' }}
                                             cursor={{ fill: 'rgba(255,255,255,0.05)' }}
                                         />
                                         <Bar
                                             dataKey="value"
                                             fill="#f59e0b"
                                             radius={[0, 4, 4, 0]}
-                                            barSize={20}
+                                            barSize={16}
                                         />
                                     </BarChart>
                                 </ResponsiveContainer>
@@ -335,40 +358,41 @@ export default function CRMDashboard() {
             </div>
 
             {/* Recent POs */}
-            <div className="grid gap-6">
-                <Card className="glass-dark border-none shadow-lg">
-                    <CardHeader>
-                        <CardTitle className="text-white">Recent Orders</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-4">
-                            {stats?.recentPOs.length === 0 ? (
-                                <p className="text-white/60 text-sm text-center py-4">No orders match the filters.</p>
-                            ) : (
-                                stats?.recentPOs.map((po: any) => (
-                                    <div key={po.id} className="flex items-center justify-between p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/5">
-                                        <div className="flex items-center space-x-4">
-                                            <div className="p-2 bg-blue-500/20 rounded-full">
-                                                <FileText className="h-4 w-4 text-blue-400" />
-                                            </div>
-                                            <div>
-                                                <p className="text-sm font-medium text-white leading-none">{po.po_number}</p>
-                                                <p className="text-xs text-white/60 mt-1">{po.clients?.name}</p>
-                                            </div>
+            <Card className="glass-dark border-none shadow-lg">
+                <CardHeader>
+                    <CardTitle className="text-white text-lg flex items-center gap-2">
+                        <FileText className="h-5 w-5 text-gray-400" />
+                        Recent Orders
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-3">
+                        {stats?.recentPOs.length === 0 ? (
+                            <p className="text-white/40 text-sm text-center py-6">No orders match the current filters.</p>
+                        ) : (
+                            stats?.recentPOs.map((po: any) => (
+                                <div key={po.id} className="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5 group">
+                                    <div className="flex items-center space-x-4">
+                                        <div className="p-2.5 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors">
+                                            <FileText className="h-5 w-5 text-blue-400" />
                                         </div>
-                                        <Badge
-                                            variant={po.status === 'open' ? 'default' : 'secondary'}
-                                            className={po.status === 'open' ? 'bg-blue-500/20 text-blue-300 hover:bg-blue-500/30' : 'bg-green-500/20 text-green-300 hover:bg-green-500/30'}
-                                        >
-                                            {po.status}
-                                        </Badge>
+                                        <div>
+                                            <p className="font-semibold text-white leading-none mb-1">{po.po_number}</p>
+                                            <p className="text-xs text-white/50">{po.clients?.name}</p>
+                                        </div>
                                     </div>
-                                ))
-                            )}
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
+                                    <Badge
+                                        variant={po.status === 'open' ? 'default' : 'secondary'}
+                                        className={`capitalize px-3 py-1 ${po.status === 'open' ? 'bg-blue-500/20 text-blue-300 hover:bg-blue-500/30' : 'bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30'}`}
+                                    >
+                                        {po.status}
+                                    </Badge>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     );
 }
