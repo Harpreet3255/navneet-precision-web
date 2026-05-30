@@ -23,6 +23,9 @@ import TransitionOverlay from "./components/TransitionOverlay";
 import { TransitionProvider } from "./contexts/TransitionContext";
 import './App.css';
 
+import { ErrorBoundary } from "react-error-boundary";
+import GlobalFallback from "./components/GlobalFallback";
+
 const queryClient = new QueryClient();
 
 // Routes component without general page transitions
@@ -57,18 +60,26 @@ const AppRoutes = () => {
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <TransitionProvider>
-        <BrowserRouter>
-          <AppRoutes />
-          <TransitionOverlay />
-        </BrowserRouter>
-      </TransitionProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <ErrorBoundary
+    FallbackComponent={GlobalFallback}
+    onReset={() => {
+      // Optional: Reset state or caches on error restart
+      window.location.reload();
+    }}
+  >
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <TransitionProvider>
+          <BrowserRouter>
+            <AppRoutes />
+            <TransitionOverlay />
+          </BrowserRouter>
+        </TransitionProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;

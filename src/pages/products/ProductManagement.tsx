@@ -111,10 +111,10 @@ const ProductManagement = () => {
     };
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500 pb-10">
+        <div className="space-y-8 animate-in fade-in duration-500 pb-24 md:pb-10">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-white tracking-tight">Products</h1>
+                    <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">Products</h1>
                     <p className="text-white/60 mt-1">Manage your product catalog</p>
                 </div>
                 <Button onClick={() => setShowForm(true)} className="bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20">
@@ -218,9 +218,9 @@ const ProductManagement = () => {
                         <TableHeader className="bg-white/5">
                             <TableRow className="border-white/10 hover:bg-transparent">
                                 <TableHead className="text-white/70 pl-6">Name</TableHead>
-                                <TableHead className="text-white/70">Client</TableHead>
-                                <TableHead className="text-white/70">HSN/SAC</TableHead>
-                                <TableHead className="text-white/70">Unit</TableHead>
+                                <TableHead className="text-white/70 hidden md:table-cell">Client</TableHead>
+                                <TableHead className="text-white/70 hidden md:table-cell">HSN/SAC</TableHead>
+                                <TableHead className="text-white/70 hidden sm:table-cell">Unit</TableHead>
                                 <TableHead className="text-white/70">Unit Price</TableHead>
                                 <TableHead className="text-white/70 text-right pr-6">Actions</TableHead>
                             </TableRow>
@@ -228,26 +228,26 @@ const ProductManagement = () => {
                         <TableBody>
                             {products.map((product) => (
                                 <TableRow key={product.id} className="border-white/5 hover:bg-white/5 transition-colors">
-                                    <TableCell className="font-medium text-white pl-6">
-                                        <div className="flex items-center gap-2">
-                                            <Package className="h-4 w-4 text-blue-400" />
-                                            {product.name}
+                                    <TableCell className="font-medium text-white pl-4 md:pl-6 max-w-[150px]">
+                                        <div className="flex items-center gap-2 truncate">
+                                            <Package className="h-4 w-4 text-blue-400 shrink-0" />
+                                            <span className="truncate">{product.name}</span>
                                         </div>
                                     </TableCell>
-                                    <TableCell className="text-white/70">{product.client?.name || '-'}</TableCell>
-                                    <TableCell className="text-white/70">
+                                    <TableCell className="text-white/70 hidden md:table-cell">{product.client?.name || '-'}</TableCell>
+                                    <TableCell className="text-white/70 hidden md:table-cell">
                                         <div className="flex items-center gap-2">
-                                            <Tag className="h-3 w-3 text-white/40" />
-                                            {product.hsn_code || product.sac_code || '-'}
+                                            <Tag className="h-3 w-3 text-white/40 shrink-0" />
+                                            <span className="truncate">{product.hsn_code || product.sac_code || '-'}</span>
                                         </div>
                                     </TableCell>
-                                    <TableCell className="text-white/70">
+                                    <TableCell className="text-white/70 hidden sm:table-cell">
                                         <div className="flex items-center gap-2">
-                                            <Ruler className="h-3 w-3 text-white/40" />
+                                            <Ruler className="h-3 w-3 text-white/40 shrink-0" />
                                             {product.unit}
                                         </div>
                                     </TableCell>
-                                    <TableCell className="font-medium text-white">
+                                    <TableCell className="font-medium text-white whitespace-nowrap">
                                         {formatCurrency(product.unit_price)}
                                     </TableCell>
                                     <TableCell className="text-right pr-6">

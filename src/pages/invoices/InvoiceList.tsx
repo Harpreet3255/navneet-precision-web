@@ -75,10 +75,10 @@ const InvoiceList = () => {
     }
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500 pb-10">
+        <div className="space-y-8 animate-in fade-in duration-500 pb-24 md:pb-10">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-white tracking-tight">Invoices</h1>
+                    <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">Invoices</h1>
                     <p className="text-white/60 mt-1">Manage all your invoices</p>
                 </div>
                 <Link to="/admin/invoices/new">
@@ -107,10 +107,10 @@ const InvoiceList = () => {
                         <TableHeader className="bg-white/5">
                             <TableRow className="border-white/10 hover:bg-transparent">
                                 <TableHead className="text-white/70 pl-6">Invoice #</TableHead>
-                                <TableHead className="text-white/70">Date</TableHead>
-                                <TableHead className="text-white/70">Client</TableHead>
+                                <TableHead className="text-white/70 hidden md:table-cell">Date</TableHead>
+                                <TableHead className="text-white/70 hidden md:table-cell">Client</TableHead>
                                 <TableHead className="text-white/70">Amount</TableHead>
-                                <TableHead className="text-white/70">Status</TableHead>
+                                <TableHead className="text-white/70 hidden sm:table-cell">Status</TableHead>
                                 <TableHead className="text-white/70 text-right pr-6">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -124,28 +124,28 @@ const InvoiceList = () => {
                             ) : (
                                 filteredInvoices.map((invoice) => (
                                     <TableRow key={invoice.id} className="border-white/5 hover:bg-white/5 transition-colors">
-                                        <TableCell className="font-medium text-white pl-6">
+                                        <TableCell className="font-medium text-white pl-4 md:pl-6">
                                             <div className="flex items-center gap-2">
-                                                <FileText className="h-4 w-4 text-blue-400" />
-                                                {invoice.invoice_number}
+                                                <FileText className="h-4 w-4 text-blue-400 shrink-0" />
+                                                <span className="truncate max-w-[100px] md:max-w-none">{invoice.invoice_number}</span>
                                             </div>
                                         </TableCell>
-                                        <TableCell className="text-white/70">
+                                        <TableCell className="text-white/70 hidden md:table-cell">
                                             <div className="flex items-center gap-2">
                                                 <Calendar className="h-3 w-3 text-white/40" />
                                                 {formatDate(invoice.invoice_date)}
                                             </div>
                                         </TableCell>
-                                        <TableCell className="text-white/70">
+                                        <TableCell className="text-white/70 hidden md:table-cell">
                                             <div className="flex items-center gap-2">
                                                 <User className="h-3 w-3 text-white/40" />
-                                                {invoice.receiver_name || '-'}
+                                                <span className="truncate max-w-[150px]">{invoice.receiver_name || '-'}</span>
                                             </div>
                                         </TableCell>
-                                        <TableCell className="font-medium text-white">
+                                        <TableCell className="font-medium text-white whitespace-nowrap">
                                             {formatCurrency(invoice.total_amount)}
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell className="hidden sm:table-cell">
                                             <Badge
                                                 variant={invoice.status === 'finalized' ? 'default' : 'secondary'}
                                                 className={invoice.status === 'finalized'

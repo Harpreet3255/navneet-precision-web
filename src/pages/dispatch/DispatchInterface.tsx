@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { Loader2, Truck, CheckCircle2, GraduationCap, Check, ChevronsUpDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import DataFallback from "@/components/DataFallback";
 
 type TrackingItem = {
     po_id: string;
@@ -56,7 +57,7 @@ export default function DispatchInterface() {
     const [trainingMode, setTrainingMode] = useState<boolean>(false);
 
     // Fetch Clients
-    const { data: clients } = useQuery({
+    const { data: clients, isError: isClientsError, refetch: refetchClients } = useQuery({
         queryKey: ['clients'],
         queryFn: async () => {
             const { data, error } = await supabase
@@ -69,7 +70,7 @@ export default function DispatchInterface() {
     });
 
     // Fetch All Open Line Items for Client (Aggregated by Product)
-    const { data: aggregatedProducts, isLoading: loadingProducts } = useQuery({
+    const { data: aggregatedProducts, isLoading: loadingProducts, isError: isProductsError, refetch: refetchProducts } = useQuery({
         queryKey: ['client_products', selectedClient],
         queryFn: async () => {
             if (!selectedClient) return [];
@@ -387,13 +388,26 @@ export default function DispatchInterface() {
                                 </Command>
                             </PopoverContent>
                         </Popover>
+                        {isClientsError && (
+                            <div className="mt-2 flex items-center gap-2 text-red-400 text-sm">
+                                <span>Failed to load clients.</span>
+                                <Button variant="link" className="text-red-400 p-0 h-auto" onClick={() => refetchClients()}>Retry</Button>
+                            </div>
+                        )}
                     </div>
                 </CardContent>
             </Card>
 
             {selectedClient && (
                 <div className="space-y-4">
-                    {loadingProducts ? (
+                    {isProductsError ? (
+                        <DataFallback 
+                            title="Failed to Load Product Data" 
+                            message="We couldn't retrieve the products for this client. Please check your connection and try again."
+                            onRetry={() => refetchProducts()} 
+                            className="my-8"
+                        />
+                    ) : loadingProducts ? (
                         <div className="flex justify-center p-8">
                             <Loader2 className="h-8 w-8 animate-spin text-blue-400" />
                         </div>

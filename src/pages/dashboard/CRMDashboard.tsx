@@ -22,6 +22,7 @@ import {
 } from "recharts";
 
 import { useNavigate } from "react-router-dom";
+import DataFallback from "@/components/DataFallback";
 
 export default function CRMDashboard() {
     const navigate = useNavigate();
@@ -30,7 +31,7 @@ export default function CRMDashboard() {
     const [statusFilter, setStatusFilter] = useState<string>("all"); // all, open, completed
 
     // Fetch Clients for Filter
-    const { data: clients } = useQuery({
+    const { data: clients, isError: isClientsError, refetch: refetchClients } = useQuery({
         queryKey: ['clients_list'],
         queryFn: async () => {
             const { data } = await supabase.from('clients').select('id, name').order('name');
@@ -39,7 +40,7 @@ export default function CRMDashboard() {
     });
 
     // Fetch Dashboard Stats with Filters
-    const { data: stats, isLoading } = useQuery({
+    const { data: stats, isLoading, isError: isStatsError, refetch: refetchStats } = useQuery({
         queryKey: ['dashboard_stats', clientFilter, periodFilter, statusFilter],
         queryFn: async () => {
             // Base queries
@@ -139,6 +140,18 @@ export default function CRMDashboard() {
         );
     }
 
+    if (isStatsError) {
+        return (
+            <div className="p-8">
+                <DataFallback 
+                    title="Dashboard Error" 
+                    message="Failed to load dashboard statistics. Please ensure your connection is stable." 
+                    onRetry={() => refetchStats()} 
+                />
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-6 md:space-y-8 animate-in fade-in duration-500 pb-20 md:pb-10"> {/* Extra padding for mobile bottom nav */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -164,6 +177,9 @@ export default function CRMDashboard() {
                         </SelectTrigger>
                         <SelectContent className="bg-gray-900 border-white/10 text-white">
                             <SelectItem value="all">All Clients</SelectItem>
+                            {isClientsError && (
+                                <div className="p-2 text-xs text-red-400">Failed to load clients.</div>
+                            )}
                             {clients?.map(c => (
                                 <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
                             ))}

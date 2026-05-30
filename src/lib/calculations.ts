@@ -16,7 +16,9 @@ export function calculateItemTax(
     senderStateCode: string = '20', // Default to Jamshedpur (Jharkhand)
     receiverStateCode: string
 ) {
-    const taxableValue = quantity * rate;
+    const safeQty = Number(quantity) || 0;
+    const safeRate = Number(rate) || 0;
+    const taxableValue = safeQty * safeRate;
 
     // Force sender state to be Jamshedpur '20' for Jamshedpur GST Accuracy Test
     const actualSenderStateCode = '20';
@@ -68,11 +70,14 @@ export function calculateInvoiceTotals(
     }>,
     transportationCharges: number = 0
 ) {
-    const subtotal = items.reduce((sum, item) => sum + item.taxable_value, 0);
-    const cgstAmount = items.reduce((sum, item) => sum + item.cgst_amount, 0);
-    const sgstAmount = items.reduce((sum, item) => sum + item.sgst_amount, 0);
-    const igstAmount = items.reduce((sum, item) => sum + item.igst_amount, 0);
-    const totalAmount = subtotal + cgstAmount + sgstAmount + igstAmount + transportationCharges;
+    const safeItems = items || [];
+    const safeTransport = Number(transportationCharges) || 0;
+
+    const subtotal = safeItems.reduce((sum, item) => sum + (Number(item?.taxable_value) || 0), 0);
+    const cgstAmount = safeItems.reduce((sum, item) => sum + (Number(item?.cgst_amount) || 0), 0);
+    const sgstAmount = safeItems.reduce((sum, item) => sum + (Number(item?.sgst_amount) || 0), 0);
+    const igstAmount = safeItems.reduce((sum, item) => sum + (Number(item?.igst_amount) || 0), 0);
+    const totalAmount = subtotal + cgstAmount + sgstAmount + igstAmount + safeTransport;
 
     return {
         subtotal: Number(subtotal.toFixed(2)),
@@ -103,18 +108,22 @@ export function generateInvoiceNumber(lastInvoiceNumber: string | null): string 
  * Format currency for display
  */
 export function formatCurrency(amount: number): string {
+    const safeAmount = Number(amount) || 0;
     return new Intl.NumberFormat('en-IN', {
         style: 'currency',
         currency: 'INR',
         minimumFractionDigits: 2,
-    }).format(amount);
+    }).format(safeAmount);
 }
 
 /**
  * Format date for display
  */
 export function formatDate(date: string | Date): string {
-    return new Date(date).toLocaleDateString('en-IN', {
+    if (!date) return '';
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate.getTime())) return '';
+    return parsedDate.toLocaleDateString('en-IN', {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',

@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2, Plus, Trash2, FileText, Calendar, User, Hash, DollarSign } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import DataFallback from "@/components/DataFallback";
 import {
     Table,
     TableBody,
@@ -56,7 +57,7 @@ export default function PurchaseOrderForm() {
     const watchedItems = watch("items");
 
     // Fetch Clients
-    const { data: clients } = useQuery({
+    const { data: clients, isError: isClientsError, refetch: refetchClients } = useQuery({
         queryKey: ['clients'],
         queryFn: async () => {
             const { data, error } = await supabase
@@ -69,7 +70,7 @@ export default function PurchaseOrderForm() {
     });
 
     // Fetch Products
-    const { data: products } = useQuery({
+    const { data: products, isError: isProductsError, refetch: refetchProducts } = useQuery({
         queryKey: ['products'],
         queryFn: async () => {
             const { data, error } = await supabase
@@ -147,6 +148,15 @@ export default function PurchaseOrderForm() {
                     <p className="text-white/60 mt-1">Record a new customer order</p>
                 </div>
             </div>
+
+            {(isClientsError || isProductsError) && (
+                <DataFallback 
+                    title="Failed to Load Data" 
+                    message="Unable to retrieve clients or products required for this form."
+                    onRetry={() => { refetchClients(); refetchProducts(); }}
+                    className="mb-8"
+                />
+            )}
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
                 {/* PO Details Card */}

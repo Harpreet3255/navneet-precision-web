@@ -25,6 +25,17 @@ const DashboardLayout = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black text-white text-base">
+            {/* Mobile Top Bar - Hidden on desktop */}
+            <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-gray-900/90 backdrop-blur-xl border-b border-white/10 z-50 flex items-center px-4 gap-3">
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
+                    <FileText className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                    <h1 className="text-white font-bold text-base tracking-tight leading-tight">Navneet Industries</h1>
+                    <p className="text-white/60 text-[10px] font-medium leading-tight">Invoice System</p>
+                </div>
+            </div>
+
             {/* Sidebar - Hidden on mobile */}
             <div className="hidden md:block fixed inset-y-0 left-0 w-64 bg-black/40 backdrop-blur-xl border-r border-white/10 z-50">
                 <div className="flex flex-col h-full">
@@ -78,7 +89,7 @@ const DashboardLayout = () => {
             {/* Bottom Navigation - Hidden on desktop */}
             <div className="md:hidden fixed bottom-0 left-0 right-0 bg-gray-900/90 backdrop-blur-xl border-t border-white/10 z-50 pb-safe">
                 <nav className="flex justify-around items-center p-2">
-                    {navigation.filter(item => ['Dashboard', 'Invoices', 'Dispatch'].includes(item.name)).map((item) => {
+                    {navigation.filter(item => ['Dashboard', 'Invoices', 'Create PO', 'Products', 'Dispatch'].includes(item.name)).map((item) => {
                         // Filter to show only key items or show all if they fit. User requested: Dispatch, Orders (PO?), Dashboard.
                         // Let's see what maps to what.
                         // Dashboard -> /admin/dashboard
@@ -117,7 +128,7 @@ const DashboardLayout = () => {
             </div>
 
             {/* Main content */}
-            <div className="md:pl-64 min-h-screen pb-20 md:pb-0"> {/* Add padding bottom for mobile nav */}
+            <div className="md:pl-64 min-h-screen pt-16 md:pt-0 pb-24 md:pb-0"> {/* Add padding for mobile navs */}
                 <div className="p-4 md:p-8 max-w-7xl mx-auto">
                     <Outlet />
                 </div>
