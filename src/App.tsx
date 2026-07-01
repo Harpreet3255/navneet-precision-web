@@ -18,6 +18,7 @@ import ProductManagement from "./pages/products/ProductManagement";
 import PurchaseOrderForm from "./pages/pos/PurchaseOrderForm";
 import DispatchInterface from "./pages/dispatch/DispatchInterface";
 import CRMDashboard from "./pages/dashboard/CRMDashboard";
+import MasterSync from "./pages/admin/MasterSync";
 import DashboardLayout from "./components/layouts/DashboardLayout";
 import TransitionOverlay from "./components/TransitionOverlay";
 import { TransitionProvider } from "./contexts/TransitionContext";
@@ -43,6 +44,7 @@ const AppRoutes = () => {
       {/* Invoice Management System */}
       <Route path="/admin" element={<DashboardLayout />}>
         <Route index element={<InvoiceList />} />
+        <Route path="master-sync" element={<MasterSync />} />
         <Route path="invoices" element={<InvoiceList />} />
         <Route path="invoices/new" element={<InvoiceForm />} />
         <Route path="invoices/:id" element={<InvoiceView />} />

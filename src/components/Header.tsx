@@ -66,8 +66,8 @@ const Header = () => {
           </div>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center">
-            <div className="flex space-x-1">
+          <nav className="hidden lg:flex items-center gap-2 xl:gap-6">
+            <div className="flex items-center space-x-1">
               {[
                 { id: 'hero', label: 'Home' },
                 { id: 'about', label: 'About Us' },
@@ -77,33 +77,32 @@ const Header = () => {
                 { id: 'why-choose-us', label: 'Why Us' },
                 { id: 'contact', label: 'Contact' }
               ].map((item) => (
-                <div key={item.id} className="relative px-1">
-                  <button
-                    onClick={() => handleNavClick(item.id)}
-                    className={`font-medium transition-all duration-300 px-4 py-2 rounded-lg ${activeSection === item.id
-                      ? 'text-white bg-blue-500/80'
-                      : 'text-white/80 hover:text-white hover:bg-white/10'
-                      }`}
-                  >
-                    {item.label}
-                  </button>
-                </div>
-              ))}
-
-              {/* Admin Button */}
-              <div className="relative px-1">
-                <Link
-                  to="/admin"
-                  className="font-medium transition-all duration-300 px-4 py-2 rounded-lg bg-blue-500/80 text-white hover:bg-blue-500"
+                <button
+                  key={item.id}
+                  onClick={() => handleNavClick(item.id)}
+                  className={`font-medium text-sm transition-all duration-300 px-3 xl:px-4 py-2 rounded-full ${activeSection === item.id
+                    ? 'text-blue-400 bg-blue-500/10'
+                    : 'text-white/70 hover:text-white hover:bg-white/10'
+                    }`}
                 >
-                  Admin
-                </Link>
-              </div>
+                  {item.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Admin Button */}
+            <div className="pl-2 xl:pl-6 border-l border-white/10">
+              <Link
+                to="/admin"
+                className="font-medium text-sm transition-all duration-300 px-6 py-2 rounded-full bg-blue-600/90 text-white hover:bg-blue-500 hover:shadow-[0_0_15px_rgba(37,99,235,0.4)]"
+              >
+                Admin
+              </Link>
             </div>
           </nav>
 
           {/* Mobile Menu Button */}
-          <button className="md:hidden text-white hover:scale-110 transition-transform" onClick={toggleMenu}>
+          <button className="lg:hidden text-white hover:scale-110 transition-transform" onClick={toggleMenu}>
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
@@ -111,7 +110,7 @@ const Header = () => {
 
       {/* Mobile Navigation Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-black/90 backdrop-blur-xl border-b border-white/10">
+        <div className="lg:hidden bg-black/90 backdrop-blur-xl border-b border-white/10">
           <div className="container mx-auto px-4 py-4">
             <nav className="flex flex-col space-y-2">
               {[
