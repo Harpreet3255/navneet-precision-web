@@ -1,23 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Search, Building2, MapPin, FileText } from 'lucide-react';
-import { supabase, type Client } from '@/lib/supabase';
+import { Plus, Edit, Trash2, Building2, ChevronRight, FileText } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
 import { toast } from "sonner";
 
 const ClientManagement = () => {
-    const [clients, setClients] = useState<Client[]>([]);
+    const navigate = useNavigate();
+    const [clients, setClients] = useState<any[]>([]);
     const [showForm, setShowForm] = useState(false);
-    const [editingClient, setEditingClient] = useState<Client | null>(null);
     const [formData, setFormData] = useState({
         name: '',
         address: '',
@@ -32,11 +25,22 @@ const ClientManagement = () => {
     }, []);
 
     const fetchClients = async () => {
-        const { data, error } = await supabase.from('clients').select('*').order('name');
+        const { data, error } = await supabase.from('clients').select(`
+            *,
+            client_pricing ( id ),
+            purchase_orders ( id, status )
+        `).order('name');
+        
         if (error) {
             toast.error("Failed to fetch clients");
         } else {
-            setClients(data || []);
+            const enhancedData = (data || []).map(c => ({
+                ...c,
+                contractsCount: c.client_pricing?.length || 0,
+                openPOsCount: c.purchase_orders?.filter((po: any) => po.status === 'open').length || 0
+            }));
+            const distinctClients = Array.from(new Map(enhancedData.map(c => [c.name.trim().toUpperCase(), c])).values());
+            setClients(distinctClients);
         }
     };
 
@@ -44,15 +48,9 @@ const ClientManagement = () => {
         e.preventDefault();
 
         try {
-            if (editingClient) {
-                const { error } = await supabase.from('clients').update(formData).eq('id', editingClient.id);
-                if (error) throw error;
-                toast.success("Client updated successfully");
-            } else {
-                const { error } = await supabase.from('clients').insert(formData);
-                if (error) throw error;
-                toast.success("Client added successfully");
-            }
+            const { error } = await supabase.from('clients').insert(formData);
+            if (error) throw error;
+            toast.success("Client added successfully");
 
             resetForm();
             fetchClients();
@@ -61,45 +59,19 @@ const ClientManagement = () => {
         }
     };
 
-    const handleEdit = (client: Client) => {
-        setEditingClient(client);
-        setFormData({
-            name: client.name,
-            address: client.address || '',
-            city: client.city || '',
-            state: client.state || '',
-            state_code: client.state_code || '',
-            gstin: client.gstin || '',
-        });
-        setShowForm(true);
-    };
-
-    const handleDelete = async (id: string) => {
-        if (!confirm('Delete this client?')) return;
-        try {
-            const { error } = await supabase.from('clients').delete().eq('id', id);
-            if (error) throw error;
-            toast.success("Client deleted successfully");
-            fetchClients();
-        } catch (error: any) {
-            toast.error(`Error deleting client: ${error.message}`);
-        }
-    };
-
     const resetForm = () => {
         setFormData({ name: '', address: '', city: '', state: '', state_code: '', gstin: '' });
-        setEditingClient(null);
         setShowForm(false);
     };
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500 pb-24 md:pb-10">
+        <div className="space-y-8 animate-in fade-in duration-500 pb-24 md:pb-10 max-w-7xl mx-auto">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">Clients</h1>
-                    <p className="text-white/60 mt-1">Manage your client database</p>
+                    <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">Clients Hub</h1>
+                    <p className="text-white/60 mt-1">Enterprise Command Center</p>
                 </div>
-                <Button onClick={() => setShowForm(true)} className="bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20">
+                <Button onClick={() => setShowForm(!showForm)} className="bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20">
                     <Plus className="w-4 h-4 mr-2" />
                     Add Client
                 </Button>
@@ -109,8 +81,8 @@ const ClientManagement = () => {
                 <Card className="glass-dark border-none shadow-xl animate-in slide-in-from-top-4 duration-300">
                     <CardHeader>
                         <CardTitle className="text-white flex items-center gap-2">
-                            {editingClient ? <Edit className="h-5 w-5 text-blue-400" /> : <Plus className="h-5 w-5 text-blue-400" />}
-                            {editingClient ? 'Edit Client' : 'Add New Client'}
+                            <Plus className="h-5 w-5 text-blue-400" />
+                            Add New Client
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -163,7 +135,7 @@ const ClientManagement = () => {
                                     Cancel
                                 </Button>
                                 <Button type="submit" className="bg-blue-600 hover:bg-blue-500 text-white">
-                                    {editingClient ? 'Update' : 'Save'} Client
+                                    Save Client
                                 </Button>
                             </div>
                         </form>
@@ -171,51 +143,46 @@ const ClientManagement = () => {
                 </Card>
             )}
 
-            <Card className="glass-dark border-none shadow-xl">
-                <CardContent className="p-0">
-                    <Table>
-                        <TableHeader className="bg-white/5">
-                            <TableRow className="border-white/10 hover:bg-transparent">
-                                <TableHead className="text-white/70 pl-6">Name</TableHead>
-                                <TableHead className="text-white/70 hidden sm:table-cell">City</TableHead>
-                                <TableHead className="text-white/70 hidden md:table-cell">State</TableHead>
-                                <TableHead className="text-white/70 hidden md:table-cell">GSTIN</TableHead>
-                                <TableHead className="text-white/70 text-right pr-6">Actions</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {clients.map((client) => (
-                                <TableRow key={client.id} className="border-white/5 hover:bg-white/5 transition-colors">
-                                    <TableCell className="font-medium text-white pl-4 md:pl-6 max-w-[180px]">
-                                        <div className="flex items-center gap-2 truncate">
-                                            <Building2 className="h-4 w-4 text-blue-400 shrink-0" />
-                                            <span className="truncate">{client.name}</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {clients.map((client) => (
+                    <Card 
+                        key={client.id} 
+                        className="glass-dark border border-white/5 shadow-lg cursor-pointer group hover:-translate-y-1 hover:shadow-blue-500/20 hover:border-blue-500/30 transition-all duration-300 relative overflow-hidden"
+                        onClick={() => navigate(`/admin/clients/${client.id}`)}
+                    >
+                        <div className="absolute right-4 top-4 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-4 group-hover:translate-x-0 duration-300">
+                            <ChevronRight className="w-5 h-5 text-blue-400" />
+                        </div>
+                        <CardContent className="p-6">
+                            <div className="flex items-start gap-4">
+                                <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0 group-hover:bg-blue-500/20 transition-colors">
+                                    <Building2 className="w-6 h-6 text-blue-400 group-hover:scale-110 transition-transform" />
+                                </div>
+                                <div className="space-y-4 w-full pr-4">
+                                    <h3 className="text-xl font-bold text-white tracking-tight leading-tight line-clamp-2">
+                                        {client.name}
+                                    </h3>
+                                    
+                                    <div className="flex flex-col gap-2">
+                                        <div className="flex items-center justify-between bg-black/40 rounded-lg px-3 py-2 border border-white/5 group-hover:border-blue-500/20 transition-colors">
+                                            <span className="text-sm font-medium text-white/50">Active Contracts</span>
+                                            <span className="font-mono font-bold text-blue-300 bg-blue-500/20 px-2 py-0.5 rounded text-sm">
+                                                {client.contractsCount}
+                                            </span>
                                         </div>
-                                    </TableCell>
-                                    <TableCell className="text-white/70 hidden sm:table-cell truncate max-w-[120px]">{client.city || '-'}</TableCell>
-                                    <TableCell className="text-white/70 hidden md:table-cell">{client.state || '-'}</TableCell>
-                                    <TableCell className="text-white/70 hidden md:table-cell">
-                                        <div className="flex items-center gap-2">
-                                            <FileText className="h-3 w-3 text-white/40 shrink-0" />
-                                            <span className="truncate">{client.gstin || '-'}</span>
+                                        <div className="flex items-center justify-between bg-black/40 rounded-lg px-3 py-2 border border-white/5 group-hover:border-amber-500/20 transition-colors">
+                                            <span className="text-sm font-medium text-white/50">Open POs</span>
+                                            <span className={`font-mono font-bold px-2 py-0.5 rounded text-sm ${client.openPOsCount > 0 ? 'text-amber-300 bg-amber-500/20' : 'text-white/30 bg-white/5'}`}>
+                                                {client.openPOsCount}
+                                            </span>
                                         </div>
-                                    </TableCell>
-                                    <TableCell className="text-right pr-6">
-                                        <div className="flex items-center justify-end gap-2">
-                                            <Button variant="ghost" size="icon" onClick={() => handleEdit(client)} className="h-8 w-8 text-white/70 hover:text-white hover:bg-white/10">
-                                                <Edit className="w-4 h-4" />
-                                            </Button>
-                                            <Button variant="ghost" size="icon" onClick={() => handleDelete(client.id)} className="h-8 w-8 text-red-400 hover:text-red-300 hover:bg-red-400/10">
-                                                <Trash2 className="w-4 h-4" />
-                                            </Button>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
+                                    </div>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
         </div>
     );
 };

@@ -14,7 +14,9 @@ import InvoiceList from "./pages/invoices/InvoiceList";
 import InvoiceForm from "./pages/invoices/InvoiceForm";
 import InvoiceView from "./pages/invoices/InvoiceView";
 import ClientManagement from "./pages/clients/ClientManagement";
+import ClientDetails from "./pages/clients/ClientDetails";
 import ProductManagement from "./pages/products/ProductManagement";
+import ClientPricingManagement from "./pages/products/ClientPricingManagement";
 import PurchaseOrderForm from "./pages/pos/PurchaseOrderForm";
 import DispatchInterface from "./pages/dispatch/DispatchInterface";
 import CRMDashboard from "./pages/dashboard/CRMDashboard";
@@ -50,7 +52,9 @@ const AppRoutes = () => {
         <Route path="invoices/:id" element={<InvoiceView />} />
         <Route path="invoices/:id/edit" element={<InvoiceForm />} />
         <Route path="clients" element={<ClientManagement />} />
+        <Route path="clients/:clientId" element={<ClientDetails />} />
         <Route path="products" element={<ProductManagement />} />
+        <Route path="products/pricing" element={<ClientPricingManagement />} />
         <Route path="pos/new" element={<PurchaseOrderForm />} />
         <Route path="dispatch" element={<DispatchInterface />} />
         <Route path="dashboard" element={<CRMDashboard />} />

@@ -19,18 +19,35 @@ export type Client = {
     updated_at: string;
 };
 
+export type ProductGroup = {
+    id: string;
+    group_name: string;
+    created_at: string;
+};
+
 export type Product = {
     id: string;
-    client_id?: string;
+    sku: string;
     name: string;
     description: string | null;
     sac_code: string | null;
     hsn_code: string | null;
     unit: string;
-    unit_price: number;
+    group_id?: string | null;
+    created_at: string;
+    updated_at: string;
+    group?: ProductGroup;
+};
+
+export type ClientPricing = {
+    id: string;
+    client_id: string;
+    product_id: string;
+    custom_rate: number;
     created_at: string;
     updated_at: string;
     client?: Client;
+    product?: Product;
 };
 
 export type Invoice = {

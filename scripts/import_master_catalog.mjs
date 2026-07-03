@@ -5,39 +5,72 @@ import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 
-// ES module __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables
 dotenv.config();
 
-// You'll need to set SUPABASE_SERVICE_ROLE_KEY in your .env file
 const supabaseUrl = process.env.VITE_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseServiceKey) {
     console.error('❌ Error: Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in .env file');
-    console.error('Please add SUPABASE_SERVICE_ROLE_KEY to your .env file');
     process.exit(1);
 }
 
-// Create Supabase client with service role key for admin access
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-// Statistics
 const stats = {
     totalRows: 0,
     clientsCreated: 0,
-    clientsUpdated: 0,
     productsCreated: 0,
-    productsUpdated: 0,
+    pricingCreated: 0,
     errors: [],
 };
 
-/**
- * Parse CSV file and return rows
- */
+function generateBaseSKU(description) {
+  const descUpper = description.toUpperCase();
+  
+  let prefix = 'GEN';
+  if (descUpper.includes('CAP')) prefix = 'PC';
+  else if (descUpper.includes('DISC') || descUpper.includes('SEPARATOR')) prefix = 'SD';
+  else if (descUpper.includes('BUSH')) prefix = 'NB';
+  else if (descUpper.includes('WASHER')) prefix = 'TW';
+  
+  const dimRegex = /(OD\s*\d+|ID\s*\d+|DIA\s*\d+|M\s*\d+)/gi;
+  const matches = descUpper.match(dimRegex) || [];
+  const dimensions = matches.map(m => m.replace(/\s+/g, '')).join('-');
+  
+  let suffix = '';
+  if (descUpper.includes('UPPER')) suffix = '-UP';
+  if (descUpper.includes('BOTTOM')) suffix = '-BT';
+  
+  const parts = [prefix];
+  if (dimensions) parts.push(dimensions);
+  
+  let baseSku = parts.join('-');
+  if (suffix) baseSku += suffix;
+  
+  return baseSku;
+}
+
+class SKURegistry {
+  constructor() {
+    this.seenSkus = {};
+  }
+
+  generateUniqueSKU(description) {
+    const baseSku = generateBaseSKU(description);
+    if (this.seenSkus[baseSku] !== undefined) {
+      this.seenSkus[baseSku]++;
+      return `${baseSku}-V${this.seenSkus[baseSku]}`;
+    } else {
+      this.seenSkus[baseSku] = 0;
+      return baseSku;
+    }
+  }
+}
+
 async function parseCSV(filePath) {
     const rows = [];
     const fileStream = fs.createReadStream(filePath);
@@ -50,17 +83,15 @@ async function parseCSV(filePath) {
     for await (const line of rl) {
         if (isFirstLine) {
             isFirstLine = false;
-            continue; // Skip header
+            continue;
         }
 
-        if (!line.trim()) continue; // Skip empty lines
+        if (!line.trim()) continue;
 
-        // Simple CSV parsing: Party Name, Description, Rate
         const parts = line.split(',');
 
         if (parts.length >= 3) {
             const partyName = parts[0].replace(/^"|"$/g, '').trim();
-            // Description might have commas, so join all middle parts
             const description = parts.slice(1, -1).join(',').replace(/^"|"$/g, '').trim();
             const rate = parseFloat(parts[parts.length - 1].trim());
 
@@ -73,16 +104,11 @@ async function parseCSV(filePath) {
             }
         }
     }
-
     return rows;
 }
 
-/**
- * Upsert a client by name
- */
 async function upsertClient(clientName) {
     try {
-        // First, try to find existing client
         const { data: existingClient, error: findError } = await supabase
             .from('clients')
             .select('id')
@@ -90,21 +116,12 @@ async function upsertClient(clientName) {
             .maybeSingle();
 
         if (existingClient) {
-            stats.clientsUpdated++;
             return existingClient.id;
         }
 
-        // If not found, insert new client
         const { data: newClient, error: insertError } = await supabase
             .from('clients')
-            .insert({
-                name: clientName,
-                address: null,
-                city: null,
-                state: null,
-                state_code: null,
-                gstin: null
-            })
+            .insert({ name: clientName })
             .select('id')
             .single();
 
@@ -119,59 +136,60 @@ async function upsertClient(clientName) {
     }
 }
 
-/**
- * Upsert a product for a specific client
- */
-async function upsertProduct(clientId, productName, unitPrice) {
+async function upsertProduct(productName, sku) {
     try {
-        // First check if product exists
         const { data: existing } = await supabase
             .from('products')
             .select('id')
-            .eq('client_id', clientId)
-            .eq('name', productName)
+            .eq('sku', sku)
             .maybeSingle();
 
         if (existing) {
-            // Update existing
-            const { error: updateError } = await supabase
-                .from('products')
-                .update({ unit_price: unitPrice })
-                .eq('id', existing.id);
-
-            if (updateError) throw updateError;
-            stats.productsUpdated++;
-        } else {
-            // Insert new
-            const { error: insertError } = await supabase
-                .from('products')
-                .insert({
-                    client_id: clientId,
-                    name: productName,
-                    unit_price: unitPrice,
-                    description: productName,
-                    unit: 'Nos',
-                });
-
-            if (insertError) throw insertError;
-            stats.productsCreated++;
+            return existing.id;
         }
 
-        return true;
+        const { data: newProduct, error: insertError } = await supabase
+            .from('products')
+            .insert({
+                sku: sku,
+                name: productName,
+                description: productName,
+                unit: 'Nos',
+            })
+            .select('id')
+            .single();
+
+        if (insertError) throw insertError;
+        
+        stats.productsCreated++;
+        return newProduct.id;
     } catch (error) {
-        console.error(`\nError upserting product "${productName}" for client ${clientId}:`, error.message);
-        stats.errors.push({ type: 'product', name: productName, clientId, error: error.message });
-        return false;
+        console.error(`\nError upserting product "${productName}":`, error.message);
+        stats.errors.push({ type: 'product', name: productName, error: error.message });
+        return null;
     }
 }
 
-/**
- * Main import function
- */
+async function upsertClientPricing(clientId, productId, rate) {
+    try {
+        const { error } = await supabase
+            .from('client_pricing')
+            .upsert(
+                { client_id: clientId, product_id: productId, custom_rate: rate },
+                { onConflict: 'client_id,product_id' }
+            );
+
+        if (error) throw error;
+        stats.pricingCreated++;
+    } catch (error) {
+        console.error(`\nError upserting client pricing:`, error.message);
+        stats.errors.push({ type: 'pricing', error: error.message });
+    }
+}
+
 async function importCatalog() {
     console.log('🚀 Starting Master Catalog Import...\n');
 
-    // Parse CSV
     const csvPath = path.join(__dirname, '..', 'Navneet_Master_Catalog_Clean.csv');
     console.log(`📖 Reading CSV from: ${csvPath}`);
 
@@ -184,55 +202,50 @@ async function importCatalog() {
     stats.totalRows = rows.length;
     console.log(`✅ Parsed ${rows.length} rows from CSV\n`);
 
-    // Group rows by client to batch operations
-    const clientMap = new Map();
+    const registry = new SKURegistry();
+
+    // Map description to unique SKU to ensure we reuse the same SKU for the same description
+    const productSKUMap = new Map();
+
     rows.forEach(row => {
-        if (!clientMap.has(row.partyName)) {
-            clientMap.set(row.partyName, []);
+        const descUpper = row.description.trim().toUpperCase();
+        if (!productSKUMap.has(descUpper)) {
+            productSKUMap.set(descUpper, registry.generateUniqueSKU(descUpper));
         }
-        clientMap.get(row.partyName).push(row);
     });
 
-    console.log(`👥 Found ${clientMap.size} unique clients\n`);
+    let processed = 0;
+    for (const row of rows) {
+        processed++;
+        process.stdout.write(`\r📦 Processing row ${processed}/${rows.length} `);
 
-    // Process each client and their products
-    let processedClients = 0;
-    for (const [clientName, products] of clientMap) {
-        processedClients++;
-        process.stdout.write(`\r📦 Processing client ${processedClients}/${clientMap.size}: ${clientName.substring(0, 40).padEnd(40)} `);
-
-        // Upsert client
-        const clientId = await upsertClient(clientName);
+        const clientId = await upsertClient(row.partyName);
         if (!clientId) continue;
 
-        // Upsert all products for this client
-        for (const product of products) {
-            await upsertProduct(clientId, product.description, product.rate);
-        }
+        const descUpper = row.description.trim().toUpperCase();
+        const sku = productSKUMap.get(descUpper);
+
+        const productId = await upsertProduct(row.description, sku);
+        if (!productId) continue;
+
+        await upsertClientPricing(clientId, productId, row.rate);
     }
 
     console.log('\n\n✨ Import Complete!\n');
     console.log('📊 Statistics:');
-    console.log(`   Total Rows: ${stats.totalRows}`);
-    console.log(`   Clients Created: ${stats.clientsCreated}`);
-    console.log(`   Clients Updated: ${stats.clientsUpdated}`);
-    console.log(`   Products Created: ${stats.productsCreated}`);
-    console.log(`   Products Updated: ${stats.productsUpdated}`);
+    console.log(`   Total Rows Processed: ${stats.totalRows}`);
+    console.log(`   New Clients Created: ${stats.clientsCreated}`);
+    console.log(`   New Products Created: ${stats.productsCreated}`);
+    console.log(`   Pricing Rules Inserted/Updated: ${stats.pricingCreated}`);
 
     if (stats.errors.length > 0) {
         console.log(`\n⚠️  Errors: ${stats.errors.length}`);
         stats.errors.slice(0, 10).forEach((err, idx) => {
-            console.log(`   ${idx + 1}. ${err.type}: ${err.name} - ${err.error}`);
+            console.log(`   ${idx + 1}. ${err.type}: ${err.name || ''} - ${err.error}`);
         });
-        if (stats.errors.length > 10) {
-            console.log(`   ... and ${stats.errors.length - 10} more errors`);
-        }
-    } else {
-        console.log('\n✅ No errors!');
     }
 }
 
-// Run the import
 importCatalog().catch(error => {
     console.error('\n❌ Fatal error:', error);
     process.exit(1);

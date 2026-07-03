@@ -17,6 +17,7 @@ const DashboardLayout = () => {
         { name: 'Invoices', href: '/admin/invoices', icon: FileText },
         { name: 'Clients', href: '/admin/clients', icon: Users },
         { name: 'Products', href: '/admin/products', icon: Package },
+        { name: 'Client Pricing', href: '/admin/products/pricing', icon: Users },
         { name: 'Create PO', href: '/admin/pos/new', icon: PlusCircle },
         { name: 'Dispatch', href: '/admin/dispatch', icon: Truck },
     ];
@@ -87,43 +88,26 @@ const DashboardLayout = () => {
             </div>
 
             {/* Bottom Navigation - Hidden on desktop */}
-            <div className="md:hidden fixed bottom-0 left-0 right-0 bg-gray-900/90 backdrop-blur-xl border-t border-white/10 z-50 pb-safe">
-                <nav className="flex justify-around items-center p-2">
-                    {navigation.filter(item => ['Dashboard', 'Invoices', 'Create PO', 'Products', 'Dispatch'].includes(item.name)).map((item) => {
-                        // Filter to show only key items or show all if they fit. User requested: Dispatch, Orders (PO?), Dashboard.
-                        // Let's see what maps to what.
-                        // Dashboard -> /admin/dashboard
-                        // Orders (assuming Create PO or Invoices?) -> Let's interpret "Orders" as "Create PO" or "Purchase Orders" generally? 
-                        // The user said "Icons: Dispatch, Orders, Dashboard". 
-                        // Existing items: Dashboard, Invoices, Clients, Products, Create PO, Dispatch.
-                        // I will show specific ones for mobile as requested, plus maybe Invoices/PO.
-                        // Let's prioritize: Dashboard, Dispatch, Create PO (Orders).
-
+            <div className="md:hidden fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-xl border-t border-white/10 z-50 pb-safe">
+                <nav className="flex justify-around items-center px-2 py-1">
+                    {navigation.filter(item => ['Dashboard', 'Clients', 'Products', 'Dispatch'].includes(item.name)).map((item) => {
                         const Icon = item.icon;
                         const active = isActive(item.href);
                         return (
                             <Link
                                 key={item.name}
                                 to={item.href}
-                                className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-colors ${active
-                                    ? 'text-blue-500'
-                                    : 'text-white/60 hover:text-white'
+                                className={`flex flex-col items-center justify-center gap-1 w-16 h-[56px] min-h-[48px] rounded-xl transition-all ${
+                                    active
+                                        ? 'text-blue-500 bg-blue-500/10'
+                                        : 'text-white/50 hover:text-white/80 hover:bg-white/5'
                                     }`}
                             >
                                 <Icon className={`w-6 h-6 ${active ? 'fill-current' : ''}`} />
-                                <span className="text-[10px] font-medium">{item.name}</span>
+                                <span className="text-[10px] font-semibold">{item.name}</span>
                             </Link>
                         );
                     })}
-                    {/* Add a "More" or ensure we cover "Orders". 
-                        The user asked for "Orders". I have "Create PO" and "Invoices". 
-                        I'll stick to the requested 3 for the bottom bar if possible, or maybe 4 to fit nicely.
-                        Let's verify the list:
-                        DashboardLayout defines: Dashboard, Invoices, Clients, Products, Create PO, Dispatch.
-                        User asked for: Dispatch, Orders, Dashboard.
-                        "Orders" likely translates to "Create PO" or "Invoices". I'll default to "Create PO" as "Orders" for now, or maybe keep all accessible?
-                        Actually, 4-5 icons fit fine on mobile. I will include: Dashboard, Dispatch, Invoices, Create PO.
-                     */}
                 </nav>
             </div>
 

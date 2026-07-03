@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
@@ -20,158 +20,83 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { Loader2, Truck, CheckCircle2, GraduationCap, Check, ChevronsUpDown } from "lucide-react";
+import { Loader2, Truck, CheckCircle2, GraduationCap, Check, ChevronsUpDown, Package } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import DataFallback from "@/components/DataFallback";
 
-type TrackingItem = {
-    po_id: string;
-    po_number: string;
-    po_date: string; // from created_at of PO
-    client_id: string;
-    po_line_item_id: string;
-    product_id: string;
-    product_name: string;
-    qty_ordered: number;
-    qty_shipped: number;
-    qty_remaining: number;
-    unit_price: number;
-};
-
-type ProductAggregate = {
-    product_id: string;
-    product_name: string;
-    total_ordered: number;
-    total_remaining: number;
-    tracking_items: TrackingItem[];
-};
-
 export default function DispatchInterface() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const [selectedClient, setSelectedClient] = useState<string>("");
-    const [clientOpen, setClientOpen] = useState(false);
-    const [dispatchQuantities, setDispatchQuantities] = useState<Record<string, number>>({}); // product_id -> qty
+    const [selectedPO, setSelectedPO] = useState<string>("");
+    const [poOpen, setPoOpen] = useState(false);
+    const [dispatchQuantities, setDispatchQuantities] = useState<Record<string, number>>({}); // po_line_item_id -> qty
     const [invalidItems, setInvalidItems] = useState<Record<string, boolean>>({});
     const [trainingMode, setTrainingMode] = useState<boolean>(false);
 
-    // Fetch Clients
-    const { data: clients, isError: isClientsError, refetch: refetchClients } = useQuery({
-        queryKey: ['clients'],
+    // Fetch Open POs
+    const { data: purchaseOrders, isError: isPOError, refetch: refetchPOs } = useQuery({
+        queryKey: ['open_pos'],
         queryFn: async () => {
             const { data, error } = await supabase
-                .from('clients')
-                .select('id, name')
-                .order('name');
+                .from('purchase_orders')
+                .select('id, po_number, created_at, client:clients(id, name, address, city, state, state_code, gstin)')
+                .eq('status', 'open')
+                .order('created_at', { ascending: false });
             if (error) throw error;
             return data;
         }
     });
 
-    // Fetch All Open Line Items for Client (Aggregated by Product)
-    const { data: aggregatedProducts, isLoading: loadingProducts, isError: isProductsError, refetch: refetchProducts } = useQuery({
-        queryKey: ['client_products', selectedClient],
+    const activePOData = purchaseOrders?.find(po => po.id === selectedPO);
+
+    // Fetch Line Items for selected PO
+    const { data: lineItems, isLoading: loadingItems, isError: isItemsError, refetch: refetchItems } = useQuery({
+        queryKey: ['po_line_items', selectedPO],
         queryFn: async () => {
-            if (!selectedClient) return [];
+            if (!selectedPO) return [];
 
-            // 1. Fetch from view_po_tracking for this client
-            const { data: tracking, error: trackingError } = await supabase
-                .from('view_po_tracking')
-                .select('*')
-                .eq('client_id', selectedClient)
-                .gt('qty_remaining', 0); // Only fetch items with remaining qty
+            const { data, error } = await supabase
+                .from('po_line_items')
+                .select(`
+                    id,
+                    qty_ordered,
+                    unit_price,
+                    product:products(id, name, sku),
+                    invoice_items(quantity)
+                `)
+                .eq('po_id', selectedPO);
 
-            if (trackingError) throw trackingError;
+            if (error) throw error;
 
-            // 2. Fetch PO details (date) and Line Item details (price)
-            // We need prices and PO dates for FIFO
-            const poIds = [...new Set(tracking.map(t => t.po_id))];
-
-            if (poIds.length === 0) return [];
-
-            const [poRes, productRes, clientProductRes] = await Promise.all([
-                supabase.from('purchase_orders').select('id, created_at, po_number, client_id').in('id', poIds),
-                supabase.from('products').select('id, unit_price').in('id', [...new Set(tracking.map(t => t.product_id))]),
-                // Fallback: fetch ALL products for this client by name to resolve ₹0 prices
-                supabase.from('products').select('name, unit_price').eq('client_id', selectedClient)
-            ]);
-
-            if (poRes.error) throw poRes.error;
-            if (productRes.error) throw productRes.error;
-
-            const poMap = new Map(poRes.data.map(po => [po.id, po]));
-            // Primary price map: by product_id
-            const priceMap = new Map(productRes.data.map(p => [p.id, p.unit_price]));
-            // Fallback price map: by product name (from master catalog)
-            const namePriceMap = new Map(
-                (clientProductRes.data || []).map(p => [p.name.trim().toUpperCase(), p.unit_price])
-            );
-
-            // 3. Enrich and Group
-            const enrichedTracking: TrackingItem[] = tracking.map(t => {
-                const po = poMap.get(t.po_id);
-                // Integrity Check: Warn if PO client doesn't match selected client
-                if (po && po.client_id !== selectedClient) {
-                    console.error(`PO ${po.po_number} belongs to client ${po.client_id}, expected ${selectedClient}`);
-                }
-
-                // Resolve price: primary by product_id, fallback by product name from master catalog
-                const priceByid = priceMap.get(t.product_id);
-                const priceByName = namePriceMap.get(t.product_name?.trim().toUpperCase());
-                const resolvedPrice = (priceByid && priceByid > 0) ? priceByid : (priceByName || 0);
-
+            return data.map((item: any) => {
+                const qtyShipped = item.invoice_items?.reduce((sum: number, ii: any) => sum + (ii.quantity || 0), 0) || 0;
                 return {
-                    ...t,
-                    po_number: po?.po_number || '',
-                    po_date: po?.created_at || '',
-                    unit_price: resolvedPrice
-                }
-            });
-
-            // Group by Product
-            const productsMap = new Map<string, ProductAggregate>();
-
-            enrichedTracking.forEach(item => {
-                const existing = productsMap.get(item.product_id);
-                if (existing) {
-                    existing.total_ordered += item.qty_ordered;
-                    existing.total_remaining += item.qty_remaining;
-                    existing.tracking_items.push(item);
-                } else {
-                    productsMap.set(item.product_id, {
-                        product_id: item.product_id,
-                        product_name: item.product_name,
-                        total_ordered: item.qty_ordered,
-                        total_remaining: item.qty_remaining,
-                        tracking_items: [item]
-                    });
-                }
-            });
-
-            // Sort tracking items within each product by PO Date (FIFO)
-            Array.from(productsMap.values()).forEach(prod => {
-                prod.tracking_items.sort((a, b) => new Date(a.po_date).getTime() - new Date(b.po_date).getTime());
-            });
-
-            return Array.from(productsMap.values());
+                    id: item.id,
+                    product_id: item.product?.id,
+                    product_name: item.product?.name,
+                    sku: item.product?.sku,
+                    qty_ordered: item.qty_ordered,
+                    unit_price: item.unit_price,
+                    qty_shipped: qtyShipped,
+                    qty_remaining: item.qty_ordered - qtyShipped
+                };
+            }).filter(item => item.qty_remaining > 0);
         },
-        enabled: !!selectedClient
+        enabled: !!selectedPO
     });
 
-    const handleQuantityChange = (productId: string, qtyStr: string, totalRemaining: number) => {
-        // Allow empty string to clear input
+    const handleQuantityChange = (lineItemId: string, qtyStr: string, totalRemaining: number) => {
         if (qtyStr === "") {
             setDispatchQuantities(prev => {
                 const newState = { ...prev };
-                delete newState[productId];
+                delete newState[lineItemId];
                 return newState;
             });
-            // Clear invalid state if empty
-            if (invalidItems[productId]) {
+            if (invalidItems[lineItemId]) {
                 setInvalidItems(prev => {
                     const newState = { ...prev };
-                    delete newState[productId];
+                    delete newState[lineItemId];
                     return newState;
                 });
             }
@@ -181,65 +106,53 @@ export default function DispatchInterface() {
         const val = parseFloat(qtyStr);
         const qty = isNaN(val) ? 0 : val;
 
-        // "Over-shipping" Check
         if (qty > totalRemaining) {
             toast.error(`Over-shipping Alert! You entered ${qty}, but only ${totalRemaining} are remaining.`, {
                 style: { background: '#ef4444', color: 'white', border: 'none', fontSize: '16px' }
             });
-            setInvalidItems(prev => ({ ...prev, [productId]: true }));
+            setInvalidItems(prev => ({ ...prev, [lineItemId]: true }));
         } else {
             setInvalidItems(prev => {
                 const newState = { ...prev };
-                delete newState[productId];
+                delete newState[lineItemId];
                 return newState;
             });
         }
 
         setDispatchQuantities(prev => ({
             ...prev,
-            [productId]: qty
+            [lineItemId]: qty
         }));
     };
 
     const generateInvoice = useMutation({
         mutationFn: async () => {
-            if (!selectedClient) throw new Error("Missing client selection");
+            if (!selectedPO || !activePOData) throw new Error("Missing PO selection");
 
-            // Filter items to dispatch
-            const productsToDispatch = Object.entries(dispatchQuantities)
+            const itemsToDispatch = Object.entries(dispatchQuantities)
                 .filter(([_, qty]) => qty > 0)
-                .map(([prodId, qty]) => {
-                    // Find product details for price/name
-                    const prod = aggregatedProducts?.find(p => p.product_id === prodId);
+                .map(([lineItemId, qty]) => {
+                    const line = lineItems?.find(l => l.id === lineItemId);
+                    if (!line) throw new Error("Line item not found");
                     return {
-                        product_id: prodId,
-                        product_name: prod?.product_name || 'Unknown Product',
-                        quantity: qty,
-                        unit_price: prod?.tracking_items[0]?.unit_price || 0
+                        ...line,
+                        dispatch_qty: qty
                     };
                 });
 
-            if (productsToDispatch.length === 0) throw new Error("Nothing to ship");
+            if (itemsToDispatch.length === 0) throw new Error("Nothing to ship");
 
-            // --- Training Mode Simulation ---
             if (trainingMode) {
-                await new Promise(resolve => setTimeout(resolve, 1500)); // Fake network delay
+                await new Promise(resolve => setTimeout(resolve, 1500));
                 return { invoice_number: "TRAINING-MODE-001", id: "simulated" };
             }
-            // --------------------------------
 
-            // 1. Get Client Details
-            const { data: client, error: clientError } = await supabase
-                .from('clients')
-                .select('*')
-                .eq('id', selectedClient)
-                .single();
-            if (clientError) throw clientError;
+            const clientInfo: any = activePOData.client;
 
-            // 2. Generate Invoice Number
+            // Generate Invoice Number
             const getNextInvoiceNumber = async () => {
                 const today = new Date();
-                const month = today.getMonth(); // 0-11
+                const month = today.getMonth();
                 const year = today.getFullYear();
                 const startYear = month >= 3 ? year : year - 1;
                 const fyString = `${(startYear % 100)}-${(startYear + 1) % 100}`;
@@ -268,40 +181,102 @@ export default function DispatchInterface() {
 
             const invoiceNumber = await getNextInvoiceNumber();
 
-            // 3. Call RPC for Transactional Execution
-            const { data: rpcResult, error: rpcError } = await supabase.rpc('create_dispatch_invoice', {
-                p_client_id: selectedClient,
-                p_invoice_number: invoiceNumber,
-                p_invoice_date: new Date().toISOString(),
-                p_receiver_details: {
-                    name: client.name,
-                    address: client.address,
-                    city: client.city,
-                    state: client.state,
-                    state_code: client.state_code,
-                    gstin: client.gstin
-                },
-                p_dispatch_items: productsToDispatch
+            // Insert Invoice Header
+            const { data: newInvoice, error: invError } = await supabase.from('invoices').insert({
+                invoice_number: invoiceNumber,
+                invoice_date: new Date().toISOString(),
+                client_id: clientInfo.id,
+                receiver_name: clientInfo.name,
+                receiver_address: clientInfo.address,
+                receiver_city: clientInfo.city,
+                receiver_state: clientInfo.state,
+                receiver_state_code: clientInfo.state_code,
+                receiver_gstin: clientInfo.gstin,
+                status: 'draft',
+                subtotal: 0,
+                cgst_amount: 0,
+                sgst_amount: 0,
+                igst_amount: 0,
+                total_amount: 0
+            }).select('id').single();
+
+            if (invError) throw invError;
+
+            let subtotal = 0;
+            let cgst = 0;
+            let sgst = 0;
+            let igst = 0;
+            let totalAmount = 0;
+
+            const invoiceItemsToInsert = itemsToDispatch.map(item => {
+                const taxableVal = item.dispatch_qty * item.unit_price;
+                
+                let lineCgst = 0;
+                let lineSgst = 0;
+                let lineIgst = 0;
+
+                // Rule: If state_code is '20' (Jharkhand), assume intra-state (CGST+SGST). Else Inter-state (IGST).
+                if (clientInfo.state_code === '20') {
+                    lineCgst = taxableVal * 0.09;
+                    lineSgst = taxableVal * 0.09;
+                } else {
+                    lineIgst = taxableVal * 0.18;
+                }
+
+                const lineTotal = taxableVal + lineCgst + lineSgst + lineIgst;
+
+                subtotal += taxableVal;
+                cgst += lineCgst;
+                sgst += lineSgst;
+                igst += lineIgst;
+                totalAmount += lineTotal;
+
+                return {
+                    invoice_id: newInvoice.id,
+                    product_id: item.product_id,
+                    po_line_item_id: item.id,
+                    description: item.product_name,
+                    quantity: item.dispatch_qty,
+                    unit: 'Nos',
+                    rate: item.unit_price,
+                    taxable_value: taxableVal,
+                    cgst_amount: lineCgst,
+                    sgst_amount: lineSgst,
+                    igst_amount: lineIgst,
+                    total: lineTotal
+                };
             });
 
-            if (rpcError) throw rpcError;
+            // Insert Invoice Items
+            const { error: itemsError } = await supabase.from('invoice_items').insert(invoiceItemsToInsert);
+            if (itemsError) throw itemsError;
 
-            return rpcResult;
+            // Update Invoice Totals
+            const { error: updateError } = await supabase.from('invoices').update({
+                subtotal,
+                cgst_amount: cgst,
+                sgst_amount: sgst,
+                igst_amount: igst,
+                total_amount: totalAmount
+            }).eq('id', newInvoice.id);
+
+            if (updateError) throw updateError;
+
+            return { id: newInvoice.id, invoice_number: invoiceNumber };
         },
-        onSuccess: (data) => {
+        onSuccess: () => {
             if (trainingMode) {
                 toast.success("Training Invoice Generated! (Simulated).");
             } else {
                 toast.success("Invoice Generated Successfully!");
             }
-            // Reset
             setDispatchQuantities({});
             setInvalidItems({});
-            queryClient.invalidateQueries({ queryKey: ['client_products'] });
-            queryClient.invalidateQueries({ queryKey: ['view_po_tracking'] });
+            queryClient.invalidateQueries({ queryKey: ['po_line_items'] });
+            queryClient.invalidateQueries({ queryKey: ['open_pos'] });
             if (!trainingMode) navigate('/admin/invoices');
         },
-        onError: (error) => {
+        onError: (error: any) => {
             console.error(error);
             toast.error(`Transaction Failed: ${error.message}`);
         }
@@ -328,7 +303,7 @@ export default function DispatchInterface() {
                 <CardHeader className="px-0 flex flex-row items-center justify-between">
                     <CardTitle className="flex items-center gap-2 text-2xl text-white">
                         <Truck className="h-6 w-6 text-blue-400" />
-                        Dispatch
+                        Dispatch Goods
                     </CardTitle>
                     <div className="flex items-center space-x-2 bg-white/5 p-2 rounded-lg border border-white/10">
                         <GraduationCap className={`h-5 w-5 ${trainingMode ? 'text-amber-400' : 'text-white/40'}`} />
@@ -342,45 +317,48 @@ export default function DispatchInterface() {
                 </CardHeader>
                 <CardContent className="px-0 space-y-6">
                     <div className="space-y-2">
-                        <Label className="text-lg font-medium text-white/90">Select Client</Label>
-                        <Popover open={clientOpen} onOpenChange={setClientOpen}>
+                        <Label className="text-lg font-medium text-white/90">Select Purchase Order</Label>
+                        <Popover open={poOpen} onOpenChange={setPoOpen}>
                             <PopoverTrigger asChild>
                                 <Button
                                     variant="outline"
                                     role="combobox"
-                                    aria-expanded={clientOpen}
+                                    aria-expanded={poOpen}
                                     className="w-full h-14 justify-between bg-white/5 border-white/10 text-white hover:bg-white/10 text-lg"
                                 >
-                                    {selectedClient
-                                        ? clients?.find((client) => client.id === selectedClient)?.name
-                                        : "Search Client..."}
+                                    {selectedPO && activePOData
+                                        ? `${activePOData.po_number} - ${activePOData.client?.name}`
+                                        : "Select active PO..."}
                                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-[--radix-popover-trigger-width] p-0 bg-gray-900 border-white/10 text-white">
                                 <Command className="bg-transparent">
-                                    <CommandInput placeholder="Search client..." className="h-12 text-base text-white" />
+                                    <CommandInput placeholder="Search PO number or client..." className="h-12 text-base text-white" />
                                     <CommandList>
-                                        <CommandEmpty>No client found.</CommandEmpty>
+                                        <CommandEmpty>No open PO found.</CommandEmpty>
                                         <CommandGroup>
-                                            {clients?.map((client) => (
+                                            {purchaseOrders?.map((po) => (
                                                 <CommandItem
-                                                    key={client.id}
-                                                    value={client.name}
+                                                    key={po.id}
+                                                    value={`${po.po_number} ${po.client?.name}`}
                                                     onSelect={() => {
-                                                        setSelectedClient(client.id);
+                                                        setSelectedPO(po.id);
                                                         setDispatchQuantities({});
-                                                        setClientOpen(false);
+                                                        setPoOpen(false);
                                                     }}
-                                                    className="text-lg py-3 aria-selected:bg-white/10 aria-selected:text-white"
+                                                    className="text-base py-3 aria-selected:bg-white/10 aria-selected:text-white"
                                                 >
                                                     <Check
                                                         className={cn(
                                                             "mr-2 h-4 w-4 text-blue-500",
-                                                            selectedClient === client.id ? "opacity-100" : "opacity-0"
+                                                            selectedPO === po.id ? "opacity-100" : "opacity-0"
                                                         )}
                                                     />
-                                                    {client.name}
+                                                    <div className="flex flex-col">
+                                                        <span className="font-bold text-blue-300">{po.po_number}</span>
+                                                        <span className="text-sm text-white/70">{po.client?.name}</span>
+                                                    </div>
                                                 </CommandItem>
                                             ))}
                                         </CommandGroup>
@@ -388,56 +366,59 @@ export default function DispatchInterface() {
                                 </Command>
                             </PopoverContent>
                         </Popover>
-                        {isClientsError && (
+                        {isPOError && (
                             <div className="mt-2 flex items-center gap-2 text-red-400 text-sm">
-                                <span>Failed to load clients.</span>
-                                <Button variant="link" className="text-red-400 p-0 h-auto" onClick={() => refetchClients()}>Retry</Button>
+                                <span>Failed to load purchase orders.</span>
+                                <Button variant="link" className="text-red-400 p-0 h-auto" onClick={() => refetchPOs()}>Retry</Button>
                             </div>
                         )}
                     </div>
                 </CardContent>
             </Card>
 
-            {selectedClient && (
+            {selectedPO && (
                 <div className="space-y-4">
-                    {isProductsError ? (
+                    {isItemsError ? (
                         <DataFallback 
-                            title="Failed to Load Product Data" 
-                            message="We couldn't retrieve the products for this client. Please check your connection and try again."
-                            onRetry={() => refetchProducts()} 
+                            title="Failed to Load PO Items" 
+                            message="We couldn't retrieve the line items for this PO."
+                            onRetry={() => refetchItems()} 
                             className="my-8"
                         />
-                    ) : loadingProducts ? (
+                    ) : loadingItems ? (
                         <div className="flex justify-center p-8">
                             <Loader2 className="h-8 w-8 animate-spin text-blue-400" />
                         </div>
-                    ) : aggregatedProducts?.length === 0 ? (
+                    ) : lineItems?.length === 0 ? (
                         <div className="text-center p-8 text-white/60">
-                            No open orders found for this client.
+                            No remaining items to dispatch for this PO.
                         </div>
                     ) : (
                         <div className="grid gap-4">
-                            {aggregatedProducts?.map(product => {
-                                const currentDispatch = dispatchQuantities[product.product_id] || 0;
-                                const isInvalid = invalidItems[product.product_id];
+                            {lineItems?.map(item => {
+                                const currentDispatch = dispatchQuantities[item.id] || 0;
+                                const isInvalid = invalidItems[item.id];
 
                                 return (
-                                    <Card key={product.product_id} className={`glass-dark border-none shadow-lg transition-all duration-200 ${isInvalid ? 'ring-2 ring-red-500/50 bg-red-950/10' : 'bg-black/40'}`}>
+                                    <Card key={item.id} className={`glass-dark border-none shadow-lg transition-all duration-200 ${isInvalid ? 'ring-2 ring-red-500/50 bg-red-950/10' : 'bg-black/40'}`}>
                                         <CardContent className="p-5">
                                             <div className="flex flex-col gap-4">
-                                                {/* Header & Status */}
                                                 <div className="space-y-2">
-                                                    <h3 className="text-2xl font-bold text-white leading-tight">{product.product_name}</h3>
-                                                    <div className="flex items-center flex-wrap gap-2 text-sm">
-                                                        <span className="text-white/60">Ordered: <span className="text-white font-mono">{product.total_ordered}</span></span>
+                                                    <div className="flex flex-col">
+                                                        <span className="text-lg font-bold text-white/90">[{item.sku || 'N/A'}]</span>
+                                                        <h3 className="text-xl text-white/70 leading-tight mt-1">{item.product_name}</h3>
+                                                    </div>
+                                                    <div className="flex items-center flex-wrap gap-2 text-sm mt-2">
+                                                        <span className="text-white/60">Ordered: <span className="text-white font-mono">{item.qty_ordered}</span></span>
                                                         <span className="text-white/20">|</span>
-                                                        <span className={`${product.total_remaining < 100 ? 'text-amber-400' : 'text-green-400'} font-bold`}>
-                                                            Remaining: {product.total_remaining}
+                                                        <span className={`${item.qty_remaining < 100 ? 'text-amber-400' : 'text-green-400'} font-bold`}>
+                                                            Remaining: {item.qty_remaining}
                                                         </span>
+                                                        <span className="text-white/20">|</span>
+                                                        <span className="text-blue-400 font-mono">₹{item.unit_price}</span>
                                                     </div>
                                                 </div>
 
-                                                {/* Input Area */}
                                                 <div className="relative">
                                                     <Label className="text-xs text-white/40 mb-1.5 block uppercase tracking-wider">Dispatch Qty</Label>
                                                     <Input
@@ -448,7 +429,7 @@ export default function DispatchInterface() {
                                                         placeholder="0"
                                                         min="0"
                                                         value={currentDispatch || ''}
-                                                        onChange={(e) => handleQuantityChange(product.product_id, e.target.value, product.total_remaining)}
+                                                        onChange={(e) => handleQuantityChange(item.id, e.target.value, item.qty_remaining)}
                                                     />
                                                     {currentDispatch > 0 && !isInvalid && (
                                                         <div className="absolute right-4 top-[38px] text-green-500 animate-in zoom-in spin-in-90 duration-300">
@@ -466,7 +447,7 @@ export default function DispatchInterface() {
                 </div>
             )}
 
-            {selectedClient && (
+            {selectedPO && (
                 <div className="fixed bottom-0 left-0 right-0 p-4 bg-gray-950/90 backdrop-blur-xl border-t border-white/10 z-[60] pb-safe">
                     <div className="container max-w-2xl mx-auto flex gap-4">
                         <Button
@@ -485,7 +466,7 @@ export default function DispatchInterface() {
                             disabled={generateInvoice.isPending}
                         >
                             {generateInvoice.isPending ? <Loader2 className="animate-spin mr-2" /> : <Truck className="mr-2" />}
-                            {trainingMode ? 'Generate Simulated' : 'Generate Invoice'}
+                            {trainingMode ? 'Generate Simulated' : 'Confirm Dispatch'}
                         </Button>
                     </div>
                 </div>

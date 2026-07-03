@@ -69,17 +69,35 @@ export default function PurchaseOrderForm() {
         }
     });
 
-    // Fetch Products
+    // Fetch Products (Universal Catalog)
     const { data: products, isError: isProductsError, refetch: refetchProducts } = useQuery({
         queryKey: ['products'],
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('products')
-                .select('id, name, unit_price')
+                .select('id, name, sku')
                 .order('name');
             if (error) throw error;
-            return data;
+            // Eliminate duplicates by SKU
+            return Array.from(new Map((data || []).map(p => [p.sku, p])).values());
         }
+    });
+
+    const watchedClientId = watch("client_id");
+
+    // Fetch Client Pricing Matrix
+    const { data: pricingItems } = useQuery({
+        queryKey: ['client_pricing', watchedClientId],
+        queryFn: async () => {
+            if (!watchedClientId) return [];
+            const { data, error } = await supabase
+                .from('client_pricing')
+                .select('product_id, custom_rate')
+                .eq('client_id', watchedClientId);
+            if (error) throw error;
+            return data;
+        },
+        enabled: !!watchedClientId
     });
 
     // Calculate Total Real-time
@@ -250,9 +268,12 @@ export default function PurchaseOrderForm() {
                                                 <Select
                                                     onValueChange={(val) => {
                                                         setValue(`items.${index}.product_id`, val);
-                                                        const product = products?.find(p => p.id === val);
-                                                        if (product) {
-                                                            setValue(`items.${index}.unit_price`, product.unit_price);
+                                                        const pricing = pricingItems?.find((p: any) => p.product_id === val);
+                                                        if (pricing) {
+                                                            setValue(`items.${index}.unit_price`, pricing.custom_rate);
+                                                        } else {
+                                                            setValue(`items.${index}.unit_price`, 0);
+                                                            toast.warning("No contract price found for this product. Defaulted to ₹0.00. Flagged for review.");
                                                         }
                                                     }}
                                                 >
@@ -260,9 +281,9 @@ export default function PurchaseOrderForm() {
                                                         <SelectValue placeholder="Select Product" />
                                                     </SelectTrigger>
                                                     <SelectContent className="bg-gray-900 border-white/10 text-white">
-                                                        {products?.map(product => (
+                                                        {products?.map((product: any) => (
                                                             <SelectItem key={product.id} value={product.id} className="focus:bg-white/10 focus:text-white">
-                                                                {product.name}
+                                                                [{product.sku}] {product.name}
                                                             </SelectItem>
                                                         ))}
                                                     </SelectContent>
