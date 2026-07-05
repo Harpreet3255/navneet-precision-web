@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
@@ -62,7 +62,16 @@ export default function PurchaseOrderForm() {
             const { data, error } = await supabase
                 .from('clients').select('id, name').order('name');
             if (error) throw error;
-            return data;
+            // De-dupe: aggressively normalize names to collapse punctuation/spacing variants
+            // e.g. "TATA MOTORS LIMITED " vs "TATA MOTORS LIMITED"
+            // e.g. "TATA STEEL LIMITED, TINPLATE DIVISION" vs "TATA STEEL LIMITED(TINPLATE DIVISION )"
+            const seen = new Set<string>();
+            return (data || []).filter(c => {
+                const norm = (c.name || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+                if (seen.has(norm)) return false;
+                seen.add(norm);
+                return true;
+            });
         },
     });
 
@@ -93,11 +102,19 @@ export default function PurchaseOrderForm() {
         enabled: !!watchedClientId,
     });
 
-    // Build contractMap: productId → custom_rate (only for this client)
-    const contractMap: Record<string, number> = {};
-    for (const row of clientPricingRows) {
-        contractMap[row.product_id] = parseFloat(String(row.custom_rate)) || 0;
-    }
+    // Build contractMap: productId → custom_rate
+    // useMemo prevents new object reference on every render (stops ProductCombobox re-render loops)
+    // Also de-dupes: if a client has multiple contract rows for the same product_id, keep the MIN rate
+    const contractMap = useMemo(() => {
+        const map: Record<string, number> = {};
+        for (const row of clientPricingRows) {
+            const rate = parseFloat(String(row.custom_rate)) || 0;
+            if (map[row.product_id] === undefined || rate < map[row.product_id]) {
+                map[row.product_id] = rate;
+            }
+        }
+        return map;
+    }, [clientPricingRows]);
     const contractCount = Object.keys(contractMap).length;
 
     // ── Total ────────────────────────────────────────────────────────────────
