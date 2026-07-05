@@ -89,22 +89,24 @@ const DashboardLayout = () => {
 
             {/* Bottom Navigation - Hidden on desktop */}
             <div className="md:hidden fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-xl border-t border-white/10 z-50 pb-safe">
-                <nav className="flex justify-around items-center px-2 py-1">
-                    {navigation.filter(item => ['Dashboard', 'Clients', 'Products', 'Dispatch'].includes(item.name)).map((item) => {
+                <nav className="flex justify-around items-center px-1 py-1">
+                    {navigation.filter(item => ['Dashboard', 'Clients', 'Products', 'Create PO', 'Dispatch'].includes(item.name)).map((item) => {
                         const Icon = item.icon;
                         const active = isActive(item.href);
                         return (
                             <Link
                                 key={item.name}
                                 to={item.href}
-                                className={`flex flex-col items-center justify-center gap-1 w-16 h-[56px] min-h-[48px] rounded-xl transition-all ${
+                                className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-[54px] min-h-[48px] rounded-xl transition-all ${
                                     active
                                         ? 'text-blue-500 bg-blue-500/10'
                                         : 'text-white/50 hover:text-white/80 hover:bg-white/5'
                                     }`}
                             >
-                                <Icon className={`w-6 h-6 ${active ? 'fill-current' : ''}`} />
-                                <span className="text-[10px] font-semibold">{item.name}</span>
+                                <Icon className={`w-5 h-5 ${active ? 'fill-current' : ''}`} />
+                                <span className="text-[9px] font-semibold leading-tight text-center">
+                                    {item.name === 'Create PO' ? 'Create PO' : item.name}
+                                </span>
                             </Link>
                         );
                     })}
