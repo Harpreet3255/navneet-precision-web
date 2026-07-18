@@ -16,6 +16,9 @@ export default defineConfig(({ mode }) => ({
     componentTagger(),
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: {
+        maximumFileSizeToCacheInBytes: 3500000
+      },
       manifest: {
         name: 'Navneet Industries',
         short_name: 'Navneet',
