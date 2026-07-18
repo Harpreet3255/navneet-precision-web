@@ -1,22 +1,25 @@
 // Supabase client configuration
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const rawUrl = import.meta.env.VITE_SUPABASE_URL;
+const rawKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
+// Check if variables exist and if the URL is actually a valid HTTP format
+const isValidUrl = rawUrl && rawUrl.startsWith('http');
+const supabaseUrl = isValidUrl ? rawUrl : 'https://placeholder.supabase.co';
+const supabaseAnonKey = rawKey || 'placeholder-key';
+
+if (!rawUrl || !rawKey || !isValidUrl) {
     console.error(
-        "⚠️ Supabase environment variables are missing! " +
-        "Please ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set."
+        "⚠️ Supabase environment variables are missing or invalid! " +
+        `Current URL value: "${rawUrl}". ` +
+        "Please ensure VITE_SUPABASE_URL (must start with http/https) and VITE_SUPABASE_ANON_KEY are set correctly in Vercel."
     );
 }
 
 // We provide a fallback valid URL format to prevent the application from white-screening immediately on load.
 // API calls will fail, but the UI will render.
-export const supabase = createClient(
-    supabaseUrl || 'https://placeholder.supabase.co',
-    supabaseAnonKey || 'placeholder-key'
-);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Database types
 export type Client = {

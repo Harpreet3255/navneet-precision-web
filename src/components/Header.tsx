@@ -110,7 +110,7 @@ const Header = () => {
 
       {/* Mobile Navigation Menu */}
       {isMenuOpen && (
-        <div className="lg:hidden bg-black/90 backdrop-blur-xl border-b border-white/10">
+        <div className="lg:hidden bg-black/90 backdrop-blur-xl border-b border-white/10 h-[100dvh] overflow-y-auto pb-24">
           <div className="container mx-auto px-4 py-4">
             <nav className="flex flex-col space-y-2">
               {[
@@ -130,6 +130,16 @@ const Header = () => {
                   {item.label}
                 </button>
               ))}
+              
+              <div className="pt-4 mt-2 border-t border-white/10">
+                <Link
+                  to="/admin"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="block w-full text-center font-medium py-3 px-4 rounded-lg bg-blue-600/90 text-white hover:bg-blue-500 hover:shadow-[0_0_15px_rgba(37,99,235,0.4)] transition-all duration-300"
+                >
+                  Admin Menu
+                </Link>
+              </div>
             </nav>
           </div>
         </div>
