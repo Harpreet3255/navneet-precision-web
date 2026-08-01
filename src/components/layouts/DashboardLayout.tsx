@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { FileText, Users, Package, Home, LayoutDashboard, Truck, PlusCircle } from 'lucide-react';
+import { BrandLogo } from '../icons/BrandLogo';
 
 const DashboardLayout = () => {
     const location = useLocation();
@@ -28,12 +29,10 @@ const DashboardLayout = () => {
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black text-white text-base">
             {/* Mobile Top Bar - Hidden on desktop */}
             <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-gray-900/90 backdrop-blur-xl border-b border-white/10 z-50 flex items-center px-4 gap-3">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
-                    <FileText className="w-5 h-5 text-white" />
-                </div>
+                <BrandLogo className="w-8 h-8 shrink-0" />
                 <div>
                     <h1 className="text-white font-bold text-base tracking-tight leading-tight">Navneet Industries</h1>
-                    <p className="text-white/60 text-[10px] font-medium leading-tight">Invoice System</p>
+                    <p className="text-gray-400 text-[10px] font-medium leading-tight">Invoice System</p>
                 </div>
             </div>
 
@@ -42,13 +41,11 @@ const DashboardLayout = () => {
                 <div className="flex flex-col h-full">
                     {/* Logo */}
                     <div className="p-6 border-b border-white/10">
-                        <Link to="/" className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
-                                <FileText className="w-6 h-6 text-white" />
-                            </div>
+                        <Link to="/" className="flex items-center gap-3 group">
+                            <BrandLogo className="w-10 h-10 shrink-0 transition-transform group-hover:scale-105 duration-300" />
                             <div>
                                 <h1 className="text-white font-bold text-lg tracking-tight">Navneet Industries</h1>
-                                <p className="text-white/60 text-xs font-medium">Invoice System</p>
+                                <p className="text-gray-400 text-xs font-medium">Invoice System</p>
                             </div>
                         </Link>
                     </div>

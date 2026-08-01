@@ -28,8 +28,11 @@ import DataFallback from "@/components/DataFallback";
 export default function DispatchInterface() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const [selectedClientId, setSelectedClientId] = useState<string>("");
+    const [selectedProductId, setSelectedProductId] = useState<string>("");
     const [selectedPO, setSelectedPO] = useState<string>("");
-    const [poOpen, setPoOpen] = useState(false);
+    const [clientOpen, setClientOpen] = useState(false);
+    const [productOpen, setProductOpen] = useState(false);
     const [dispatchQuantities, setDispatchQuantities] = useState<Record<string, number>>({}); // po_line_item_id -> qty
     const [invalidItems, setInvalidItems] = useState<Record<string, boolean>>({});
     const [trainingMode, setTrainingMode] = useState<boolean>(false);
@@ -40,7 +43,7 @@ export default function DispatchInterface() {
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('purchase_orders')
-                .select('id, po_number, created_at, client:clients(id, name, address, city, state, state_code, gstin)')
+                .select('id, po_number, created_at, client:clients(id, name, address, city, state, state_code, gstin), po_line_items(product:products(id, name, sku))')
                 .eq('status', 'open')
                 .order('created_at', { ascending: false });
             if (error) throw error;
@@ -297,6 +300,43 @@ export default function DispatchInterface() {
         generateInvoice.mutate();
     };
 
+    // Data processing for dropdowns
+    const clientsMap = new Map();
+    purchaseOrders?.forEach(po => {
+        if (po.client) clientsMap.set(po.client.id, po.client);
+    });
+    const uniqueClients = Array.from(clientsMap.values());
+
+    const clientPOs = purchaseOrders?.filter(po => po.client?.id === selectedClientId) || [];
+    const productsMap = new Map();
+    clientPOs.forEach(po => {
+        po.po_line_items?.forEach((item: any) => {
+            if (item.product) productsMap.set(item.product.id, item.product);
+        });
+    });
+    const uniqueProducts = Array.from(productsMap.values());
+
+    const handleProductSelect = (productId: string) => {
+        setSelectedProductId(productId);
+        setDispatchQuantities({});
+        setInvalidItems({});
+        
+        // Find oldest active PO for this client + product combination
+        const eligiblePOs = clientPOs.filter(po => 
+            po.po_line_items?.some((item: any) => item.product?.id === productId)
+        );
+        
+        // Sort oldest first (ascending created_at)
+        eligiblePOs.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+        
+        if (eligiblePOs.length > 0) {
+            setSelectedPO(eligiblePOs[0].id);
+            toast.success(`Auto-selected oldest PO: ${eligiblePOs[0].po_number}`);
+        } else {
+            setSelectedPO("");
+        }
+    };
+
     return (
         <div className="container mx-auto p-4 max-w-2xl pb-32 animate-in fade-in duration-500">
             <Card className="border-none shadow-none bg-transparent mb-6">
@@ -316,63 +356,118 @@ export default function DispatchInterface() {
                     </div>
                 </CardHeader>
                 <CardContent className="px-0 space-y-6">
-                    <div className="space-y-2">
-                        <Label className="text-lg font-medium text-white/90">Select Purchase Order</Label>
-                        <Popover open={poOpen} onOpenChange={setPoOpen}>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    role="combobox"
-                                    aria-expanded={poOpen}
-                                    className="w-full h-14 justify-between bg-white/5 border-white/10 text-white hover:bg-white/10 text-lg"
-                                >
-                                    {selectedPO && activePOData
-                                        ? `${activePOData.po_number} - ${activePOData.client?.name}`
-                                        : "Select active PO..."}
-                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-[--radix-popover-trigger-width] p-0 bg-gray-900 border-white/10 text-white">
-                                <Command className="bg-transparent">
-                                    <CommandInput placeholder="Search PO number or client..." className="h-12 text-base text-white" />
-                                    <CommandList>
-                                        <CommandEmpty>No open PO found.</CommandEmpty>
-                                        <CommandGroup>
-                                            {purchaseOrders?.map((po) => (
-                                                <CommandItem
-                                                    key={po.id}
-                                                    value={`${po.po_number} ${po.client?.name}`}
-                                                    onSelect={() => {
-                                                        setSelectedPO(po.id);
-                                                        setDispatchQuantities({});
-                                                        setPoOpen(false);
-                                                    }}
-                                                    className="text-base py-3 aria-selected:bg-white/10 aria-selected:text-white"
-                                                >
-                                                    <Check
-                                                        className={cn(
-                                                            "mr-2 h-4 w-4 text-blue-500",
-                                                            selectedPO === po.id ? "opacity-100" : "opacity-0"
-                                                        )}
-                                                    />
-                                                    <div className="flex flex-col">
-                                                        <span className="font-bold text-blue-300">{po.po_number}</span>
-                                                        <span className="text-sm text-white/70">{po.client?.name}</span>
-                                                    </div>
-                                                </CommandItem>
-                                            ))}
-                                        </CommandGroup>
-                                    </CommandList>
-                                </Command>
-                            </PopoverContent>
-                        </Popover>
-                        {isPOError && (
-                            <div className="mt-2 flex items-center gap-2 text-red-400 text-sm">
-                                <span>Failed to load purchase orders.</span>
-                                <Button variant="link" className="text-red-400 p-0 h-auto" onClick={() => refetchPOs()}>Retry</Button>
-                            </div>
-                        )}
+                    <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="space-y-2">
+                            <Label className="text-lg font-medium text-white/90">Select Company</Label>
+                            <Popover open={clientOpen} onOpenChange={setClientOpen}>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        role="combobox"
+                                        aria-expanded={clientOpen}
+                                        className="w-full h-14 justify-between bg-white/5 border-white/10 text-white hover:bg-white/10 text-lg"
+                                    >
+                                        {selectedClientId
+                                            ? uniqueClients.find(c => c.id === selectedClientId)?.name
+                                            : "Select Company..."}
+                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-[--radix-popover-trigger-width] p-0 bg-gray-900 border-white/10 text-white">
+                                    <Command className="bg-transparent">
+                                        <CommandInput placeholder="Search company..." className="h-12 text-base text-white" />
+                                        <CommandList>
+                                            <CommandEmpty>No companies found.</CommandEmpty>
+                                            <CommandGroup>
+                                                {uniqueClients.map((client: any) => (
+                                                    <CommandItem
+                                                        key={client.id}
+                                                        value={client.name}
+                                                        onSelect={() => {
+                                                            setSelectedClientId(client.id);
+                                                            setSelectedProductId("");
+                                                            setSelectedPO("");
+                                                            setDispatchQuantities({});
+                                                            setClientOpen(false);
+                                                        }}
+                                                        className="text-base py-3 aria-selected:bg-white/10 aria-selected:text-white"
+                                                    >
+                                                        <Check className={cn("mr-2 h-4 w-4 text-blue-500", selectedClientId === client.id ? "opacity-100" : "opacity-0")} />
+                                                        {client.name}
+                                                    </CommandItem>
+                                                ))}
+                                            </CommandGroup>
+                                        </CommandList>
+                                    </Command>
+                                </PopoverContent>
+                            </Popover>
+                        </div>
+                        
+                        <div className="space-y-2">
+                            <Label className="text-lg font-medium text-white/90">Select Product</Label>
+                            <Popover open={productOpen} onOpenChange={setProductOpen}>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        role="combobox"
+                                        aria-expanded={productOpen}
+                                        className="w-full h-14 justify-between bg-white/5 border-white/10 text-white hover:bg-white/10 text-lg disabled:opacity-50"
+                                        disabled={!selectedClientId}
+                                    >
+                                        {selectedProductId
+                                            ? uniqueProducts.find(p => p.id === selectedProductId)?.name
+                                            : "Select Product..."}
+                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-[--radix-popover-trigger-width] p-0 bg-gray-900 border-white/10 text-white">
+                                    <Command className="bg-transparent">
+                                        <CommandInput placeholder="Search product..." className="h-12 text-base text-white" />
+                                        <CommandList>
+                                            <CommandEmpty>No products found.</CommandEmpty>
+                                            <CommandGroup>
+                                                {uniqueProducts.map((product: any) => (
+                                                    <CommandItem
+                                                        key={product.id}
+                                                        value={`${product.name} ${product.sku}`}
+                                                        onSelect={() => {
+                                                            handleProductSelect(product.id);
+                                                            setProductOpen(false);
+                                                        }}
+                                                        className="text-base py-3 aria-selected:bg-white/10 aria-selected:text-white"
+                                                    >
+                                                        <Check className={cn("mr-2 h-4 w-4 text-blue-500", selectedProductId === product.id ? "opacity-100" : "opacity-0")} />
+                                                        <div className="flex flex-col">
+                                                            <span>{product.name}</span>
+                                                            <span className="text-xs text-white/50">{product.sku}</span>
+                                                        </div>
+                                                    </CommandItem>
+                                                ))}
+                                            </CommandGroup>
+                                        </CommandList>
+                                    </Command>
+                                </PopoverContent>
+                            </Popover>
+                        </div>
                     </div>
+
+                    {selectedPO && activePOData && (
+                        <div className="bg-blue-900/20 border border-blue-500/30 rounded-xl p-4 flex items-center justify-between animate-in slide-in-from-top-2 duration-300">
+                             <div className="flex flex-col">
+                                 <span className="text-blue-400 font-bold text-lg">Active PO: {activePOData.po_number}</span>
+                                 <span className="text-sm text-white/70">Generated on {new Date(activePOData.created_at).toLocaleDateString()}</span>
+                             </div>
+                             <div className="h-10 w-10 bg-blue-500/20 rounded-full flex items-center justify-center">
+                                 <CheckCircle2 className="text-blue-400 h-6 w-6" />
+                             </div>
+                        </div>
+                    )}
+                    {isPOError && (
+                        <div className="mt-2 flex items-center gap-2 text-red-400 text-sm">
+                            <span>Failed to load data.</span>
+                            <Button variant="link" className="text-red-400 p-0 h-auto" onClick={() => refetchPOs()}>Retry</Button>
+                        </div>
+                    )}
                 </CardContent>
             </Card>
 

@@ -42,7 +42,6 @@ type POFormData = {
 export default function PurchaseOrderForm() {
     const navigate      = useNavigate();
     const queryClient   = useQueryClient();
-    const [totalAmount, setTotalAmount] = useState(0);
 
     const { register, control, handleSubmit, watch, setValue, formState: { errors } } = useForm<POFormData>({
         defaultValues: {
@@ -118,11 +117,12 @@ export default function PurchaseOrderForm() {
     const contractCount = Object.keys(contractMap).length;
 
     // ── Total ────────────────────────────────────────────────────────────────
-    useEffect(() => {
-        const total = watchedItems.reduce((sum, item) =>
-            sum + (Number(item.quantity) * Number(item.unit_price)), 0);
-        setTotalAmount(total);
-    }, [watchedItems]);
+    // Calculate total on the fly to guarantee sync with form state
+    const totalAmount = (watchedItems || []).reduce((sum, item) => {
+        const qty = parseFloat(String(item?.quantity)) || 0;
+        const price = parseFloat(String(item?.unit_price)) || 0;
+        return sum + (qty * price);
+    }, 0);
 
     // Reset line-item product selections when client changes
     const handleClientChange = (clientId: string) => {
@@ -305,7 +305,9 @@ export default function PurchaseOrderForm() {
                             </TableHeader>
                             <TableBody>
                                 {fields.map((field, index) => {
-                                    const itemTotal = (watchedItems[index]?.quantity || 0) * (watchedItems[index]?.unit_price || 0);
+                                    const qty = parseFloat(String(watchedItems[index]?.quantity)) || 0;
+                                    const price = parseFloat(String(watchedItems[index]?.unit_price)) || 0;
+                                    const itemTotal = qty * price;
                                     const selectedProductId = watchedItems[index]?.product_id;
                                     const hasContract = selectedProductId ? selectedProductId in contractMap : false;
 
@@ -341,7 +343,7 @@ export default function PurchaseOrderForm() {
                                                         <span className="text-white/30 text-xs w-6 shrink-0">Qty</span>
                                                         <Input
                                                             type="number"
-                                                            {...register(`items.${index}.quantity` as const)}
+                                                            {...register(`items.${index}.quantity` as const, { valueAsNumber: true })}
                                                             className="bg-white/5 border-white/10 text-white h-8 focus:ring-blue-500/50 text-center text-sm w-16"
                                                             min="1"
                                                         />
@@ -350,7 +352,7 @@ export default function PurchaseOrderForm() {
                                                         <span className="text-white/30 text-xs shrink-0">₹</span>
                                                         <Input
                                                             type="number"
-                                                            {...register(`items.${index}.unit_price` as const)}
+                                                            {...register(`items.${index}.unit_price` as const, { valueAsNumber: true })}
                                                             className="bg-white/5 border-white/10 text-white h-8 focus:ring-blue-500/50 text-sm flex-1"
                                                             step="0.01"
                                                         />
@@ -361,7 +363,7 @@ export default function PurchaseOrderForm() {
                                             <TableCell className="hidden sm:table-cell p-3">
                                                 <Input
                                                     type="number"
-                                                    {...register(`items.${index}.quantity` as const)}
+                                                    {...register(`items.${index}.quantity` as const, { valueAsNumber: true })}
                                                     className="bg-white/5 border-white/10 text-white h-10 focus:ring-blue-500/50 text-center"
                                                     min="1"
                                                 />
@@ -371,7 +373,7 @@ export default function PurchaseOrderForm() {
                                                     <span className="absolute left-3 top-2.5 text-white/30 text-sm">₹</span>
                                                     <Input
                                                         type="number"
-                                                        {...register(`items.${index}.unit_price` as const)}
+                                                        {...register(`items.${index}.unit_price` as const, { valueAsNumber: true })}
                                                         className="pl-7 bg-white/5 border-white/10 text-white h-10 focus:ring-blue-500/50"
                                                         step="0.01"
                                                     />
