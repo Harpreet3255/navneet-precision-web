@@ -1,0 +1,4 @@
+ALTER TABLE products ADD COLUMN IF NOT EXISTS hsn_code text;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS cgst_rate numeric DEFAULT 9;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS sgst_rate numeric DEFAULT 9;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS igst_rate numeric DEFAULT 18;

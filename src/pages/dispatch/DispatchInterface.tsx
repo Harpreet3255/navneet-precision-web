@@ -65,7 +65,7 @@ export default function DispatchInterface() {
                     id,
                     qty_ordered,
                     unit_price,
-                    product:products(id, name, sku),
+                    product:products(id, name, sku, cgst_rate, sgst_rate, igst_rate),
                     invoice_items(quantity)
                 `)
                 .eq('po_id', selectedPO);
@@ -79,6 +79,9 @@ export default function DispatchInterface() {
                     product_id: item.product?.id,
                     product_name: item.product?.name,
                     sku: item.product?.sku,
+                    cgst_rate: item.product?.cgst_rate || 9,
+                    sgst_rate: item.product?.sgst_rate || 9,
+                    igst_rate: item.product?.igst_rate || 18,
                     qty_ordered: item.qty_ordered,
                     unit_price: item.unit_price,
                     qty_shipped: qtyShipped,
@@ -220,10 +223,10 @@ export default function DispatchInterface() {
 
                 // Rule: If state_code is '20' (Jharkhand), assume intra-state (CGST+SGST). Else Inter-state (IGST).
                 if (clientInfo.state_code === '20') {
-                    lineCgst = taxableVal * 0.09;
-                    lineSgst = taxableVal * 0.09;
+                    lineCgst = taxableVal * ((item.cgst_rate || 9) / 100);
+                    lineSgst = taxableVal * ((item.sgst_rate || 9) / 100);
                 } else {
-                    lineIgst = taxableVal * 0.18;
+                    lineIgst = taxableVal * ((item.igst_rate || 18) / 100);
                 }
 
                 const lineTotal = taxableVal + lineCgst + lineSgst + lineIgst;
@@ -243,8 +246,11 @@ export default function DispatchInterface() {
                     unit: 'Nos',
                     rate: item.unit_price,
                     taxable_value: taxableVal,
+                    cgst_rate: clientInfo.state_code === '20' ? (item.cgst_rate || 9) : 0,
                     cgst_amount: lineCgst,
+                    sgst_rate: clientInfo.state_code === '20' ? (item.sgst_rate || 9) : 0,
                     sgst_amount: lineSgst,
+                    igst_rate: clientInfo.state_code === '20' ? 0 : (item.igst_rate || 18),
                     igst_amount: lineIgst,
                     total: lineTotal
                 };

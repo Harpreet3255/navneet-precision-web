@@ -1,9 +1,8 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { type InvoiceWithItems } from '@/lib/supabase';
-import { formatCurrency, formatDate } from '@/lib/calculations';
+import { formatDate } from '@/lib/calculations';
 
-// Utility for Amount in words
 const amountToWords = (amount: number): string => {
     if (amount === 0) return 'Zero Rupees Only';
     const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
@@ -28,116 +27,75 @@ const amountToWords = (amount: number): string => {
     return result + ' Only';
 };
 
-// Define styles for PDF
 const styles = StyleSheet.create({
-    page: {
-        padding: 30,
-        fontSize: 10,
-        fontFamily: 'Helvetica',
-    },
-    header: {
-        textAlign: 'center',
-        marginBottom: 20,
-        borderBottom: '1px solid #000',
-        paddingBottom: 10,
-    },
-    companyName: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 5,
-    },
-    companyDetails: {
-        fontSize: 9,
-        marginBottom: 2,
-    },
-    invoiceTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginVertical: 10,
-    },
-    section: {
-        marginBottom: 10,
-    },
-    row: {
-        flexDirection: 'row',
-        marginBottom: 10,
-    },
-    column: {
-        flex: 1,
-    },
-    label: {
-        fontWeight: 'bold',
-        marginBottom: 3,
-    },
-    value: {
-        fontSize: 9,
-    },
-    table: {
-        marginVertical: 10,
-    },
-    tableHeader: {
-        flexDirection: 'row',
-        borderBottom: '1px solid #000',
-        borderTop: '1px solid #000',
-        paddingVertical: 5,
-        backgroundColor: '#f0f0f0',
-        fontWeight: 'bold',
-        fontSize: 8,
-    },
-    tableRow: {
-        flexDirection: 'row',
-        borderBottom: '0.5px solid #ccc',
-        paddingVertical: 5,
-        fontSize: 8,
-    },
-    col1: { width: '30%', paddingHorizontal: 5 },
-    col2: { width: '10%', paddingHorizontal: 5 },
-    col3: { width: '8%', paddingHorizontal: 5, textAlign: 'right' },
-    col4: { width: '8%', paddingHorizontal: 5 },
-    col5: { width: '11%', paddingHorizontal: 5, textAlign: 'right' },
-    col6: { width: '11%', paddingHorizontal: 5, textAlign: 'right' },
-    col7: { width: '11%', paddingHorizontal: 5, textAlign: 'right' },
-    col8: { width: '11%', paddingHorizontal: 5, textAlign: 'right' },
-    totals: {
-        width: '40%',
-    },
-    totalRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 5,
-        fontSize: 9,
-    },
-    grandTotal: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginTop: 5,
-        paddingTop: 5,
-        borderTop: '1px solid #000',
-        fontWeight: 'bold',
-        fontSize: 11,
-    },
-    notes: {
-        marginTop: 15,
-        fontSize: 9,
-        padding: 10,
-        backgroundColor: '#f9f9f9',
-    },
-    termsContainer: {
-        marginTop: 20,
-        width: '65%',
-    },
-    termsTitle: {
-        fontSize: 9,
-        fontWeight: 'bold',
-        marginBottom: 4,
-        textDecoration: 'underline',
-    },
-    termsText: {
-        fontSize: 7.5,
-        marginBottom: 2,
-        color: '#333',
-    },
+    page: { padding: 20, fontSize: 8, fontFamily: 'Helvetica' },
+    table: { border: '1px solid #000', flex: 1, display: 'flex', flexDirection: 'column' },
+    
+    row: { flexDirection: 'row', borderBottom: '1px solid #000' },
+    colHeader: { padding: 4, textAlign: 'center', borderRight: '1px solid #000', flex: 1, fontSize: 7, fontWeight: 'bold' },
+    colHeaderLast: { padding: 4, textAlign: 'center', flex: 1, fontSize: 7, fontWeight: 'bold' },
+    
+    centerBlock: { padding: 5, textAlign: 'center', borderBottom: '1px solid #000' },
+    titleMain: { fontSize: 9, fontWeight: 'bold' },
+    titleSub: { fontSize: 8, fontStyle: 'italic', marginBottom: 5 },
+    companyName: { fontSize: 14, fontWeight: 'bold', marginTop: 5 },
+    companyAddress: { fontSize: 8 },
+    companyGstin: { fontSize: 9, fontWeight: 'bold', marginTop: 2 },
+    
+    detailsRow: { flexDirection: 'row', borderBottom: '1px solid #000', minHeight: 70 },
+    detailsColLeft: { width: '35%', borderRight: '1px solid #000', padding: 5 },
+    detailsColMid: { width: '30%', borderRight: '1px solid #000', padding: 5 },
+    detailsColRight: { width: '35%', padding: 5 },
+    
+    detailsLabel: { fontWeight: 'bold', fontSize: 7, marginBottom: 2 },
+    detailsText: { fontSize: 7, marginBottom: 1 },
+    
+    itemsHeader: { flexDirection: 'row', borderBottom: '1px solid #000', backgroundColor: '#f9f9f9', alignItems: 'stretch' },
+    itemCol1: { width: '5%', borderRight: '1px solid #000', padding: 4, textAlign: 'center', fontSize: 7, fontWeight: 'bold' },
+    itemCol2: { width: '35%', borderRight: '1px solid #000', padding: 4, fontSize: 7, fontWeight: 'bold' },
+    itemCol3: { width: '10%', borderRight: '1px solid #000', padding: 4, textAlign: 'center', fontSize: 7, fontWeight: 'bold' },
+    itemCol4: { width: '15%', borderRight: '1px solid #000', padding: 4, textAlign: 'center', fontSize: 7, fontWeight: 'bold' },
+    itemCol5: { width: '12%', borderRight: '1px solid #000', padding: 4, textAlign: 'right', fontSize: 7, fontWeight: 'bold' },
+    itemCol6: { width: '11%', borderRight: '1px solid #000', padding: 4, textAlign: 'right', fontSize: 7, fontWeight: 'bold' },
+    itemCol7: { width: '12%', padding: 4, textAlign: 'right', fontSize: 7, fontWeight: 'bold' },
+    
+    itemsContainer: { flex: 1, position: 'relative', borderBottom: '1px solid #000', flexDirection: 'column' },
+    itemRow: { flexDirection: 'row', minHeight: 20 },
+    itemCol1D: { width: '5%', padding: 4, textAlign: 'center', fontSize: 7 },
+    itemCol2D: { width: '35%', padding: 4, fontSize: 7 },
+    itemCol3D: { width: '10%', padding: 4, textAlign: 'center', fontSize: 7 },
+    itemCol4D: { width: '15%', padding: 4, textAlign: 'center', fontSize: 7 },
+    itemCol5D: { width: '12%', padding: 4, textAlign: 'right', fontSize: 7 },
+    itemCol6D: { width: '11%', padding: 4, textAlign: 'right', fontSize: 7 },
+    itemCol7D: { width: '12%', padding: 4, textAlign: 'right', fontSize: 7 },
+    
+    // Absolute vertical lines for the items container to stretch all the way down
+    vLine1: { position: 'absolute', top: 0, bottom: 0, left: '5%', borderLeft: '1px solid #000' },
+    vLine2: { position: 'absolute', top: 0, bottom: 0, left: '40%', borderLeft: '1px solid #000' },
+    vLine3: { position: 'absolute', top: 0, bottom: 0, left: '50%', borderLeft: '1px solid #000' },
+    vLine4: { position: 'absolute', top: 0, bottom: 0, left: '65%', borderLeft: '1px solid #000' },
+    vLine5: { position: 'absolute', top: 0, bottom: 0, left: '77%', borderLeft: '1px solid #000' },
+    vLine6: { position: 'absolute', top: 0, bottom: 0, left: '88%', borderLeft: '1px solid #000' },
+    
+    footerRow: { flexDirection: 'row', minHeight: 120 },
+    footerLeft: { width: '65%', borderRight: '1px solid #000', flexDirection: 'column' },
+    footerRight: { width: '35%', flexDirection: 'column' },
+    
+    wordsBlock: { padding: 5, borderBottom: '1px solid #000' },
+    wordsLabel: { fontWeight: 'bold', fontSize: 7 },
+    wordsText: { fontSize: 7, marginTop: 2 },
+    
+    declarationBlock: { padding: 5, flex: 1 },
+    declarationText: { fontSize: 7 },
+    
+    totalsRow: { flexDirection: 'row', borderBottom: '1px solid #000', minHeight: 16, alignItems: 'center' },
+    totalsLabel: { width: '60%', borderRight: '1px solid #000', padding: 4, fontSize: 7 },
+    totalsValue: { width: '40%', padding: 4, textAlign: 'right', fontSize: 7 },
+    
+    sigBlock: { padding: 5, flex: 1, position: 'relative' },
+    sigText: { fontSize: 7, marginTop: 5 },
+    sigLine: { borderBottom: '1px solid #000', marginTop: 2, marginBottom: 2 },
+    sigCompany: { fontSize: 8, fontWeight: 'bold', position: 'absolute', bottom: 5, right: 5 }
 });
 
 interface InvoicePDFProps {
@@ -146,180 +104,184 @@ interface InvoicePDFProps {
 
 const InvoicePDF: React.FC<InvoicePDFProps> = ({ invoice }) => {
     const isInterState = invoice.igst_amount > 0;
-
-    // Helper function to ensure values are never empty strings for PDF renderer
+    
     const safeValue = (value: any): string => {
-        if (value === null || value === undefined || value === '') {
-            return '-';
-        }
+        if (value === null || value === undefined || value === '') return '';
         return String(value);
     };
+
+    const totalTax = invoice.cgst_amount + invoice.sgst_amount + invoice.igst_amount;
+    
+    const poNumbers = [...new Set(invoice.invoice_items.map((i: any) => i.po_line_items?.purchase_orders?.po_number).filter(Boolean))];
+    const poNumberDisplay = poNumbers.join(', ') || '-';
 
     return (
         <Document>
             <Page size="A4" style={styles.page}>
-                {/* Header */}
-                <View style={styles.header}>
-                    <Text style={styles.companyName}>NAVNEET INDUSTRIES</Text>
-                    <Text style={styles.companyDetails}>
-                        New Development Area, 25/A, Golmuri, Jamshedpur, Jharkhand 831003, India
-                    </Text>
-                    <Text style={styles.companyDetails}>
-                        Email: navneetindustries@gmail.com | GSTIN: 20AAECT1182J12A
-                    </Text>
-                </View>
-
-                <Text style={styles.invoiceTitle}>TAX INVOICE</Text>
-
-                {/* Details Section */}
-                <View style={styles.row}>
-                    <View style={styles.column}>
-                        <Text style={styles.label}>Receiver (Billed to)</Text>
-                        <Text style={styles.value}>Name: {safeValue(invoice.receiver_name)}</Text>
-                        <Text style={styles.value}>Address: {safeValue(invoice.receiver_address)}</Text>
-                        <Text style={styles.value}>{`${safeValue(invoice.receiver_city)}, ${safeValue(invoice.receiver_state)}`}</Text>
-                        <Text style={styles.value}>State Code: {safeValue(invoice.receiver_state_code)}</Text>
-                        <Text style={styles.value}>GSTIN: {safeValue(invoice.client?.gstin || invoice.receiver_gstin)}</Text>
-                    </View>
-                    <View style={styles.column}>
-                        <Text style={styles.label}>Consignee (Shipped to)</Text>
-                        <Text style={styles.value}>Name: {safeValue(invoice.consignee_name || invoice.receiver_name)}</Text>
-                        <Text style={styles.value}>Address: {safeValue(invoice.consignee_address || invoice.receiver_address)}</Text>
-                        <Text style={styles.value}>{`${safeValue(invoice.consignee_city || invoice.receiver_city)}, ${safeValue(invoice.consignee_state || invoice.receiver_state)}`}</Text>
-                        <Text style={styles.value}>State Code: {safeValue(invoice.consignee_state_code || invoice.receiver_state_code)}</Text>
-                        <Text style={styles.value}>GSTIN: {safeValue(invoice.consignee_gstin || invoice.client?.gstin || invoice.receiver_gstin)}</Text>
-                    </View>
-                </View>
-
-                {/* Invoice Details */}
-                <View style={styles.row}>
-                    <View style={styles.column}>
-                        <Text style={styles.label}>Invoice No: {safeValue(invoice.invoice_number)}</Text>
-                        <Text style={styles.value}>Date: {formatDate(invoice.invoice_date)}</Text>
-                    </View>
-                    {invoice.supplier && (
-                        <View style={styles.column}>
-                            <Text style={styles.label}>Supplier: {safeValue(invoice.supplier)}</Text>
-                        </View>
-                    )}
-                </View>
-
-                {/* Items Table */}
                 <View style={styles.table}>
-                    <View style={styles.tableHeader}>
-                        <Text style={{ ...styles.col1, width: '25%' }}>Description</Text>
-                        <Text style={{ ...styles.col2, width: '13%' }}>PO No.</Text>
-                        <Text style={styles.col2}>HSN/SAC</Text>
-                        <Text style={styles.col3}>Qty</Text>
-                        <Text style={styles.col4}>Unit</Text>
-                        <Text style={styles.col5}>Rate</Text>
-                        <Text style={styles.col6}>Taxable Value</Text>
-                        {isInterState ? (
-                            <Text style={{ ...styles.col7, width: '22%' }}>IGST 18%</Text>
-                        ) : (
-                            <Text style={styles.col7}>CGST 9% {"\n"}(Jharkhand)</Text>
-                        )}
-                        {!isInterState && <Text style={styles.col8}>SGST 9%</Text>}
-                        <Text style={styles.col8}>Total</Text>
+                    {/* Top Copies Row */}
+                    <View style={styles.row}>
+                        <Text style={styles.colHeader}>Original for buyer</Text>
+                        <Text style={styles.colHeader}>Duplicate for transporter</Text>
+                        <Text style={styles.colHeader}>Triplicate for office copy</Text>
+                        <Text style={styles.colHeaderLast}>Extra copy</Text>
                     </View>
 
-                    {invoice.invoice_items.map((item) => (
-                        <View key={item.id} style={styles.tableRow}>
-                            <Text style={{ ...styles.col1, width: '25%' }}>
-                                {/* @ts-ignore */}
-                                {safeValue(((item.product?.sku ? `[${item.product.sku}] ` : '') + (item.description || '')))}
-                            </Text>
-                            <Text style={{ ...styles.col2, width: '13%', fontSize: 7 }}>
-                                {/* @ts-ignore */}
-                                {safeValue(item.po_line_items?.purchase_orders?.po_number)}
-                            </Text>
-                            {/* @ts-ignore */}
-                            <Text style={styles.col2}>{safeValue(item.hsn_code || item.sac_code || item.product?.hsn_code)}</Text>
-                            <Text style={styles.col3}>{safeValue(item.quantity)}</Text>
-                            <Text style={styles.col4}>{safeValue(item.unit)}</Text>
-                            <Text style={styles.col5}>{item.rate.toFixed(2)}</Text>
-                            <Text style={styles.col6}>{item.taxable_value.toFixed(2)}</Text>
-                            {isInterState ? (
-                                <Text style={{ ...styles.col7, width: '22%' }}>{item.igst_amount.toFixed(2)}</Text>
-                            ) : (
-                                <Text style={styles.col7}>{item.cgst_amount.toFixed(2)}</Text>
-                            )}
-                            {!isInterState && <Text style={styles.col8}>{item.sgst_amount.toFixed(2)}</Text>}
-                            <Text style={styles.col8}>{item.total.toFixed(2)}</Text>
-                        </View>
-                    ))}
-                </View>
-
-                {!isInterState && (
-                    <Text style={{ fontSize: 8, fontStyle: 'italic', marginBottom: 5 }}>
-                        * Intra-state Supply (Jharkhand) - CGST (9%) + SGST (9%)
-                    </Text>
-                )}
-
-                {/* Totals & Amount in Words */}
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-                    <View style={{ width: '55%', paddingTop: 10 }}>
-                        <Text style={{ fontSize: 9, fontWeight: 'bold', marginBottom: 4 }}>Amount Chargeable (in words)</Text>
-                        <Text style={{ fontSize: 9, fontWeight: 'bold' }}>INR {amountToWords(invoice.total_amount)}</Text>
+                    {/* Main Header */}
+                    <View style={styles.centerBlock}>
+                        <Text style={styles.titleMain}>Government of India/ State Department of Jharkhand</Text>
+                        <Text style={styles.titleMain}>Form Goods and Service Tax-Invoice</Text>
+                        <Text style={styles.titleSub}>(See rules—20)</Text>
+                        
+                        <Text style={styles.companyName}>NAVNEET INDUSTRIES</Text>
+                        <Text style={styles.companyAddress}>New Development Area, 25/A, Golmuri, Jamshedpur, Jharkhand 831003, India</Text>
+                        <Text style={styles.companyGstin}>GSTIN No 20AAECT1182J12A</Text>
                     </View>
 
-                    <View style={styles.totals}>
-                        <View style={styles.totalRow}>
-                            <Text>Subtotal:</Text>
-                            <Text>₹{invoice.subtotal.toFixed(2)}</Text>
+                    {/* Parties Details */}
+                    <View style={styles.detailsRow}>
+                        <View style={styles.detailsColLeft}>
+                            <Text style={styles.detailsLabel}>Details of Receiver (Billed To)</Text>
+                            <Text style={{...styles.detailsText, fontWeight: 'bold'}}>{safeValue(invoice.receiver_name)}</Text>
+                            <Text style={styles.detailsText}>{safeValue(invoice.receiver_address)}</Text>
+                            <Text style={styles.detailsText}>{`${safeValue(invoice.receiver_city)}, ${safeValue(invoice.receiver_state)} - ${safeValue(invoice.receiver_state_code)}`}</Text>
+                            <Text style={styles.detailsText}>Phone No : </Text>
+                            <Text style={styles.detailsText}>PAN No.: </Text>
+                            <Text style={styles.detailsText}>Range :  Division : </Text>
+                            <Text style={styles.detailsText}>GSTIN : {safeValue(invoice.client?.gstin || invoice.receiver_gstin)}</Text>
+                            <Text style={styles.detailsText}>IEC No. : </Text>
                         </View>
+                        
+                        <View style={styles.detailsColMid}>
+                            <Text style={styles.detailsText}><Text style={{fontWeight: 'bold'}}>Invoice No:</Text> {safeValue(invoice.invoice_number)}</Text>
+                            <Text style={styles.detailsText}><Text style={{fontWeight: 'bold'}}>Invoice Date:</Text> {formatDate(invoice.invoice_date)}</Text>
+                            <Text style={{...styles.detailsText, marginTop: 10}}><Text style={{fontWeight: 'bold'}}>Order No.:</Text> {poNumberDisplay}</Text>
+                            {invoice.supplier && <Text style={styles.detailsText}><Text style={{fontWeight: 'bold'}}>Supplier:</Text> {safeValue(invoice.supplier)}</Text>}
+                        </View>
+
+                        <View style={styles.detailsColRight}>
+                            <Text style={styles.detailsLabel}>Details of Consignee (Shipped To)</Text>
+                            <Text style={{...styles.detailsText, fontWeight: 'bold'}}>{safeValue(invoice.consignee_name || invoice.receiver_name)}</Text>
+                            <Text style={styles.detailsText}>{safeValue(invoice.consignee_address || invoice.receiver_address)}</Text>
+                            <Text style={styles.detailsText}>{`${safeValue(invoice.consignee_city || invoice.receiver_city)}, ${safeValue(invoice.consignee_state || invoice.receiver_state)} - ${safeValue(invoice.consignee_state_code || invoice.receiver_state_code)}`}</Text>
+                            <Text style={styles.detailsText}>Phone No : </Text>
+                            <Text style={styles.detailsText}>PAN No.: </Text>
+                            <Text style={styles.detailsText}>Range :  Division : </Text>
+                            <Text style={styles.detailsText}>GSTIN : {safeValue(invoice.consignee_gstin || invoice.client?.gstin || invoice.receiver_gstin)}</Text>
+                            <Text style={styles.detailsText}>IEC No. : </Text>
+                        </View>
+                    </View>
+
+                    {/* Items Header */}
+                    <View style={styles.itemsHeader}>
+                        <Text style={styles.itemCol1}>Sl. No</Text>
+                        <Text style={styles.itemCol2}>Particulars</Text>
+                        <Text style={styles.itemCol3}>HSN Code</Text>
+                        <Text style={styles.itemCol4}>Qty/Rate</Text>
+                        <Text style={styles.itemCol5}>Taxable Amount</Text>
+                        <Text style={styles.itemCol6}>{isInterState ? "IGST" : "CGST+SGST"}</Text>
+                        <Text style={styles.itemCol7}>Total Invoice Value</Text>
+                    </View>
+
+                    {/* Items Container with flex 1 to fill page and absolute lines */}
+                    <View style={styles.itemsContainer}>
+                        <View style={styles.vLine1} />
+                        <View style={styles.vLine2} />
+                        <View style={styles.vLine3} />
+                        <View style={styles.vLine4} />
+                        <View style={styles.vLine5} />
+                        <View style={styles.vLine6} />
+
+                        {invoice.invoice_items.map((item, index) => {
+                            const hsn = item.hsn_code || item.sac_code || (item.product as any)?.hsn_code || '-';
+                            const qtyRate = `${item.quantity} ${item.unit} @ Rs ${item.rate.toFixed(2)}/-`;
+                            const taxAmt = (item.cgst_amount + item.sgst_amount + item.igst_amount).toFixed(2);
+                            
+                            return (
+                                <View key={item.id} style={styles.itemRow}>
+                                    <Text style={styles.itemCol1D}>{index + 1}.</Text>
+                                    <Text style={styles.itemCol2D}>
+                                        {/* @ts-ignore */}
+                                        {safeValue(((item.product?.sku ? `[${item.product.sku}] ` : '') + (item.description || '')))}
+                                    </Text>
+                                    <Text style={styles.itemCol3D}>{hsn}</Text>
+                                    <Text style={styles.itemCol4D}>{qtyRate}</Text>
+                                    <Text style={styles.itemCol5D}>{item.taxable_value.toFixed(2)}</Text>
+                                    <Text style={styles.itemCol6D}>{taxAmt}</Text>
+                                    <Text style={styles.itemCol7D}>{item.total.toFixed(2)}</Text>
+                                </View>
+                            );
+                        })}
+                        
                         {invoice.transportation_charges > 0 && (
-                            <View style={styles.totalRow}>
-                                <Text>Transportation Charges:</Text>
-                                <Text>₹{invoice.transportation_charges.toFixed(2)}</Text>
+                            <View style={styles.itemRow}>
+                                <Text style={styles.itemCol1D}></Text>
+                                <Text style={styles.itemCol2D}>Transportation Charges</Text>
+                                <Text style={styles.itemCol3D}></Text>
+                                <Text style={styles.itemCol4D}></Text>
+                                <Text style={styles.itemCol5D}>{invoice.transportation_charges.toFixed(2)}</Text>
+                                <Text style={styles.itemCol6D}></Text>
+                                <Text style={styles.itemCol7D}>{invoice.transportation_charges.toFixed(2)}</Text>
                             </View>
                         )}
-                        {isInterState ? (
-                            <View style={styles.totalRow}>
-                                <Text>IGST (18%):</Text>
-                                <Text>₹{invoice.igst_amount.toFixed(2)}</Text>
+                    </View>
+
+                    {/* Footer Section */}
+                    <View style={styles.footerRow}>
+                        <View style={styles.footerLeft}>
+                            <View style={styles.wordsBlock}>
+                                <Text style={styles.wordsLabel}>Total Tax (In Words):</Text>
+                                <Text style={styles.wordsText}>Rupees: {amountToWords(totalTax)}</Text>
                             </View>
-                        ) : (
-                            <View>
-                                <View style={styles.totalRow}>
-                                    <Text>CGST (9%):</Text>
-                                    <Text>₹{invoice.cgst_amount.toFixed(2)}</Text>
-                                </View>
-                                <View style={styles.totalRow}>
-                                    <Text>SGST (9%):</Text>
-                                    <Text>₹{invoice.sgst_amount.toFixed(2)}</Text>
-                                </View>
+                            <View style={styles.wordsBlock}>
+                                <Text style={styles.wordsLabel}>Invoice Total (In Words):</Text>
+                                <Text style={styles.wordsText}>Rupees: {amountToWords(invoice.total_amount)}</Text>
                             </View>
-                        )}
-                        <View style={styles.grandTotal}>
-                            <Text>Total Amount:</Text>
-                            <Text>₹{invoice.total_amount.toFixed(2)}</Text>
+                            <View style={styles.declarationBlock}>
+                                <Text style={styles.declarationText}>Certified that the particulars given above are true and correct and the amount indicated represent the price actually charged and that there is no flow additional consideration directly or indirectly from the buyer.</Text>
+                            </View>
+                        </View>
+                        
+                        <View style={styles.footerRight}>
+                            <View style={styles.totalsRow}>
+                                <Text style={styles.totalsLabel}>Taxable Amount:</Text>
+                                <Text style={styles.totalsValue}>{invoice.subtotal.toFixed(2)}</Text>
+                            </View>
+                            
+                            {!isInterState && (
+                                <View style={styles.totalsRow}>
+                                    <Text style={styles.totalsLabel}>Tax Amount - SGST:</Text>
+                                    <Text style={styles.totalsValue}>{invoice.sgst_amount.toFixed(2)}</Text>
+                                </View>
+                            )}
+                            {!isInterState && (
+                                <View style={styles.totalsRow}>
+                                    <Text style={styles.totalsLabel}>Tax Amount - CGST:</Text>
+                                    <Text style={styles.totalsValue}>{invoice.cgst_amount.toFixed(2)}</Text>
+                                </View>
+                            )}
+                            {isInterState && (
+                                <View style={styles.totalsRow}>
+                                    <Text style={styles.totalsLabel}>Tax Amount - IGST:</Text>
+                                    <Text style={styles.totalsValue}>{invoice.igst_amount.toFixed(2)}</Text>
+                                </View>
+                            )}
+                            
+                            <View style={styles.totalsRow}>
+                                <Text style={{...styles.totalsLabel, fontWeight: 'bold'}}>Total Invoice Value:</Text>
+                                <Text style={{...styles.totalsValue, fontWeight: 'bold'}}>{invoice.total_amount.toFixed(2)}</Text>
+                            </View>
+                            
+                            <View style={styles.sigBlock}>
+                                <Text style={styles.sigText}>Electronics Reference No</Text>
+                                <View style={styles.sigLine} />
+                                <Text style={styles.sigText}>Date</Text>
+                                <View style={styles.sigLine} />
+                                <Text style={styles.sigCompany}>For Navneet Industries</Text>
+                            </View>
                         </View>
                     </View>
-                </View>
 
-                {/* Notes */}
-                {invoice.notes && (
-                    <View style={styles.notes}>
-                        <Text style={styles.label}>Notes:</Text>
-                        <Text>{safeValue(invoice.notes)}</Text>
-                    </View>
-                )}
-
-                {/* Terms and Conditions */}
-                <View style={styles.termsContainer}>
-                    <Text style={styles.termsTitle}>Terms & Conditions:</Text>
-                    <Text style={styles.termsText}>1. Payment is strictly due within 90 days from the date of invoice.</Text>
-                    <Text style={styles.termsText}>2. Interest @ 18% p.a. (1.5% per month) will be charged on delayed payments.</Text>
-                    <Text style={styles.termsText}>3. All disputes are subject to Jamshedpur jurisdiction only.</Text>
-                    <Text style={styles.termsText}>4. Goods once sold and delivered will not be taken back or exchanged.</Text>
-                    <Text style={styles.termsText}>5. Our risk and responsibility ceases once the goods leave our manufacturing premises.</Text>
-                </View>
-
-                {/* Signature */}
-                <View style={{ position: 'absolute', bottom: 30, right: 30 }}>
-                    <Text style={{ fontSize: 9, marginTop: 40 }}>Authorized Signatory</Text>
-                    <Text style={{ fontSize: 9 }}>For Navneet Industries</Text>
                 </View>
             </Page>
         </Document>

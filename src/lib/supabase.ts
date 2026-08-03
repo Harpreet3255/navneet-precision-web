@@ -47,6 +47,9 @@ export type Product = {
     description: string | null;
     sac_code: string | null;
     hsn_code: string | null;
+    cgst_rate?: number;
+    sgst_rate?: number;
+    igst_rate?: number;
     unit: string;
     group_id?: string | null;
     created_at: string;
