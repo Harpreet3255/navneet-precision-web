@@ -1,0 +1,123 @@
+﻿
+H:\navneet-precision-web-2\src\components\Footer.tsx
+  134:17  error  Anchor used as a button. Anchors are primarily expected to navigate. Use the button element instead. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
+  148:17  error  Anchor used as a button. Anchors are primarily expected to navigate. Use the button element instead. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
+  162:17  error  Anchor used as a button. Anchors are primarily expected to navigate. Use the button element instead. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
+
+H:\navneet-precision-web-2\src\components\invoice\InvoicePDF.tsx
+  108:31  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  115:65  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  196:92  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  204:42  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+H:\navneet-precision-web-2\src\components\ui\alert.tsx
+  39:3  error  Headings must have content and the content must be accessible by a screen reader  jsx-a11y/heading-has-content
+
+H:\navneet-precision-web-2\src\components\ui\badge.tsx
+  36:17  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+H:\navneet-precision-web-2\src\components\ui\button.tsx
+  53:37  error    A `require()` style import is forbidden                                                                                         @typescript-eslint/no-require-imports
+  87:18  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+H:\navneet-precision-web-2\src\components\ui\card.tsx
+  36:3  error  Headings must have content and the content must be accessible by a screen reader  jsx-a11y/heading-has-content
+
+H:\navneet-precision-web-2\src\components\ui\command.tsx
+  24:11  error  An interface declaring no members is equivalent to its supertype  @typescript-eslint/no-empty-object-type
+
+H:\navneet-precision-web-2\src\components\ui\form.tsx
+  168:3  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+H:\navneet-precision-web-2\src\components\ui\navigation-menu.tsx
+  119:3  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+H:\navneet-precision-web-2\src\components\ui\pagination.tsx
+  48:3  error  Anchors must have content and the content must be accessible by a screen reader  jsx-a11y/anchor-has-content
+
+H:\navneet-precision-web-2\src\components\ui\sidebar.tsx
+  760:3  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+H:\navneet-precision-web-2\src\components\ui\sonner.tsx
+  29:19  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+H:\navneet-precision-web-2\src\components\ui\textarea.tsx
+  5:18  error  An interface declaring no members is equivalent to its supertype  @typescript-eslint/no-empty-object-type
+
+H:\navneet-precision-web-2\src\components\ui\toggle.tsx
+  43:18  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+H:\navneet-precision-web-2\src\contexts\TransitionContext.tsx
+  29:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+H:\navneet-precision-web-2\src\pages\admin\MasterSync.tsx
+   32:19  error  Unexpected any. Specify a different type                 @typescript-eslint/no-explicit-any
+   75:36  error  'clientError' is never reassigned. Use 'const' instead   prefer-const
+   93:37  error  'productError' is never reassigned. Use 'const' instead  prefer-const
+  124:19  error  Unexpected any. Specify a different type                 @typescript-eslint/no-explicit-any
+  194:19  error  Unexpected any. Specify a different type                 @typescript-eslint/no-explicit-any
+
+H:\navneet-precision-web-2\src\pages\clients\ClientDetails.tsx
+   75:55  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   83:48  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  169:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  214:63  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+H:\navneet-precision-web-2\src\pages\clients\ClientManagement.tsx
+  12:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  40:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  57:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+H:\navneet-precision-web-2\src\pages\dashboard\CRMDashboard.tsx
+   70:17  error  'startDate' is never reassigned. Use 'const' instead  prefer-const
+  114:65  error  Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
+  114:76  error  Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
+  121:27  error  Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
+  121:35  error  Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
+  277:75  error  Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
+  389:55  error  Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
+
+H:\navneet-precision-web-2\src\pages\dispatch\DispatchInterface.tsx
+   75:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   76:81  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  156:31  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  288:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  319:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  332:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  388:77  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  435:79  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+H:\navneet-precision-web-2\src\pages\invoices\InvoiceForm.tsx
+   92:8   warning  React Hook useEffect has missing dependencies: 'generateNextInvoiceNumber' and 'loadInvoice'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+  114:8   warning  React Hook useEffect has a missing dependency: 'setValue'. Either include it or remove the dependency array                                       react-hooks/exhaustive-deps
+  326:25  error    A form label must be associated with a control                                                                                                    jsx-a11y/label-has-associated-control
+  334:25  error    A form label must be associated with a control                                                                                                    jsx-a11y/label-has-associated-control
+  342:25  error    A form label must be associated with a control                                                                                                    jsx-a11y/label-has-associated-control
+  567:21  error    A form label must be associated with a control                                                                                                    jsx-a11y/label-has-associated-control
+
+H:\navneet-precision-web-2\src\pages\invoices\InvoiceView.tsx
+   29:8   warning  React Hook useEffect has a missing dependency: 'fetchInvoice'. Either include it or remove the dependency array      react-hooks/exhaustive-deps
+  199:46  error    Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+H:\navneet-precision-web-2\src\pages\pos\PurchaseOrderForm.tsx
+  161:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+H:\navneet-precision-web-2\src\pages\products\ClientPricingManagement.tsx
+   74:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  158:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  176:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  304:83  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+H:\navneet-precision-web-2\src\pages\products\ProductManagement.tsx
+   81:25  error  Unexpected any. Specify a different type                                                                                                                                                           @typescript-eslint/no-explicit-any
+  107:25  error  Unexpected any. Specify a different type                                                                                                                                                           @typescript-eslint/no-explicit-any
+  255:29  error  Visible, non-interactive elements with click handlers must have at least one keyboard listener                                                                                                     jsx-a11y/click-events-have-key-events
+  255:29  error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+
+H:\navneet-precision-web-2\src\test\pricing-intelligence.test.ts
+  183:66  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  188:64  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+Γ£û 67 problems (56 errors, 11 warnings)
+  1 error and 0 warnings potentially fixable with the `--fix` option.
+

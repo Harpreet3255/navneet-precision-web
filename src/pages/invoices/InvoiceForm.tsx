@@ -323,30 +323,32 @@ const InvoiceForm = () => {
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-white/70">Invoice Number</label>
+                        <label htmlFor="invoice_number" className="text-sm font-medium text-white/70">Invoice Number</label>
                         <Input
+                            id="invoice_number"
                             {...register('invoice_number')}
                             className="bg-white/5 border-white/10 text-white"
                             readOnly
                         />
                     </div>
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-white/70">Invoice Date</label>
+                        <label htmlFor="invoice_date" className="text-sm font-medium text-white/70">Invoice Date</label>
                         <Input
+                            id="invoice_date"
                             type="date"
                             {...register('invoice_date')}
                             className="bg-white/5 border-white/10 text-white"
                         />
                     </div>
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-white/70">Select Client</label>
+                        <label htmlFor="client_id" className="text-sm font-medium text-white/70">Select Client</label>
                         <Select
                             onValueChange={(val) => {
                                 setValue('client_id', val);
                             }}
                             defaultValue={watch('client_id')}
                         >
-                            <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                            <SelectTrigger id="client_id" className="bg-white/5 border-white/10 text-white">
                                 <SelectValue placeholder="Select a client..." />
                             </SelectTrigger>
                             <SelectContent className="bg-gray-900 border-white/10 text-white">
@@ -564,8 +566,9 @@ const InvoiceForm = () => {
             {/* Notes */}
             <Card className="glass-dark border-none shadow-xl">
                 <CardContent className="p-6">
-                    <label className="block text-sm font-medium text-white/70 mb-2">Notes</label>
+                    <label htmlFor="notes" className="block text-sm font-medium text-white/70 mb-2">Notes</label>
                     <Textarea
+                        id="notes"
                         {...register('notes')}
                         rows={3}
                         className="bg-white/5 border-white/10 text-white"

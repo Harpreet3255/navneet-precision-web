@@ -253,8 +253,16 @@ const ProductManagement = () => {
                     return (
                         <Card key={group.groupName} className="glass-dark border-none shadow-xl overflow-hidden">
                             <div 
+                                role="button"
+                                tabIndex={0}
                                 className="p-4 bg-white/5 border-b border-white/10 cursor-pointer hover:bg-white/10 transition-colors flex items-center justify-between"
                                 onClick={() => toggleGroup(group.groupName)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        toggleGroup(group.groupName);
+                                    }
+                                }}
                             >
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">

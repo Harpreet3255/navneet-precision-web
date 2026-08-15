@@ -131,46 +131,46 @@ const Footer = () => {
             <h3 className="text-xl font-bold mb-6 text-white uppercase tracking-wide">Our Systems</h3>
             <ul className="space-y-3 text-white/70">
               <li>
-                <a
-                  href="#"
+                <button
+                  type="button"
                   onClick={(e) => {
                     e.preventDefault();
                     setTransition('precision-cap');
                     setIsTransitioning(true);
                     setTimeout(() => navigate('/services/caps'), 1800);
                   }}
-                  className="inline-flex items-center hover:text-cyber-cyan transition-colors group"
+                  className="inline-flex items-center hover:text-cyber-cyan transition-colors group bg-transparent border-none p-0 text-base"
                 >
                   <ArrowRight className="h-3 w-3 mr-2 group-hover:translate-x-1 transition-transform" /> Plastic Cap Manufacturing
-                </a>
+                </button>
               </li>
               <li>
-                <a
-                  href="#"
+                <button
+                  type="button"
                   onClick={(e) => {
                     e.preventDefault();
                     setTransition('die-making');
                     setIsTransitioning(true);
                     setTimeout(() => navigate('/services/dies'), 1800);
                   }}
-                  className="inline-flex items-center hover:text-cyber-cyan transition-colors group"
+                  className="inline-flex items-center hover:text-cyber-cyan transition-colors group bg-transparent border-none p-0 text-base"
                 >
                   <ArrowRight className="h-3 w-3 mr-2 group-hover:translate-x-1 transition-transform" /> Custom Die Making
-                </a>
+                </button>
               </li>
               <li>
-                <a
-                  href="#"
+                <button
+                  type="button"
                   onClick={(e) => {
                     e.preventDefault();
                     setTransition('fix-progress');
                     setIsTransitioning(true);
                     setTimeout(() => navigate('/services/maintenance'), 1800);
                   }}
-                  className="inline-flex items-center hover:text-cyber-cyan transition-colors group"
+                  className="inline-flex items-center hover:text-cyber-cyan transition-colors group bg-transparent border-none p-0 text-base"
                 >
                   <ArrowRight className="h-3 w-3 mr-2 group-hover:translate-x-1 transition-transform" /> Machine Maintenance
-                </a>
+                </button>
               </li>
               <li>
                 <a
