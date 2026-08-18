@@ -1,0 +1,61 @@
+name: CI Quality Gate
+
+on:
+  pull_request:
+    branches: [ "main", "develop" ]
+  push:
+    branches: [ "main" ]
+
+jobs:
+  code-quality-and-tests:
+    name: Code Quality & Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Accessibility Linting (eslint-plugin-jsx-a11y)
+        # Blocks PR if WCAG violations are detected in the React components
+        run: npx eslint src --ext .ts,.tsx,.js,.jsx
+
+      - name: Unit & Component Tests
+        # Ensure code coverage meets threshold
+        run: npm run test -- --coverage --passWithNoTests
+        # Uncomment and configure coverage threshold in package.json or jest.config.js:
+        # coverageThreshold: { global: { branches: 80, functions: 80, lines: 80, statements: 80 } }
+
+  lighthouse-ci:
+    name: Lighthouse CI Audits
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Application
+        run: npm run build
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.13.x
+
+      - name: Run Lighthouse CI Quality Gates
+        run: lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
